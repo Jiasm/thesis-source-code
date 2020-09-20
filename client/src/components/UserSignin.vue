@@ -1,17 +1,45 @@
 <template>
   <div class="container">
-    <img class="logo" src="../assets/logo.png">
-    <h1>{{ title }}</h1>
-    <div class="login-panel">
+    <h1>问卷调查系统</h1>
+    <h2>用户注册</h2>
+    <div class="signin-panel">
       <el-row class="input-row">
         <el-col :span="8">
-          <div class="input-field">账号：</div>
+          <div class="input-field">手机号：</div>
         </el-col>
         <el-col :span="16">
           <div class="input-field">
             <el-input
-              placeholder="请输入账号"
-              v-model="username"
+              placeholder="请输入手机号"
+              v-model="phone"
+            >
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="input-row">
+        <el-col :span="8">
+          <div class="input-field">手机验证码：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="input-field">
+            <el-input
+              placeholder="请输入六位数手机验证码"
+              v-model="verify"
+            >
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="input-row">
+        <el-col :span="8">
+          <div class="input-field">昵称：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="input-field">
+            <el-input
+              placeholder="请输入昵称"
+              v-model="nickname"
             >
             </el-input>
           </div>
@@ -33,8 +61,8 @@
         </el-col>
       </el-row>
       <el-row class="button-row">
-        <el-col :span="8" :offset="16">
-          <el-button type="primary" round>登录</el-button>
+        <el-col :span="4" :offset="20">
+          <el-button type="success" round>注册</el-button>
         </el-col>
       </el-row>
     </div>
@@ -43,7 +71,7 @@
 
 <script>
 export default {
-  name: 'Login',
+  name: 'UserSignin',
   props: {
     title: String,
   },

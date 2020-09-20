@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    <img class="logo" src="../assets/logo.png">
-    <h1>{{ title }}</h1>
     <div class="login-panel">
       <el-row class="input-row">
         <el-col :span="8">
@@ -19,7 +17,50 @@
       </el-row>
       <el-row class="input-row">
         <el-col :span="8">
-          <div class="input-field">密码：</div>
+          <div class="input-field">手机号：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="input-field">
+            <el-input
+              placeholder="请输入手机号"
+              show-password
+            >
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="input-row">
+        <el-col :span="8">
+          <div class="input-field">验证码：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="input-field">
+            <el-input
+              placeholder="请输入六位验证码"
+              show-password
+            >
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="input-row">
+        <el-col :span="8">
+          <div class="input-field">新密码：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="input-field">
+            <el-input
+              placeholder="请输入密码"
+              show-password
+              v-model="password"
+            >
+            </el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="input-row">
+        <el-col :span="8">
+          <div class="input-field">确认密码：</div>
         </el-col>
         <el-col :span="16">
           <div class="input-field">
@@ -34,7 +75,7 @@
       </el-row>
       <el-row class="button-row">
         <el-col :span="8" :offset="16">
-          <el-button type="primary" round>登录</el-button>
+          <el-button type="success" round>找回密码</el-button>
         </el-col>
       </el-row>
     </div>
@@ -43,7 +84,7 @@
 
 <script>
 export default {
-  name: 'Login',
+  name: 'Reget',
   props: {
     title: String,
   },
