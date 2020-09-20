@@ -34,21 +34,19 @@
         <el-col :span="8">
         </el-col>
         <el-col>
-          <el-checkbox-group v-model="checkList" class="check-group">
-            <el-checkbox label="选项 A" ></el-checkbox>
-            <input value="选项A的描述" /><br/>
-            <el-checkbox label="选项 B" ></el-checkbox>
-            <input value="选项B的描述" /><br/>
-            <el-checkbox label="选项 C" ></el-checkbox>
-            <input /><br/>
-            <el-checkbox label="选项 D" ></el-checkbox>
-            <input />
-          </el-checkbox-group>
+          <el-checkbox label="选项 A" v-model="optionsList[0].checked" ></el-checkbox>
+          <input v-model="optionsList[0].val" /><br/>
+          <el-checkbox label="选项 B" v-model="optionsList[1].checked" ></el-checkbox>
+          <input v-model="optionsList[1].val" /><br/>
+          <el-checkbox label="选项 C" v-model="optionsList[2].checked" ></el-checkbox>
+          <input v-model="optionsList[2].val" /><br/>
+          <el-checkbox label="选项 D" v-model="optionsList[3].checked" ></el-checkbox>
+          <input v-model="optionsList[3].val" /><br/>
         </el-col>
       </el-row>
       <el-row class="button-row">
         <el-col :span="8" :offset="16">
-          <el-button type="success" round>保存</el-button>
+          <el-button type="success" round @click="save">保存</el-button>
         </el-col>
       </el-row>
     </div>
@@ -56,15 +54,33 @@
 </template>
 
 <script>
+import { getItem, changeItem } from '../lib/data'
+
 export default {
   name: 'Preview',
   data() {
+    const id = Number(this.$route.query.id)
+    const item = getItem(id)
     return {
-      title: '这里是问卷的标题',
-      question: '这里是问题描述',
-      checkList: ['选项 A', '选项 B'],
+      ...item,
     }
   },
+  methods: {
+    save() {
+      const id = Number(this.$route.query.id)
+      changeItem(id, {
+        question: this.$data.question,
+        title: this.$data.title
+      })
+      this.$confirm('问卷修改成功', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        this.$router.push({ path: '/preview', query: { id } })
+      })
+    }
+  }
 }
 </script>
 

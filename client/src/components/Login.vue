@@ -33,8 +33,11 @@
         </el-col>
       </el-row>
       <el-row class="button-row">
-        <el-col :span="8" :offset="16">
-          <el-button type="primary" round>登录</el-button>
+        <el-col :span="8" :offset="8">
+          <el-button type="primary" round @click="login">登录</el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button type="warning" round @click="forget">忘记密码</el-button>
         </el-col>
       </el-row>
     </div>
@@ -53,6 +56,14 @@ export default {
       password: '',
     }
   },
+  methods: {
+    login() {
+      this.$router.push({path:'/list'})
+    },
+    forget() {
+      this.$router.push({path:'/reget'})
+    }
+  }
 }
 </script>
 

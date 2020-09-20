@@ -37,21 +37,19 @@
         <el-col :span="8">
         </el-col>
         <el-col>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="选项 A"></el-checkbox>
-            <input /><br/>
-            <el-checkbox label="选项 B"></el-checkbox>
-            <input /><br/>
-            <el-checkbox label="选项 C"></el-checkbox>
-            <input /><br/>
-            <el-checkbox label="选项 D"></el-checkbox>
-            <input />
-          </el-checkbox-group>
+          <el-checkbox label="选项 A" ></el-checkbox>
+          <input v-model="optionsList[0]" /><br/>
+          <el-checkbox label="选项 B"></el-checkbox>
+          <input v-model="optionsList[1]" /><br/>
+          <el-checkbox label="选项 C"></el-checkbox>
+          <input v-model="optionsList[2]" /><br/>
+          <el-checkbox label="选项 D"></el-checkbox>
+          <input v-model="optionsList[3]" /><br/>
         </el-col>
       </el-row>
       <el-row class="button-row">
         <el-col :span="8" :offset="16">
-          <el-button type="success" round>创建</el-button>
+          <el-button type="success" round @click="save">创建</el-button>
         </el-col>
       </el-row>
     </div>
@@ -59,15 +57,38 @@
 </template>
 
 <script>
+import { newItem } from '../lib/data'
+
 export default {
   name: 'Create',
   data() {
     return {
       title: '',
       question: '',
-      checkList: [],
+      optionsList: ['', '', '', ''],
     }
   },
+  methods: {
+    save() {
+      console.log({
+        title: this.$data.title,
+        question: this.$data.question,
+        optionsList: [this.$data.optionsList[0], this.$data.optionsList[1], this.$data.optionsList[2], this.$data.optionsList[3]]
+      })
+      const id = newItem({
+        title: this.$data.title,
+        question: this.$data.question,
+        optionsList: this.$data.optionsList
+      })
+      this.$confirm('问卷创建成功', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        this.$router.push({ path: '/preview', query: { id: id } })
+      })
+    }
+  }
 }
 </script>
 

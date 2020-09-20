@@ -94,6 +94,17 @@ export default {
       password: '',
     }
   },
+  methods: {
+    reget() {
+      this.$confirm('密码修改成功', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        this.$router.push({ path: '/' })
+      })
+    }
+  }
 }
 </script>
 

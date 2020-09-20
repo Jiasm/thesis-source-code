@@ -25,65 +25,60 @@
         label="创建时间">
       </el-table-column>
       <el-table-column label="操作">
-        <el-button type="primary" icon="el-icon-search" circle size="mini"></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="open" ></el-button>
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-search" circle size="mini" @click="detail(scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="remove(scope.row)"></el-button>
+        </template>
       </el-table-column>
     </el-table>
       <el-row class="button-row">
         <el-col :span="8" :offset="16">
-          <el-button type="success" round>新增问卷</el-button>
+          <el-button type="success" round @click="add">新增问卷</el-button>
         </el-col>
       </el-row>
   </div>
 </template>
 
 <script>
+import { getList, removeItem } from '../lib/data'
+
 export default {
   name: 'List',
   methods: {
-    open() {
+    remove(row) {
+      const id = Number(row.id)
       this.$confirm('此操作将禁用问卷，后续用户将不能再进行填写, 是否确认?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        removeItem(id)
         this.$message({
           type: 'success',
           message: '删除成功!'
         });
+        const index = this.$data.tableData.findIndex(item => item.id === id)
+
+        this.$data.tableData.splice(index, 1)
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
         });          
       });
-    }
+    },
+    add() {
+      this.$router.push({ path: 'create' })
+    },
+    detail(row) {
+      this.$router.push({ path: 'preview', query: { id: row.id } })
+    },
   },
   data() {
     return {
-      tableData: [{
-        id: 1,
-        title: '问卷调查1',
-        status: '启用',
-        datetime: '2020-04-01 16:00',
-      }, {
-        id: 2,
-        title: '问卷调查2',
-        status: '启用',
-        datetime: '2020-03-28 15:00',
-      }, {
-        id: 3,
-        title: '问卷调查3',
-        status: '启用',
-        datetime: '2020-03-20 12:00',
-      }, {
-        id: 4,
-        title: '问卷调查4',
-        status: '禁用',
-        datetime: '2020-03-09 22:00',
-      }]
+      tableData: getList()
     }
-  }
+  },
 }
 </script>
 

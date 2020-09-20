@@ -36,21 +36,19 @@
         <el-col :span="8">
         </el-col>
         <el-col>
-          <el-checkbox-group v-model="checkList" class="check-group">
-            <el-checkbox label="选项 A" disabled ></el-checkbox>
-            <input value="选项A的描述" disabled /><br/>
-            <el-checkbox label="选项 B" disabled ></el-checkbox>
-            <input value="选项B的描述" disabled /><br/>
-            <el-checkbox label="选项 C" disabled ></el-checkbox>
-            <input disabled /><br/>
-            <el-checkbox label="选项 D" disabled ></el-checkbox>
-            <input disabled />
-          </el-checkbox-group>
+          <el-checkbox label="选项 A" v-model="optionsList[0].checked" ></el-checkbox>
+          <input :value="optionsList[0].val" /><br/>
+          <el-checkbox label="选项 B" v-model="optionsList[1].checked" ></el-checkbox>
+          <input :value="optionsList[1].val" /><br/>
+          <el-checkbox label="选项 C" v-model="optionsList[2].checked" ></el-checkbox>
+          <input :value="optionsList[2].val" /><br/>
+          <el-checkbox label="选项 D" v-model="optionsList[3].checked" ></el-checkbox>
+          <input :value="optionsList[3].val" /><br/>
         </el-col>
       </el-row>
       <el-row class="button-row">
         <el-col :span="8" :offset="16">
-          <el-button type="success" round>修改</el-button>
+          <el-button type="success" round @click="edit">修改</el-button>
         </el-col>
       </el-row>
     </div>
@@ -58,15 +56,23 @@
 </template>
 
 <script>
+import { getItem } from '../lib/data'
+
 export default {
   name: 'Preview',
   data() {
+    const id = Number(this.$route.query.id)
+    const item = getItem(id)
+    console.log(item)
     return {
-      title: '这里是问卷的标题',
-      question: '这里是问题描述',
-      checkList: ['选项 A', '选项 B'],
+      ...item
     }
   },
+  methods: {
+    edit() {
+      this.$router.push({ path: '/edit', query: { id: 1 } })
+    }
+  }
 }
 </script>
 
