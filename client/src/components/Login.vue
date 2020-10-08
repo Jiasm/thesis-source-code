@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import { login } from '../lib/api'
+
 export default {
   name: 'Login',
   props: {
@@ -57,8 +59,20 @@ export default {
     }
   },
   methods: {
-    login() {
-      this.$router.push({path:'/list'})
+    async login() {
+      const { username, password } = this.$data
+      
+      const data = await login(username, password)
+
+      if (data === 'success') {
+        this.$router.push({path:'/list'})
+      } else {
+        this.$confirm(data, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        })
+      }
     },
     forget() {
       this.$router.push({path:'/reget'})

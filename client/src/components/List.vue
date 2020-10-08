@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { getList, removeItem } from '../lib/data'
+import { getList, removeQuestion } from '../lib/api'
 
 export default {
   name: 'List',
@@ -51,15 +51,22 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        removeItem(id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-        const index = this.$data.tableData.findIndex(item => item.id === id)
+      }).then(async () => {
+        const res = await removeQuestion(id)
 
-        this.$data.tableData.splice(index, 1)
+        if (res === 'success') {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          location.reload()
+        } else {
+          this.$confirm(res.data, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'error'
+          })
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -74,9 +81,12 @@ export default {
       this.$router.push({ path: 'preview', query: { id: row.id } })
     },
   },
+  async mounted() {
+    this.$data.tableData = await getList()
+  },
   data() {
     return {
-      tableData: getList()
+      tableData: []
     }
   },
 }

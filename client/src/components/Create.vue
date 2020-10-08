@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { newItem } from '../lib/data'
+import { addQuestion } from '../lib/api'
 
 export default {
   name: 'Create',
@@ -69,23 +69,20 @@ export default {
     }
   },
   methods: {
-    save() {
+    async save() {
       console.log({
         title: this.$data.title,
         question: this.$data.question,
         optionsList: [this.$data.optionsList[0], this.$data.optionsList[1], this.$data.optionsList[2], this.$data.optionsList[3]]
       })
-      const id = newItem({
-        title: this.$data.title,
-        question: this.$data.question,
-        optionsList: this.$data.optionsList
-      })
+      const id = await addQuestion(this.$data.title, 1)
+
       this.$confirm('问卷创建成功', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
       }).then(() => {
-        this.$router.push({ path: '/preview', query: { id: id } })
+        this.$router.push({ path: '/preview', query: { id } })
       })
     }
   }

@@ -56,21 +56,26 @@
 </template>
 
 <script>
-import { getItem } from '../lib/data'
+import { getQuestion } from '../lib/api'
 
 export default {
   name: 'Preview',
   data() {
-    const id = Number(this.$route.query.id)
-    const item = getItem(id)
-    console.log(item)
     return {
-      ...item
+      optionsList: [{}, {}, {}, {}],
+      question: '',
+      title: ''
     }
+  },
+  async mounted() {
+    const id = Number(this.$route.query.id)
+    const item = await getQuestion(id)
+    this.$data.title = item.title
   },
   methods: {
     edit() {
-      this.$router.push({ path: '/edit', query: { id: 1 } })
+      const id = Number(this.$route.query.id)
+      this.$router.push({ path: '/edit', query: { id } })
     }
   }
 }
