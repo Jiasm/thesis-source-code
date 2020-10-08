@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getQuestion } from '../lib/api'
+import { getQuestion, getAnswer } from '../lib/api'
 
 export default {
   name: 'Preview',
@@ -70,7 +70,10 @@ export default {
   async mounted() {
     const id = Number(this.$route.query.id)
     const item = await getQuestion(id)
+    const answerInfo = await getAnswer(id)
     this.$data.title = item.title
+    this.$data.question = answerInfo.question
+    this.$data.optionsList = answerInfo.optionsList
   },
   methods: {
     edit() {

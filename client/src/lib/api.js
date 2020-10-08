@@ -37,7 +37,7 @@ export async function getQuestion (id) {
 export async function addQuestion (title, creater) {
   const { data } = await axios.post(`${host}/add`, {
     datetime: new Date().toISOString(),
-    creater,
+    creater: Number(creater),
     title
   })
 
@@ -48,6 +48,57 @@ export async function changeQuestion (id, title) {
   const { data } = await axios.post(`${host}/change`, {
     title,
     id
+  })
+
+  return data
+}
+
+export async function getAnswer (id) {
+  const { data } = await axios.get(`${host}/answer-info?id=${id}`)
+
+  const question = data.answer
+
+  const optionsList = new Array(4)
+
+  const fields = ['option_a', 'option_b', 'option_c', 'option_d']
+
+  fields.forEach((field, index) => {
+    if (data[field]) {
+      optionsList[index] = { checked: true, val: data[field] }
+    } else {
+      optionsList[index] = {checked: false, val: ''}
+    }
+  })
+
+  return {
+    id: data.id,
+    qid: data.qid,
+    question,
+    optionsList
+  }
+}
+
+export async function addAnswer (qid, answer, options) {
+  const { data } = await axios.post(`${host}/add-answer`, {
+    qid,
+    answer,
+    option_a: options[0],
+    option_b: options[1],
+    option_c: options[2],
+    option_d: options[3]
+  })
+
+  return data
+}
+
+export async function changeAnswer (id, answer, options) {
+  const { data } = await axios.post(`${host}/change-answer`, {
+    id,
+    answer,
+    option_a: options[0],
+    option_b: options[1],
+    option_c: options[2],
+    option_d: options[3]
   })
 
   return data

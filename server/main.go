@@ -33,6 +33,16 @@ type QuestionRequestData struct {
 	Datetime 	time.Time
 }
 
+type Answer struct {
+	Id				int				 `json:"id"`
+	Qid				int				 `json:"qid"`
+	Answer 		string		 `json:"answer"`
+	Option_a 	string		 `json:"option_a"`
+	Option_b 	string		 `json:"option_b"`
+	Option_c 	string		 `json:"option_c"`
+	Option_d 	string		 `json:"option_d"`
+}
+
 type ResetPassword struct {
 	Id int
 	Phone string
@@ -49,6 +59,9 @@ func main()  {
 	http.HandleFunc("/add", AddNewHandler)
 	http.HandleFunc("/change", ChangeHandler)
 	http.HandleFunc("/delete", RemoveHandler)
+	http.HandleFunc("/add-answer", AddAnswerHandler)
+	http.HandleFunc("/change-answer", ChangeAnswerHandler)
+	http.HandleFunc("/answer-info", GetAnswerHandler)
 	// http.HandleFunc("/reset-password", ResetPasswordHandler)
 
 	fmt.Println("server run as http://127.0.0.1:8880")
@@ -82,7 +95,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request)  {
 	if err != nil || user.Status != 1 {
 		fmt.Fprintf(w, "用户不存在")
 	} else {
-		fmt.Fprintf(w, "success")
+		fmt.Fprintf(w, fmt.Sprintf("success:%d", user.Id))
 	}
 }
 
@@ -155,6 +168,51 @@ func RemoveHandler(w http.ResponseWriter, r *http.Request)  {
 	}
 	removeQeustionInfo(data)
 	fmt.Fprintf(w, "success")
+}
+
+func AddAnswerHandler(w http.ResponseWriter, r *http.Request)  {
+	CORSHandler(w)
+
+	body, err := ioutil.ReadAll(r.Body)
+	var data Answer
+	if err = json.Unmarshal(body, &data); err != nil {
+			fmt.Printf("Unmarshal err, %v\n", err)
+			return
+	}
+	addAnswer(data)
+	fmt.Fprintf(w, "success")
+}
+
+func ChangeAnswerHandler(w http.ResponseWriter, r *http.Request)  {
+	CORSHandler(w)
+
+	body, err := ioutil.ReadAll(r.Body)
+	var data Answer
+	if err = json.Unmarshal(body, &data); err != nil {
+			fmt.Printf("Unmarshal err, %v\n", err)
+			return
+	}
+	changeAnswer(data)
+	fmt.Fprintf(w, "success")
+}
+
+func GetAnswerHandler(w http.ResponseWriter, r *http.Request) {
+	CORSHandler(w)
+
+	var id string
+	values := r.URL.Query()
+	id = values.Get("id")
+
+	intId, errs := strconv.Atoi(id)
+
+	question := getAnswerInfo(intId)
+
+	jsons, errs := json.Marshal(question)
+	if errs != nil {
+	  fmt.Println(errs.Error())
+	}
+
+	fmt.Fprintf(w, string(jsons))
 }
 
 // func ResetPasswordHandler(w http.ResponseWriter, r *http.Request)  {
@@ -247,6 +305,49 @@ func removeQeustionInfo(data QuestionRequestData) bool {
 	return true
 }
 
+func addAnswer(data Answer) int64 {
+	Db, err := sqlx.Connect("mysql", dbConfig)
+
+	if err != nil{
+		fmt.Println("connect to mysql failed,",err)
+		return 0
+	}
+	defer Db.Close()
+
+	res, err := Db.Exec("INSERT INTO Answer (qid, answer, option_a, option_b, option_c, option_d) VALUES(?, ?, ?, ?, ?, ?)", data.Qid, data.Answer, data.Option_a, data.Option_b, data.Option_c, data.Option_d)
+
+	if err != nil{
+		fmt.Println("exec mysql failed,",err)
+		return 0
+	}
+
+	id, err := res.LastInsertId()
+
+	if err != nil{
+		fmt.Println("get last insert id failed,",err)
+		return 0
+	}
+
+	return id
+}
+
+func changeAnswer(data Answer) bool {
+	Db, err := sqlx.Connect("mysql", dbConfig)
+	if err != nil{
+		fmt.Println("connect to mysql failed,", err)
+		return false
+	}
+	defer Db.Close()
+
+	_, err = Db.Exec("UPDATE Answer SET answer = ?, option_a = ?, option_b = ?, option_c = ?, option_d = ? WHERE id = ?", data.Answer, data.Option_a, data.Option_b, data.Option_c, data.Option_d, data.Id)
+
+	if err != nil {
+		fmt.Println("change answer failed.", err)
+	}
+
+	return true
+}
+
 // func resetPassword(data ResetPassword) bool {
 // 	user, err := getUserInfo(data.id)
 
@@ -310,6 +411,26 @@ func getQuestionInfo(id int) Question {
 	}
 
 	return question
+}
+
+func getAnswerInfo(id int) Answer {
+	var answer Answer
+
+	Db, err := sqlx.Connect("mysql", dbConfig)
+	if err != nil{
+		fmt.Println("connect to mysql failed,",err)
+		return answer
+	}
+	defer Db.Close()
+
+	err = Db.Get(&answer, "SELECT id, qid, answer, option_a, option_b, option_c, option_d FROM Answer WHERE qid = ?", id)
+
+	if err != nil{
+		fmt.Println("insert failed", err)
+		return answer
+	}
+
+	return answer
 }
 
 func getUserInfo(username, password string) (Admin, error) {

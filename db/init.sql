@@ -57,3 +57,6 @@ VALUES ('admin', '1234', 1);
 
 INSERT INTO QuestionInfo (title, creater, datetime, status)
 VALUES ('问卷调查1', 1, '2020-04-01 16:00', 1), ('问卷调查2', 1, '2020-04-01 10:00', 1), ('问卷调查3', 1, '2020-02-01 16:00', 1), ('问卷调查4', 1, '2020-03-20 16:00', 0);
+
+INSERT INTO Answer (qid, answer, option_a, option_b, option_c, option_d)
+VALUES (1, '问题 1', '答案 1', '答案 2', null, null), (2, '问题 2', '答案 1', '答案 2', '答案 3', null), (3, '问题 3', '答案 1', '答案 2', null, null), (4, '问题 4', '答案 1', '答案 2', null, null);

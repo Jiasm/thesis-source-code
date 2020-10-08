@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { addQuestion } from '../lib/api'
+import { addAnswer, addQuestion } from '../lib/api'
 
 export default {
   name: 'Create',
@@ -70,12 +70,8 @@ export default {
   },
   methods: {
     async save() {
-      console.log({
-        title: this.$data.title,
-        question: this.$data.question,
-        optionsList: [this.$data.optionsList[0], this.$data.optionsList[1], this.$data.optionsList[2], this.$data.optionsList[3]]
-      })
-      const id = await addQuestion(this.$data.title, 1)
+      const id = await addQuestion(this.$data.title, sessionStorage.getItem('uid'))
+      await addAnswer(id, this.$data.question, this.$data.optionsList)
 
       this.$confirm('问卷创建成功', '提示', {
         confirmButtonText: '确定',

@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { getQuestion, changeQuestion } from '../lib/api'
+import { getQuestion, changeQuestion, getAnswer, changeAnswer } from '../lib/api'
 
 export default {
   name: 'Preview',
@@ -69,15 +69,17 @@ export default {
   async mounted() {
     const id = Number(this.$route.query.id)
     const item = await getQuestion(id)
+    const answerInfo = await getAnswer(id)
     this.$data.title = item.title
+    this.$data.question = answerInfo.question
+    this.$data.optionsList = answerInfo.optionsList
   },
   methods: {
     async save() {
       const id = Number(this.$route.query.id)
+      const answerInfo = await getAnswer(id)
       await changeQuestion(id, this.$data.title)
-        // question: this.$data.question,
-      //   : this.$data.title
-      // })
+      await changeAnswer(answerInfo.id, this.$data.question, this.$data.optionsList.map(item => item.val))
       this.$confirm('问卷修改成功', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
