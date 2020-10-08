@@ -13,6 +13,13 @@ GO
 
 Browser、vue
 
+## 环境依赖
+
+- python >= 2.x
+- go
+- node.js >= 10.x
+- mysql >= 5.6
+
 ## 如何启动
 
 1. 数据库
