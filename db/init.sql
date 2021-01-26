@@ -1,62 +1,99 @@
-CREATE DATABASE `survey`;
+CREATE DATABASE IF NOT EXISTS `project_management`;
 
-USE `survey`;
+USE `project_management`;
 
-DROP TABLE IF EXISTS `Admin`;
-CREATE TABLE `Admin` (
-  id INT(11) AUTO_INCREMENT,
-  username VARCHAR(20) NOT NULL,
-  password VARCHAR(64) NOT NULL,
-  status INT(1) DEFAULT 0,
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` INT(11) AUTO_INCREMENT,
+  `username` VARCHAR(20) NOT NULL,
+  `password` VARCHAR(20) NOT NULL,
+  `role_id` INT(2) NOT NULL,
+  `status` INT(2) DEFAULT 0,
   PRIMARY KEY(id)
 );
 
-DROP TABLE IF EXISTS  `QuestionInfo`;
-CREATE TABLE `QuestionInfo` (
-  id INT(11) AUTO_INCREMENT,
-  title VARCHAR(30) NOT NULL,
-  creater INT(11) NOT NULL,
-  datetime DATETIME,
-  status INT(1) DEFAULT 0,
+DROP TABLE IF EXISTS  `user_role`;
+CREATE TABLE `user_role` (
+  `id` INT(11) AUTO_INCREMENT,
+  `text` TEXT NOT NULL,
+  `desc` TEXT,
   PRIMARY KEY(id)
 );
 
-DROP TABLE IF EXISTS `Answer`;
-CREATE TABLE `Answer` (
-  id INT(11) AUTO_INCREMENT,
-  qid INT(11) NOT NULL,
-  answer TEXT NOT NULL,
-  option_a TEXT NOT NULL,
-  option_b TEXT,
-  option_c TEXT,
-  option_d TEXT,
+DROP TABLE IF EXISTS `group`;
+CREATE TABLE `group` (
+  `id` INT(11) AUTO_INCREMENT,
+  `name` VARCHAR(20) NOT NULL,
+  `status` INT(2) NOT NULL,
+  `creator` INT(10) NOT NULL,
   PRIMARY KEY(id)
 );
 
-DROP TABLE IF EXISTS `User`;
-CREATE TABLE `User` (
-  id INT(11) AUTO_INCREMENT,
-  phone VARCHAR(11) NOT NULL,
-  password VARCHAR(64) NOT NULL,
-  name VARCHAR(32) NOT NULL,
-  status INT(1) DEFAULT 0,
+DROP TABLE IF EXISTS `group_member`;
+CREATE TABLE `group_member` (
+  `group_id` INT(10) NOT NULL,
+  `uid` INT(10) NOT NULL,
+  `role_id` INT(2) NOT NULL,
+  `status` INT(2) NOT NULL,
   PRIMARY KEY(id)
 );
 
-DROP TABLE IF EXISTS `QuestionList`;
-CREATE TABLE `QuestionList` (
-  qid INT(11) NOT NULL,
-  aid INT(11) NOT NULL,
-  uid INT(11) NOT NULL,
-  result TEXT NOT NULL,
-  PRIMARY KEY(qid, aid, uid)
+DROP TABLE IF EXISTS `project`;
+CREATE TABLE `project` (
+  `id` INT(11) AUTO_INCREMENT,
+  `creator` INT(10) NOT NULL,
+  `group_id` INT(10) NOT NULL,
+  `name` VARCHAR(20) NOT NULL,
+  `status` INT(2) NOT NULL,
+  PRIMARY KEY(id)
 );
 
-INSERT INTO Admin (username, password, status)
-VALUES ('admin', '1234', 1);
+DROP TABLE IF EXISTS `project_member`;
+CREATE TABLE `project_member` (
+  `project_id` INT(10) NOT NULL,
+  `uid` INT(10) NOT NULL,
+  `role_id` INT(2) NOT NULL,
+  `status` INT(2) NOT NULL,
+  PRIMARY KEY(id)
+);
 
-INSERT INTO QuestionInfo (title, creater, datetime, status)
-VALUES ('问卷调查1', 1, '2020-04-01 16:00', 1), ('问卷调查2', 1, '2020-04-01 10:00', 1), ('问卷调查3', 1, '2020-02-01 16:00', 1), ('问卷调查4', 1, '2020-03-20 16:00', 0);
+DROP TABLE IF EXISTS  `member_role`;
+CREATE TABLE `member_role` (
+  `id` INT(11) AUTO_INCREMENT,
+  `text` TEXT NOT NULL,
+  `desc` TEXT,
+  PRIMARY KEY(id)
+);
 
-INSERT INTO Answer (qid, answer, option_a, option_b, option_c, option_d)
-VALUES (1, '问题 1', '答案 1', '答案 2', null, null), (2, '问题 2', '答案 1', '答案 2', '答案 3', null), (3, '问题 3', '答案 1', '答案 2', null, null), (4, '问题 4', '答案 1', '答案 2', null, null);
+DROP TABLE IF EXISTS `task_group`;
+CREATE TABLE `task_group` (
+  id INT(10) AUTO_INCREMENT,
+  title VARCHAR(20) NOT NULL,
+  desc VARCHAR(20) NOT NULL,
+  creator INT(10) NOT NULL,
+  status INT(2) NOT NULL,
+  PRIMARY KEY(id)
+);
+
+DROP TABLE IF EXISTS `task`;
+CREATE TABLE `task` (
+  id INT(10) AUTO_INCREMENT,
+  title VARCHAR(20) NOT NULL,
+  desc VARCHAR(20) NOT NULL,
+  creator INT(10) NOT NULL,
+  status INT(2) NOT NULL,
+  expire_date INT(13) NOT NULL,
+  task_group_id INT(10),
+  PRIMARY KEY(id)
+);
+
+DROP TABLE IF EXISTS `task_comment`;
+CREATE TABLE `task_comment` (
+  id INT(10) AUTO_INCREMENT,
+  task_id INT(10) NOT NULL,
+  creator INT(10) NOT NULL,
+  text TEXT NOT NULL,
+  status INT(2) NOT NULL,
+  datetime INT(13) NOT NULL,
+  PRIMARY KEY(id)
+);
