@@ -132,3 +132,14 @@ VALUES ('管理员', '管理员身份'), ('用户', '普通用户');
 INSERT INTO `user` (`username`, `password`, `role_id`, `status`)
 VALUES ('admin1', '123456', 1, 1), ('admin2', '123456', 1, 1), ('user1', '123456', 2, 1), ('user2', '123456', 2, 1);
 
+INSERT INTO `group` (`name`, `status`, `creator`)
+VALUES ('测试小组1', 1, 3), ('测试小组2', 1, 4);
+
+INSERT INTO `member_role` (`text`, `desc`)
+VALUES ('管理员', '群组/项目管理员'), ('普通用户', '普通参与者');
+
+INSERT INTO `group_member` (`group_id`, `uid`, `role_id`, `status`)
+VALUES (1, 1, 1, 1), (2, 2, 2, 1);
+
+INSERT INTO `project` (`creator`, `group_id`, `name`, `status`)
+VALUES (3, 1, '测试项目 1', 1), (4, 2, '测试项目 2', 1);
