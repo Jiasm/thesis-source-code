@@ -125,3 +125,10 @@ CREATE TABLE `task_participant` (
   `add_date` INT(13) NOT NULL,
   PRIMARY KEY(`task_id`, `uid`)
 );
+
+INSERT INTO `user_role` (`text`, `desc`)
+VALUES ('管理员', '管理员身份'), ('用户', '普通用户');
+
+INSERT INTO `user` (`username`, `password`, `role_id`, `status`)
+VALUES ('admin1', '123456', 1, 1), ('admin2', '123456', 1, 1), ('user1', '123456', 2, 1), ('user2', '123456', 2, 1);
+
