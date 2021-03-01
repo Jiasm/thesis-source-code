@@ -79,7 +79,7 @@ DROP TABLE IF EXISTS `task`;
 CREATE TABLE `task` (
   `id` INT(10) AUTO_INCREMENT,
   `title` VARCHAR(20) NOT NULL,
-  `desc` VARCHAR(20) NOT NULL,
+  `desc` VARCHAR(200),
   `creator` INT(10) NOT NULL,
   `status` INT(2) NOT NULL,
   `expire_date` INT(13) NOT NULL,
@@ -145,10 +145,10 @@ INSERT INTO `project` (`creator`, `group_id`, `name`, `status`)
 VALUES (3, 1, '测试项目 1', 1), (4, 2, '测试项目 2', 1);
 
 INSERT INTO `priority_type` (`text`)
-VALUES ('紧急', '重要', '普通');
+VALUES ('紧急'), ('重要'), ('普通');
 
 INSERT INTO `task_type` (`text`)
-VALUES ('需求', '缺陷');
+VALUES ('需求'), ('缺陷');
 
 INSERT INTO `task` (`title`, `desc`, `creator`, `status`, `expire_date`, `type`, `priority`)
 VALUES ('测试任务 1', '任务描述', 3, 1, 1614419750, 1, 1);
