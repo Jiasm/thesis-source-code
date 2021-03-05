@@ -1,0 +1,7 @@
+{
+  "username": "pm",
+  "password": "123456",
+  "ip": "localhost",
+  "port": "3306",
+  "dbname": "project_management"
+}

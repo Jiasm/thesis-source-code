@@ -3,7 +3,6 @@ package service
 import (
 	"dao"
 	"entity"
-	"time"
 )
 
 type ListService struct {
@@ -11,8 +10,8 @@ type ListService struct {
 
 var listDao = new(dao.ListDao)
 
-func (p *ListService) Insert(userId uint,title string,content string) int64 {
-	id := feedbackDao.Insert(&entity.List{UserID:userId,Title:title,Content:content,CreateTime:time.Now()})
+func (p *ListService) Insert(userName, password string, roleId, status uint) int64 {
+	id := listDao.Insert(&entity.User{ UserName: userName, Password: password, RoleId: roleId, Status: status})
 	if id <= 0 {
 		return 0
 	}

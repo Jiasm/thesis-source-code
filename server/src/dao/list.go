@@ -9,8 +9,8 @@ import (
 type ListDao struct {
 }
 
-func (p *ListDao) Insert(list *entity.List) int64 {
-	result,err := util.DB.Exec("INSERT INTO list(`user_id`,`title`,`content`,`create_time`) VALUE(?,?,?,?)",list.UserID,list.Title,list.Content,list.CreateTime)
+func (p *ListDao) Insert(user *entity.User) int64 {
+	result,err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)",user.UserName,user.Password,user.RoleId,user.Status)
 	if err != nil {
 		log.Println(err)
 		return 0

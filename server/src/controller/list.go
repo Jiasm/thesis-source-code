@@ -16,11 +16,7 @@ func (p *ListController)Router(router *util.RouterHandler)  {
 }
 
 func (p *ListController)list(w http.ResponseWriter,r *http.Request)  {
-	userId := uint(123)
-
-	title := r.PostFormValue("title")
-	content := r.PostFormValue("content")
-	id := listService.Insert(userId,title,content)
+	id := listService.Insert("test insert","test password", 1, 1)
 	if id <= 0{
 		util.ResultFail(w,"feedback fail")
 		return
