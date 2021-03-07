@@ -9,7 +9,7 @@ import (
 type UserDao struct {
 }
 
-func (p *UserDao) Insert(user *entity.User) int {
+func (p *UserDao) Insert(user *entity.User) int64 {
 	result,err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)", user.UserName, user.Password, user.RoleId, user.Status)
 	if err != nil {
 		log.Println(err)

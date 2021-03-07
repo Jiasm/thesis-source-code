@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"constant"
 	"encoding/json"
 	"net/http"
 	"service"
@@ -10,7 +11,7 @@ import (
 type ListController struct {
 }
 
-type CreateAccountRequest struct {
+type UserRequest struct {
 	UserName string `json:"username"`
 	Password string `json:"password"`
 	RoleId int `json:"role_id"`
@@ -21,22 +22,36 @@ var listService = new(service.ListService)
 
 func (p *ListController)Router(router *util.RouterHandler)  {
 	router.Router("/login",p.login)
+	router.Router("/logout",p.logout)
 	router.Router("/user/create",p.create)
+}
+
+func (p *ListController)logout(w http.ResponseWriter,r *http.Request)  {
+	//session
+	session := util.GlobalSession().SessionStart(w,r)
+
+	session.Delete(constant.KEY_USER)
+
+	util.ResultJsonOk(w, nil)
 }
 
 func (p *ListController)login(w http.ResponseWriter,r *http.Request)  {
 	decoder := json.NewDecoder(r.Body)
 
-	var params map[string]string
+	request := &UserRequest{}
 
-	decoder.Decode(&params)
+	decoder.Decode(&request)
 
-	user := listService.FindOne(params["username"], params["password"])
+	user := listService.FindOne(request.UserName, request.Password)
 
 	if user == nil || user.ID == 0 {
 		util.ResultFail(w, "error")
 		return
 	}
+
+	//session
+	session := util.GlobalSession().SessionStart(w,r)
+	session.Set(constant.KEY_USER, user.UserName)
 
 	util.ResultJsonOk(w, user)
 }
@@ -44,7 +59,7 @@ func (p *ListController)login(w http.ResponseWriter,r *http.Request)  {
 func (p *ListController)create(w http.ResponseWriter,r *http.Request)  {
 	decoder := json.NewDecoder(r.Body)
 
-	request := &CreateAccountRequest{}
+	request := &UserRequest{}
 
 	decoder.Decode(&request)
 

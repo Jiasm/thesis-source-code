@@ -1,11 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"util"
-	"time"
-	"log"
 	"controller"
+	"log"
+	"net/http"
+	_ "session"
+	"time"
+	"util"
 )
 
 func main() {
