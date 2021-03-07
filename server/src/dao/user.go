@@ -2,7 +2,6 @@ package dao
 
 import (
 	"entity"
-	"fmt"
 	"log"
 	"util"
 )
@@ -10,8 +9,8 @@ import (
 type UserDao struct {
 }
 
-func (p *UserDao) Insert(user *entity.User) int64 {
-	result,err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)",user.UserName,user.Password,user.RoleId,user.Status)
+func (p *UserDao) Insert(user *entity.User) int {
+	result,err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)", user.UserName, user.Password, user.RoleId, user.Status)
 	if err != nil {
 		log.Println(err)
 		return 0
@@ -25,7 +24,7 @@ func (p *UserDao) Insert(user *entity.User) int64 {
 }
 
 func (p *UserDao) FindOne(username, password string) *entity.User {
-	rows, err := util.DB.Query("SELECT * FROM user WHERE username = ? AND password = ? LIMIT 1", username, password)
+	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM user WHERE username = ? AND password = ? LIMIT 1", username, password)
 
 	if err != nil {
 		log.Println(err)

@@ -10,7 +10,7 @@ type ListService struct {
 
 var listDao = new(dao.UserDao)
 
-func (p *ListService) Insert(userName, password string, roleId, status uint) int64 {
+func (p *ListService) CreateAccount(userName, password string, roleId, status int) int64 {
 	id := listDao.Insert(&entity.User{ UserName: userName, Password: password, RoleId: roleId, Status: status})
 	if id <= 0 {
 		return 0
