@@ -8,7 +8,7 @@ import (
 type ListService struct {
 }
 
-var listDao = new(dao.ListDao)
+var listDao = new(dao.UserDao)
 
 func (p *ListService) Insert(userName, password string, roleId, status uint) int64 {
 	id := listDao.Insert(&entity.User{ UserName: userName, Password: password, RoleId: roleId, Status: status})
@@ -16,4 +16,10 @@ func (p *ListService) Insert(userName, password string, roleId, status uint) int
 		return 0
 	}
 	return id
+}
+
+func (p *ListService) FindOne(userName, password string) *entity.User {
+	user := listDao.FindOne(userName, password)
+
+	return user
 }
