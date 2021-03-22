@@ -14,28 +14,28 @@ type ListController struct {
 type UserRequest struct {
 	UserName string `json:"username"`
 	Password string `json:"password"`
-	RoleId int `json:"role_id"`
-	Status int `json:"status"`
+	RoleId   int    `json:"role_id"`
+	Status   int    `json:"status"`
 }
 
 var listService = new(service.ListService)
 
-func (p *ListController)Router(router *util.RouterHandler)  {
-	router.Router("/login",p.login)
-	router.Router("/logout",p.logout)
-	router.Router("/user/create",p.create)
+func (p *ListController) Router(router *util.RouterHandler) {
+	router.Router("/login", p.login)
+	router.Router("/logout", p.logout)
+	router.Router("/user/create", p.create)
 }
 
-func (p *ListController)logout(w http.ResponseWriter,r *http.Request)  {
+func (p *ListController) logout(w http.ResponseWriter, r *http.Request) {
 	//session
-	session := util.GlobalSession().SessionStart(w,r)
+	session := util.GlobalSession().SessionStart(w, r)
 
 	session.Delete(constant.KEY_USER)
 
 	util.ResultJsonOk(w, nil)
 }
 
-func (p *ListController)login(w http.ResponseWriter,r *http.Request)  {
+func (p *ListController) login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	request := &UserRequest{}
@@ -50,13 +50,13 @@ func (p *ListController)login(w http.ResponseWriter,r *http.Request)  {
 	}
 
 	//session
-	session := util.GlobalSession().SessionStart(w,r)
+	session := util.GlobalSession().SessionStart(w, r)
 	session.Set(constant.KEY_USER, user.UserName)
 
 	util.ResultJsonOk(w, user)
 }
 
-func (p *ListController)create(w http.ResponseWriter,r *http.Request)  {
+func (p *ListController) create(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	request := &UserRequest{}

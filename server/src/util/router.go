@@ -1,10 +1,10 @@
 package util
 
 import (
+	"constant"
 	"fmt"
 	"net/http"
 	"strings"
-	"constant"
 )
 
 var Router *RouterHandler = new(RouterHandler)
@@ -12,7 +12,7 @@ var Router *RouterHandler = new(RouterHandler)
 type RouterHandler struct {
 }
 
-var mux = make(map[string]func(http.ResponseWriter,*http.Request))
+var mux = make(map[string]func(http.ResponseWriter, *http.Request))
 
 func (p *RouterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.Path)
@@ -21,7 +21,7 @@ func (p *RouterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//静态资源
-	if strings.HasPrefix(r.URL.Path,constant.STATIC_BAES_PATH){
+	if strings.HasPrefix(r.URL.Path, constant.STATIC_BAES_PATH) {
 		if fun, ok := mux[constant.STATIC_BAES_PATH]; ok {
 			fun(w, r)
 			return

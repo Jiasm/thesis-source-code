@@ -10,12 +10,12 @@ type UserDao struct {
 }
 
 func (p *UserDao) Insert(user *entity.User) int64 {
-	result,err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)", user.UserName, user.Password, user.RoleId, user.Status)
+	result, err := util.DB.Exec("INSERT INTO user(`username`,`password`,`role_id`,`status`) VALUE(?,?,?,?)", user.UserName, user.Password, user.RoleId, user.Status)
 	if err != nil {
 		log.Println(err)
 		return 0
 	}
-	id,err := result.LastInsertId()
+	id, err := result.LastInsertId()
 	if err != nil {
 		log.Println(err)
 		return 0
@@ -37,5 +37,31 @@ func (p *UserDao) FindOne(username, password string) *entity.User {
 
 	rows.Scan(&user.ID, &user.UserName, &user.Password, &user.Status, &user.RoleId)
 
+	rows.Close()
+
 	return &user
+}
+
+func (p *UserDao) FindAll(userIdList []int) []entity.User {
+	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM user WHERE id IN(?)", userIdList)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var users []entity.User
+
+	for rows.Next() {
+		var user entity.User
+		err := rows.Scan(&user.ID, &user.UserName, &user.Password, &user.Status, &user.RoleId)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		users = append(users, user)
+	}
+	rows.Close()
+
+	return users
 }
