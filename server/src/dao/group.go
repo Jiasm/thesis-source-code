@@ -11,8 +11,15 @@ import (
 type GroupDao struct {
 }
 
-func (p *GroupDao) Insert(group *entity.Group) int64 {
-	result, err := util.DB.Exec("INSERT INTO `group` (`name`, `status`, `creator`) VALUES (?, ?, ?)", group.Name, group.Status, group.Creator)
+type NewGroup struct {
+	Name     	string	`json:"name"`
+	Status     	uint   	`json:"status"`
+	Creator    	uint	`json:"creator"`
+	CreatedDate uint 	`json:"created_date""`
+}
+
+func (p *GroupDao) Insert(group *NewGroup) uint {
+	result, err := util.DB.Exec("INSERT INTO `group` (`name`, `status`, `creator`, `created_date`) VALUES (?, ?, ?, ?)", group.Name, group.Status, group.Creator, group.CreatedDate)
 	if err != nil {
 		log.Println(err)
 		return 0
@@ -22,11 +29,11 @@ func (p *GroupDao) Insert(group *entity.Group) int64 {
 		log.Println(err)
 		return 0
 	}
-	return id
+	return uint(id)
 }
 
 func (p *GroupDao) FindOne(groupName string) *entity.Group {
-	rows, err := util.DB.Query("SELECT id, name, status, creator FROM `group` WHERE name = ? LIMIT 1", groupName)
+	rows, err := util.DB.Query("SELECT id, name, status, creator, created_date FROM `group` WHERE name = ? LIMIT 1", groupName)
 
 	if err != nil {
 		log.Println(err)
@@ -37,7 +44,7 @@ func (p *GroupDao) FindOne(groupName string) *entity.Group {
 
 	rows.Next()
 
-	rows.Scan(&group.ID, &group.Name, &group.Status, &group.Creator)
+	rows.Scan(&group.ID, &group.Name, &group.Status, &group.Creator, &group.CreatedDate)
 
 	rows.Close()
 
@@ -51,7 +58,7 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 		groupIdStrList = append(groupIdStrList, strconv.Itoa(int(item)))
 	}
 
-	rows, err := util.DB.Query("SELECT id, name, status, creator FROM `group` WHERE id IN (?)", strings.Join(groupIdStrList, " , "))
+	rows, err := util.DB.Query("SELECT id, name, status, creator, created_date FROM `group` WHERE id IN (?)", strings.Join(groupIdStrList, " , "))
 
 	if err != nil {
 		log.Println(err)
@@ -62,7 +69,7 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 
 	for rows.Next() {
 		var group entity.Group
-		rows.Scan(&group.ID, &group.Name, &group.Status, &group.Creator)
+		rows.Scan(&group.ID, &group.Name, &group.Status, &group.Creator, &group.CreatedDate)
 		if err != nil {
 			log.Println(err)
 			continue

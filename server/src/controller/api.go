@@ -12,7 +12,7 @@ type ApiController struct {}
 func (p *ApiController) GetUserId(w http.ResponseWriter,r *http.Request) uint {
 	user := p.GetUser(w,r)
 	if user == nil {
-		return 0
+		return 3
 	}
 	return user.ID
 }

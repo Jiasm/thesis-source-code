@@ -3,6 +3,7 @@ package service
 import (
 	"dao"
 	"entity"
+	"time"
 )
 
 type GroupService struct {
@@ -28,6 +29,14 @@ func (p *GroupService) FindCreatedProjectList(uid uint) []GroupData {
 	groupList := groupDao.FindAll(groupIdList)
 
 	return BuildGroupData(groupList)
+}
+
+func (p *GroupService) CreateGroup(uid uint, name string, status uint) uint {
+	id := groupDao.Insert(&(dao.NewGroup{Name: name, Status: status, Creator: uid, CreatedDate: uint(time.Now().Unix()) }))
+
+	groupMemberDao.AddMember(uid, id, 1, 1, uint(time.Now().Unix()))
+
+	return id
 }
 
 func BuildGroupData(groupList []entity.Group) []GroupData {

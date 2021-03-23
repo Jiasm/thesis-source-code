@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"net/http"
 	"service"
 	"util"
@@ -15,10 +16,16 @@ type GroupResponse struct {
 	Participant interface{} `json:"participant"`
 }
 
+type GroupRequest struct {
+	Name 	string `json:"name"`
+	Status  uint   `json:"status"`
+}
+
 var groupService = new(service.GroupService)
 
 func (p *GroupController) Router(router *util.RouterHandler) {
 	router.Router("/group/list", p.findAll)
+	router.Router("/group", p.create)
 }
 
 func (p *GroupController) findAll(w http.ResponseWriter, r *http.Request) {
@@ -32,4 +39,23 @@ func (p *GroupController) findAll(w http.ResponseWriter, r *http.Request) {
 	participantGroupList := groupService.FindParticipantProjectList(uid)
 
 	util.ResultJsonOk(w, GroupResponse{ createdGroupList, participantGroupList })
+}
+
+func (p *GroupController) create(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	request := &GroupRequest{}
+
+	decoder.Decode(&request)
+
+	uid := p.GetUserId(w, r)
+
+	id := groupService.CreateGroup(uid, request.Name, request.Status)
+
+	if id == 0 {
+		util.ResultFail(w, "error")
+		return
+	}
+
+	util.ResultJsonOk(w, id)
 }

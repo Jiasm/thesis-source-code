@@ -26,6 +26,7 @@ CREATE TABLE `group` (
   `name` VARCHAR(20) NOT NULL,
   `status` INT(2) NOT NULL,
   `creator` INT(10) NOT NULL,
+  `created_time` INT(13) NOT NULL,
   PRIMARY KEY(`id`)
 );
 
@@ -35,6 +36,7 @@ CREATE TABLE `group_member` (
   `uid` INT(10) NOT NULL,
   `role_id` INT(2) NOT NULL,
   `status` INT(2) NOT NULL,
+  `created_date` INT(13) NOT NULL,
   PRIMARY KEY(`group_id`, `uid`)
 );
 
@@ -54,6 +56,7 @@ CREATE TABLE `project_member` (
   `uid` INT(10) NOT NULL,
   `role_id` INT(2) NOT NULL,
   `status` INT(2) NOT NULL,
+  `created_date` INT(13) NOT NULL,
   PRIMARY KEY(`project_id`, `uid`)
 );
 
@@ -134,17 +137,20 @@ VALUES ('管理员', '管理员身份'), ('用户', '普通用户');
 INSERT INTO `user` (`username`, `password`, `role_id`, `status`)
 VALUES ('admin1', '123456', 1, 1), ('admin2', '123456', 1, 1), ('user1', '123456', 2, 1), ('user2', '123456', 2, 1);
 
-INSERT INTO `group` (`name`, `status`, `creator`)
-VALUES ('测试小组1', 1, 3), ('测试小组2', 1, 4);
+INSERT INTO `group` (`name`, `status`, `creator`, `created_time`)
+VALUES ('测试小组1', 1, 3, 1616478832), ('测试小组2', 1, 4, 1616478832);
 
 INSERT INTO `member_role` (`text`, `desc`)
 VALUES ('管理员', '群组/项目管理员'), ('普通用户', '普通参与者');
 
-INSERT INTO `group_member` (`group_id`, `uid`, `role_id`, `status`)
-VALUES (1, 1, 1, 1), (2, 2, 2, 1), (2, 3, 1, 1);
+INSERT INTO `group_member` (`group_id`, `uid`, `role_id`, `status`, `created_date`)
+VALUES (1, 1, 1, 1, 1616478832), (2, 2, 2, 1, 1616478832), (2, 3, 1, 1, 1616478832);
 
 INSERT INTO `project` (`creator`, `group_id`, `name`, `status`)
 VALUES (3, 1, '测试项目 1', 1), (4, 2, '测试项目 2', 1);
+
+INSERT INTO `project_member` (`project_id`, `uid`, `role_id`, `status`, `created_date`)
+VALUES (1, 1, 1, 1, 1616478832), (2, 2, 2, 1, 1616478832), (2, 3, 1, 1, 1616478832);
 
 INSERT INTO `priority_type` (`text`)
 VALUES ('紧急'), ('重要'), ('普通');
