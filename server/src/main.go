@@ -33,4 +33,5 @@ func RegiterRouter(handler *util.RouterHandler) {
 	new(controller.ListController).Router(handler)
 	new(controller.TaskController).Router(handler)
 	new(controller.ProjectController).Router(handler)
+	new(controller.GroupController).Router(handler)
 }

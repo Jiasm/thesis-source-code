@@ -88,20 +88,18 @@ METHOD: GET
 
 ```json
 {
-  "username": "string",
-  "password": "string"
-}
-
-{
   "code": "number",
   "data": {
-    "list": [
+    "created": [
       {
         "id": "number",
-        "creator": {
-          "uid": "number",
-          "username": "string"
-        },
+        "name": "string",
+        "status": "number"
+      }
+    ],
+    "participant": [
+      {
+        "id": "number",
         "name": "string",
         "status": "number"
       }

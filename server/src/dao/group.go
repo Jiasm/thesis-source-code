@@ -58,7 +58,7 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 		return nil
 	}
 
-	var projectList []entity.Group
+	var groupList []entity.Group
 
 	for rows.Next() {
 		var group entity.Group
@@ -67,9 +67,33 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 			log.Println(err)
 			continue
 		}
-		projectList = append(projectList, group)
+		groupList = append(groupList, group)
 	}
 	rows.Close()
 
-	return projectList
+	return groupList
+}
+
+func (p *GroupDao) FindGroupIdByCreator(creator uint) []uint {
+	rows, err := util.DB.Query("SELECT id FROM `group` WHERE creator = ?", creator)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var groupIdList []uint
+
+	for rows.Next() {
+		var group entity.Group
+		rows.Scan(&group.ID)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		groupIdList = append(groupIdList, group.ID)
+	}
+	rows.Close()
+
+	return groupIdList
 }

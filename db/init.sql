@@ -141,7 +141,7 @@ INSERT INTO `member_role` (`text`, `desc`)
 VALUES ('管理员', '群组/项目管理员'), ('普通用户', '普通参与者');
 
 INSERT INTO `group_member` (`group_id`, `uid`, `role_id`, `status`)
-VALUES (1, 1, 1, 1), (2, 2, 2, 1);
+VALUES (1, 1, 1, 1), (2, 2, 2, 1), (2, 3, 1, 1);
 
 INSERT INTO `project` (`creator`, `group_id`, `name`, `status`)
 VALUES (3, 1, '测试项目 1', 1), (4, 2, '测试项目 2', 1);
