@@ -22,11 +22,11 @@ func (p *ProjectController) Router(router *util.RouterHandler) {
 }
 
 func (p *ProjectController) findAll(w http.ResponseWriter, r *http.Request) {
-	//uid := p.GetUserId(w, r)
+	uid := p.GetUserId(w, r)
 
-	var uid uint
-
-	uid = 3
+	if uid <= 0 {
+		uid = 3
+	}
 
 	createdProjectList := projectService.FindCreatedProjectList(uid)
 	participantProjectList := projectService.FindParticipantProjectList(uid)
