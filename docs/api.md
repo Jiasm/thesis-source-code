@@ -61,13 +61,17 @@ METHOD: GET
 {
   "code": "number",
   "data": {
-    "list": [
+    "created": [
       {
         "id": "number",
-        "creator": {
-          "uid": "number",
-          "username": "string"
-        },
+        "groupName": "string",
+        "name": "string",
+        "status": "number"
+      }
+    ],
+    "participant": [
+      {
+        "id": "number",
         "groupName": "string",
         "name": "string",
         "status": "number"
@@ -106,9 +110,9 @@ METHOD: GET
 }
 ```
 
-## 项目-任务列表
+## 任务列表
 
-URL: /project/:pid/task/list  
+URL: /task/list  
 METHOD: GET  
 
 ```json
@@ -117,54 +121,32 @@ METHOD: GET
   "data": {
     "list": [
       {
-        "groupId": "number",
-        "groupTitle": "string",
-        "groupDesc": "string",
-        "groupCreator": {
-          "uid": "number",
-          "username": "string"
-        },
-        "groupStatus": "number",
-        "items": [{
-          "id": "number",
-          "title": "string",
-          "desc": "string",
-          "creator": {
-            "uid": "number",
-            "username": "string"
-          },
-          "expireDate": "number",
-          "type": "number",
-          "priority": "number",
-          "status": "number",
-          "childTasks": [{
-            "id": "number",
-            "title": "string",
-            "desc": "string",
-            "creator": {
-              "uid": "number",
-              "username": "string"
-            },
-            "expireDate": "number",
-            "type": "number",
-            "priority": "number",
-            "status": "number",
-          }]
-        }]
+        "id": 2,
+        "title": "测试任务 2",
+        "desc": "任务描述",
+        "status": 1,
+        "creator": 2,
+        "executor": 2,
+        "created_date": 1616478832,
+        "expire_date": 1614439750,
+        "task_project_id": 2,
+        "parent_task_id": 0,
+        "type": 0,
+        "priority": 0
       }
     ]
   }
 }
 ```
 
-1. 按照任务状态筛选
-2. 按照任务等级筛选
-3. 按照执行人筛选
-4. 按照任务类型筛选
-5. 按照标签筛选
-6. 按照任务名筛选
-7. 按照参与者筛选
-8. 按照创建者筛选
+- [x] 按照任务状态筛选
+- [x] 按照任务等级筛选
+- [x] 按照执行人筛选
+- [x] 按照任务类型筛选
+- [x] 按照标签筛选
+- [ ] 按照任务名筛选
+- [ ] 按照参与者筛选
+- [x] 按照创建者筛选
 
 ## 我的待办
 

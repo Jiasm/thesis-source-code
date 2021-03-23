@@ -6,6 +6,8 @@ type Task struct {
 	Desc          string `json:"desc"`
 	Status        uint   `json:"status"`
 	Creator       uint   `json:"creator"`
+	Executor      uint   `json:"executor"`
+	CreatedDate   uint	 `json:"created_date"`
 	ExpireDate    uint   `json:"expire_date"`
 	TaskProjectId uint   `json:"task_project_id"`
 	ParentTaskId  uint   `json:"parent_task_id"`

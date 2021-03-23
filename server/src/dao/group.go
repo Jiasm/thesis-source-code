@@ -3,6 +3,8 @@ package dao
 import (
 	"entity"
 	"log"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -42,8 +44,14 @@ func (p *GroupDao) FindOne(groupName string) *entity.Group {
 	return &group
 }
 
-func (p *GroupDao) FindAll(groupIdList []int) []entity.Group {
-	rows, err := util.DB.Query("SELECT id, name, status, creator FROM `group` WHERE id IN (?)", groupIdList)
+func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
+	var groupIdStrList []string
+
+	for _, item := range groupIdList {
+		groupIdStrList = append(groupIdStrList, strconv.Itoa(int(item)))
+	}
+
+	rows, err := util.DB.Query("SELECT id, name, status, creator FROM `group` WHERE id IN (?)", strings.Join(groupIdStrList, " , "))
 
 	if err != nil {
 		log.Println(err)

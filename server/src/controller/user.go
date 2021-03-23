@@ -14,8 +14,8 @@ type ListController struct {
 type UserRequest struct {
 	UserName string `json:"username"`
 	Password string `json:"password"`
-	RoleId   int    `json:"role_id"`
-	Status   int    `json:"status"`
+	RoleId   uint   `json:"role_id"`
+	Status   uint   `json:"status"`
 }
 
 var listService = new(service.ListService)

@@ -81,7 +81,9 @@ CREATE TABLE `task` (
   `title` VARCHAR(20) NOT NULL,
   `desc` VARCHAR(200),
   `creator` INT(10) NOT NULL,
+  `executor` INT(10) NOT NULL,
   `status` INT(2) NOT NULL,
+  `created_date` INT(13) NOT NULL,
   `expire_date` INT(13) NOT NULL,
   `task_project_id` INT(10),
   `parent_task_id` INT(10),
@@ -150,8 +152,8 @@ VALUES ('紧急'), ('重要'), ('普通');
 INSERT INTO `task_type` (`text`)
 VALUES ('需求'), ('缺陷');
 
-INSERT INTO `task` (`title`, `desc`, `creator`, `status`, `expire_date`, `task_project_id`, `type`, `priority`)
-VALUES ('测试任务 1', '任务描述', 3, 1, 1614419750, 1, 1, 1);
+INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `type`, `priority`)
+VALUES ('测试任务 1', '任务描述', 3, 3, 1, 1616478832, 1614419750, 1, 1, 1), ('测试任务 2', '任务描述', 2, 3, 1, 1616478832, 1614439750, 2, 1, 2), ('测试任务 3', '任务描述', 2, 1, 0, 1616478832, 1614439800, 1, 1, 1), ('测试任务 4', '任务描述', 3, 1, 1, 1616478832, 1614449750, 1, 1, 1);
 
 INSERT INTO `task_participant` (`task_id`, `uid`, `add_date`)
-VALUES (1, 2, 1614419750);
+VALUES (1, 2, 1614419750), (2, 3, 1614419750);
