@@ -11,7 +11,7 @@ Status: !200
 }
 ```
 
-## 登录
+## 登录 ✅
 
 URL: /login  
 METHOD: POST  
@@ -30,12 +30,12 @@ METHOD: POST
 }
 ```
 
-## 退出
+## 退出 ✅
 
 URL: /logout  
 METHOD: POST  
 
-## 用户信息
+## 用户信息 ✅
 
 URL: /user/:uid  
 METHOD: GET  
@@ -52,7 +52,7 @@ METHOD: GET
 }
 ```
 
-## 项目列表
+## 项目列表 ✅
 
 URL: /project/list  
 METHOD: GET  
@@ -81,7 +81,7 @@ METHOD: GET
 }
 ```
 
-## 组织列表
+## 组织列表 ✅
 
 URL: /group/list  
 METHOD: GET  
@@ -108,7 +108,7 @@ METHOD: GET
 }
 ```
 
-## 任务列表
+## 任务列表 ✅
 
 URL: /task/list  
 METHOD: GET  
@@ -148,8 +148,8 @@ METHOD: GET
 
 ## 我的待办
 
-URL: /login  
-METHOD: POST  
+URL: /todo  
+METHOD: GET  
 
 ```json
 {
@@ -168,9 +168,9 @@ METHOD: POST
 
 1. 筛选执行人为当前用户 & 状态为 doing 的任务
 
-## 创建组织
+## 创建组织 ✅
 
-URL: /login  
+URL: /group  
 METHOD: POST  
 
 ```json
@@ -188,9 +188,9 @@ METHOD: POST
 }
 ```
 
-## 创建项目
+## 创建项目 ✅
 
-URL: /login  
+URL: /project  
 METHOD: POST  
 
 ```json
@@ -208,9 +208,9 @@ METHOD: POST
 }
 ```
 
-## 创建任务
+## 创建任务组 ✅
 
-URL: /login  
+URL: /task-group  
 METHOD: POST  
 
 ```json
@@ -224,6 +224,26 @@ METHOD: POST
   "code": "number",
   "data": {
     "uid": "number",
+  }
+}
+```
+
+## 创建任务 ✅
+
+URL: /task  
+METHOD: POST  
+
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+
+{
+
+  "code": "number",
+  "data": {
+    "task_id": "number",
   }
 }
 ```
@@ -290,8 +310,8 @@ METHOD: POST
 
 ## 获取子任务列表
 
-URL: /login  
-METHOD: POST  
+URL: /child-task/list  
+METHOD: GET  
 
 ```json
 {
@@ -310,7 +330,7 @@ METHOD: POST
 
 ## 添加任务评论
 
-URL: /login  
+URL: /task/add-comment  
 METHOD: POST  
 
 ```json
@@ -330,7 +350,7 @@ METHOD: POST
 
 ## 新增子任务
 
-URL: /login  
+URL: /child-task  
 METHOD: POST  
 
 ```json
@@ -350,7 +370,7 @@ METHOD: POST
 
 ## 修改任务状态
 
-URL: /login  
+URL: /task/update  
 METHOD: POST  
 
 ```json
@@ -370,7 +390,7 @@ METHOD: POST
 
 ## 指定执行人
 
-URL: /login  
+URL: /task/set-executor  
 METHOD: POST  
 
 ```json
@@ -390,7 +410,7 @@ METHOD: POST
 
 ## 添加参与者
 
-URL: /login  
+URL: /task/append-member  
 METHOD: POST  
 
 ```json
@@ -410,7 +430,7 @@ METHOD: POST
 
 ## 添加标签
 
-URL: /login  
+URL: /task/add-tag  
 METHOD: POST  
 
 ```json
@@ -430,7 +450,7 @@ METHOD: POST
 
 ## 邀请用户加入组织、项目
 
-URL: /login  
+URL: /group/invite  
 METHOD: POST  
 
 ```json
@@ -450,7 +470,7 @@ METHOD: POST
 
 ## 从组织、项目中移除用户
 
-URL: /login  
+URL: /group/remove  
 METHOD: POST  
 
 ```json

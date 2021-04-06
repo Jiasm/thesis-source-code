@@ -10,6 +10,7 @@ type Task struct {
 	CreatedDate   uint	 `json:"created_date"`
 	ExpireDate    uint   `json:"expire_date"`
 	TaskProjectId uint   `json:"task_project_id"`
+	TaskGroupId   uint   `json:"task_group_id"`
 	ParentTaskId  uint   `json:"parent_task_id"`
 	Type          uint   `json:"type"`
 	Priority      uint   `json:"priority"`

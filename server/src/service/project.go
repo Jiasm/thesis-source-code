@@ -3,6 +3,7 @@ package service
 import (
 	"dao"
 	"entity"
+	"time"
 )
 
 type ProjectService struct {
@@ -29,6 +30,13 @@ func (p *ProjectService) FindCreatedProjectList(uid uint) []ProjectData {
 	projectList := projectDao.FindByCreator(uid)
 
 	return BuildProjectData(projectList)
+}
+
+func (p *ProjectService) Create(request dao.NewProject) uint {
+	request.CreatedDate = uint(time.Now().Unix())
+	projectId := projectDao.Insert(request)
+
+	return projectId
 }
 
 func BuildProjectData(projectList []entity.Project) []ProjectData {

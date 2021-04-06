@@ -9,11 +9,25 @@ import (
 	"util"
 )
 
-type TaskDao struct {
+type NewTask struct {
+	Title string `json:"title"`
+	Desc string `json:"desc"`
+	Creator uint `json:"creator"`
+	Executor uint `json:"executor"`
+	Status uint `json:"status"`
+	CreatedDate uint `json:"created_date"`
+	ExpireDate uint `json:"expire_date"`
+	TaskProjectId uint `json:"task_project_id"`
+	TaskGroupId uint `json:"task_group_id"`
+	ParentTaskId uint `json:"parent_task_id"`
+	TaskType uint `json:"task_type"`
+	Priority uint `json:"priority"`
 }
 
-func (p *TaskDao) Insert(task *entity.Task) int64 {
-	result, err := util.DB.Exec("INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `parent_task_id`, `type`, `priority`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", task.Title, task.Desc, task.Creator, task.Status, task.CreatedDate, task.ExpireDate, task.TaskProjectId, task.ParentTaskId, task.Type, task.Priority)
+type TaskDao struct {}
+
+func (p *TaskDao) Insert(request NewTask) uint {
+	result, err := util.DB.Exec("INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", request.Title, request.Desc, request.Creator, request.Executor, request.Status, request.CreatedDate, request.ExpireDate, request.TaskProjectId, request.TaskGroupId, request.ParentTaskId, request.TaskType, request.Priority)
 	if err != nil {
 		log.Println(err)
 		return 0
@@ -23,11 +37,11 @@ func (p *TaskDao) Insert(task *entity.Task) int64 {
 		log.Println(err)
 		return 0
 	}
-	return id
+	return uint(id)
 }
 
 func (p *TaskDao) FindOne(taskId uint) *entity.Task {
-	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = ? LIMIT 1", taskId)
+	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = ? LIMIT 1", taskId)
 
 	if err != nil {
 		log.Println(err)
@@ -38,7 +52,7 @@ func (p *TaskDao) FindOne(taskId uint) *entity.Task {
 
 	rows.Next()
 
-	rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.Type, &task.Priority)
+	rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.TaskGroupId, &task.ParentTaskId, &task.Type, &task.Priority)
 
 	rows.Close()
 
@@ -52,7 +66,7 @@ func (p *TaskDao) FindAll(taskIdList []int) []entity.Task {
 		taskIdStrList = append(taskIdStrList, strconv.Itoa(int(item)))
 	}
 
-	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id IN (?)", strings.Join(taskIdStrList, " , "))
+	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id IN (?)", strings.Join(taskIdStrList, " , "))
 
 	if err != nil {
 		log.Println(err)
@@ -63,7 +77,7 @@ func (p *TaskDao) FindAll(taskIdList []int) []entity.Task {
 
 	for rows.Next() {
 		var task entity.Task
-		rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.ParentTaskId, &task.Type, &task.Priority)
+		rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.TaskGroupId, &task.ParentTaskId, &task.Type, &task.Priority)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -105,7 +119,7 @@ func (p *TaskDao) FindProjectId(taskIdList []uint) []uint {
 	return projectIdList
 }
 
-func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCreatedDate, maxExpireDate, minExpireDate, taskProjectId, parentTaskId, taskType, priority, page, size uint) []entity.Task {
+func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCreatedDate, maxExpireDate, minExpireDate, taskProjectId, taskGroupId, parentTaskId, taskType, priority, page, size uint) []entity.Task {
 	var where []string
 
 	if creator > 0 {
@@ -140,6 +154,10 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 		where = append(where, fmt.Sprintf(`task_project_id = %d`, taskProjectId))
 	}
 
+	if taskGroupId > 0 {
+		where = append(where, fmt.Sprintf(`task_group_id = %d`, taskGroupId))
+	}
+
 	if parentTaskId > 0 {
 		where = append(where, fmt.Sprintf(`parent_task_id = %d`, parentTaskId))
 	}
@@ -166,9 +184,9 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 	orderStr := " ORDER BY task_project_id DESC, parent_task_id DESC, created_date DESC"
 
 	if len(where) > 0 {
-		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `parent_task_id`, `type`, `priority` FROM task WHERE " + strings.Join(where, " AND ") + orderStr + limitStr
+		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE " + strings.Join(where, " AND ") + orderStr + limitStr
 	} else {
-		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `parent_task_id`, `type`, `priority` FROM task" + orderStr + limitStr
+		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task" + orderStr + limitStr
 	}
 
 	fmt.Println(sql)
@@ -184,7 +202,7 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 
 	for rows.Next() {
 		var task entity.Task
-		rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.ParentTaskId, &task.Type, &task.Priority)
+		rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.TaskGroupId, &task.ParentTaskId, &task.Type, &task.Priority)
 		if err != nil {
 			log.Println(err)
 			continue

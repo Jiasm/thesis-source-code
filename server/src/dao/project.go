@@ -11,8 +11,16 @@ import (
 type ProjectDao struct {
 }
 
-func (p *ProjectDao) Insert(project *entity.Project) int64 {
-	result, err := util.DB.Exec("INSERT INTO `project` (`creator`, `group_id`, `name`, `status`) VALUES (?, ?, ?, ?);", project.Creator, project.GroupId, project.Name, project.Status)
+type NewProject struct {
+	GroupId 	uint 	`json:"group_id"`
+	Creator 	uint 	`json:"creator"`
+	Name    	string  `json:"name"`
+	Status  	uint 	`json:"status"`
+	CreatedDate uint 	`json:"created_date"`
+}
+
+func (p *ProjectDao) Insert(project NewProject) uint {
+	result, err := util.DB.Exec("INSERT INTO `project` (`creator`, `group_id`, `name`, `status`, `created_date`) VALUES (?, ?, ?, ?, ?);", project.Creator, project.GroupId, project.Name, project.Status, project.CreatedDate)
 	if err != nil {
 		log.Println(err)
 		return 0
@@ -22,7 +30,7 @@ func (p *ProjectDao) Insert(project *entity.Project) int64 {
 		log.Println(err)
 		return 0
 	}
-	return id
+	return uint(id)
 }
 
 func (p *ProjectDao) FindOne(projectName string) *entity.Project {

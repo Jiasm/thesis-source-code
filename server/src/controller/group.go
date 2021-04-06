@@ -21,6 +21,10 @@ type GroupRequest struct {
 	Status  uint   `json:"status"`
 }
 
+type CreateGroupResponse struct {
+	GroupId uint `json:"group_id"`
+}
+
 var groupService = new(service.GroupService)
 
 func (p *GroupController) Router(router *util.RouterHandler) {
@@ -57,5 +61,5 @@ func (p *GroupController) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.ResultJsonOk(w, id)
+	util.ResultJsonOk(w, CreateGroupResponse{id})
 }
