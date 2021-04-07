@@ -33,3 +33,18 @@ func (p *TaskParticipantDao) FindTaskIdByParticipant(uid uint) []uint {
 
 	return taskIdList
 }
+
+
+func (p *TaskParticipantDao) Insert(taskId, uid, addDate uint) uint {
+	result, err := util.DB.Exec("INSERT INTO `task_participant` (`task_id`, `uid`, `add_date`) VALUES (?, ?, ?)", taskId, uid, addDate)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	id, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(id)
+}

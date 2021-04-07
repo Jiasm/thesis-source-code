@@ -181,7 +181,7 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 	var sql string
 
 	limitStr := " LIMIT " + strconv.Itoa(int(page - 1)) + " , " + strconv.Itoa(int(size * page))
-	orderStr := " ORDER BY task_project_id DESC, parent_task_id DESC, created_date DESC"
+	orderStr := " ORDER BY task_project_id DESC, task_group_id DESC, parent_task_id DESC, priority DESC, created_date DESC"
 
 	if len(where) > 0 {
 		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE " + strings.Join(where, " AND ") + orderStr + limitStr
@@ -214,4 +214,32 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 	return taskList
 }
 
+func (p *TaskDao) ChangeStatus(taskId, status uint) uint {
+	result, err := util.DB.Exec("UPDATE `task` SET status = ? WHERE id = ?", status, taskId)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(count)
+}
+
+
+func (p *TaskDao) ChangeExecutor(taskId, executor uint) uint {
+	result, err := util.DB.Exec("UPDATE `task` SET executor = ? WHERE id = ?", executor, taskId)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(count)
+}
 

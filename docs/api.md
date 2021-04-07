@@ -235,8 +235,15 @@ METHOD: POST
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+    "title": "string",
+    "desc": "string",
+    "executor": "number",
+    "status": "number",
+    "expire_date": "number",
+    "task_project_id": "number",
+    "task_group_id": "number",
+    "type": "number",
+    "priority": "number"
 }
 
 {
@@ -328,115 +335,114 @@ METHOD: GET
 }
 ```
 
-## 添加任务评论
+## 添加任务评论 ✅
 
 URL: /task/add-comment  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "task_id": "number",
+  "text": "string"
 }
 
 {
 
   "code": "number",
   "data": {
-    "uid": "number",
+    "comment_id": "number",
   }
 }
 ```
 
-## 新增子任务
+## 新增子任务 ✅
 
 URL: /child-task  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+    "title": "string",
+    "desc": "string",
+    "executor": "number",
+    "status": "number",
+    "expire_date": "number",
+    "task_project_id": "number",
+    "task_group_id": "number",
+    "parent_task_id": "number",
+    "type": "number",
+    "priority": "number"
 }
 
 {
 
   "code": "number",
   "data": {
-    "uid": "number",
+    "task_id": "number",
   }
 }
 ```
 
-## 修改任务状态
+## 修改任务状态 ✅
 
-URL: /task/update  
+URL: /task/update-status  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "task_id": "number",
+  "status": "number"
 }
 
 {
 
-  "code": "number",
-  "data": {
-    "uid": "number",
-  }
+  "code": "number"
 }
 ```
 
-## 指定执行人
+## 指定执行人 ✅
 
 URL: /task/set-executor  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "task_id": "number",
+  "executor": "number"
 }
 
 {
 
-  "code": "number",
-  "data": {
-    "uid": "number",
-  }
+  "code": "number"
 }
 ```
 
-## 添加参与者
+## 添加参与者 ✅
 
 URL: /task/append-member  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "task_id": "number",
+  "member": "number"
 }
 
 {
 
-  "code": "number",
-  "data": {
-    "uid": "number",
-  }
+  "code": "number"
 }
 ```
 
-## 添加标签
+## 添加标签 ✅
 
 URL: /task/add-tag  
 METHOD: POST  
 
 ```json
 {
-  "username": "string",
-  "password": "string"
+  "task_id": "number",
+  "tag": "string"
 }
 
 {

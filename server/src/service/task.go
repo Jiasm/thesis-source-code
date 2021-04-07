@@ -23,3 +23,49 @@ func (p *TaskService) Create(request dao.NewTask) uint {
 
 	return taskId
 }
+
+func (p *TaskService) CreateChildTask(request dao.NewTask) uint {
+	request.CreatedDate = uint(time.Now().Unix())
+	taskId := taskDao.Insert(request)
+
+	return taskId
+}
+
+func (p *TaskService) ChangeStatus(taskId, status uint) uint {
+	changedCount := taskDao.ChangeStatus(taskId, status)
+
+	return changedCount
+}
+
+func (p *TaskService) ChangeExecutor(taskId, executor uint) uint {
+	changedCount := taskDao.ChangeExecutor(taskId, executor)
+
+	return changedCount
+}
+
+func (p *TaskService) AppendMember(taskId, executor uint) uint {
+	changedCount := taskParticipantDao.Insert(taskId, executor, uint(time.Now().Unix()))
+
+	return changedCount
+}
+
+func (p *TaskService) AddComment(taskId uint, text string, uid uint) uint {
+	commentId := taskCommentDao.Insert(taskId, uid, 1, uint(time.Now().Unix()), text)
+
+	return commentId
+}
+
+func (p *TaskService) AddTag(taskId uint, text string) uint {
+	var tagId uint
+	tag := tagDao.FindOne(text)
+
+	if tag.Id <= 0 {
+		tagId = tagDao.Insert(text, uint(time.Now().Unix()))
+	} else {
+		tagId = tag.Id
+	}
+
+	changedCount := taskTagDao.Insert(taskId, tagId)
+
+	return changedCount
+}

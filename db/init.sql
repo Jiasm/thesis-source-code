@@ -47,6 +47,7 @@ CREATE TABLE `project` (
   `group_id` INT(10) NOT NULL,
   `name` VARCHAR(20) NOT NULL,
   `status` INT(2) NOT NULL,
+  `created_date` INT(13) NOT NULL,
   PRIMARY KEY(`id`)
 );
 
@@ -89,6 +90,7 @@ CREATE TABLE `task` (
   `created_date` INT(13) NOT NULL,
   `expire_date` INT(13) NOT NULL,
   `task_project_id` INT(10),
+  `task_group_id` INT(10),
   `parent_task_id` INT(10),
   `type` INT(2) NOT NULL,
   `priority` INT(2) NOT NULL,
@@ -102,7 +104,7 @@ CREATE TABLE `task_comment` (
   `creator` INT(10) NOT NULL,
   `text` TEXT NOT NULL,
   `status` INT(2) NOT NULL,
-  `datetime` INT(13) NOT NULL,
+  `created_date` INT(13) NOT NULL,
   PRIMARY KEY(`id`)
 );
 
@@ -122,13 +124,27 @@ CREATE TABLE `priority_type` (
   PRIMARY KEY(`id`)
 );
 
-
 DROP TABLE IF EXISTS  `task_participant`;
 CREATE TABLE `task_participant` (
   `task_id` INT(10) NOT NULL,
   `uid` INT(10) NOT NULL,
   `add_date` INT(13) NOT NULL,
   PRIMARY KEY(`task_id`, `uid`)
+);
+
+DROP TABLE IF EXISTS  `tag`;
+CREATE TABLE `tag` (
+  `id` INT(10) AUTO_INCREMENT,
+  `text` TEXT NOT NULL,
+  `add_date` INT(13) NOT NULL,
+  PRIMARY KEY(`id`)
+);
+
+DROP TABLE IF EXISTS  `task_tag`;
+CREATE TABLE `task_tag` (
+  `task_id` INT(10) NOT NULL,
+  `tag_id` INT(10) NOT NULL,
+  PRIMARY KEY(`task_id`, `tag_id`)
 );
 
 INSERT INTO `user_role` (`text`, `desc`)
@@ -158,8 +174,11 @@ VALUES ('紧急'), ('重要'), ('普通');
 INSERT INTO `task_type` (`text`)
 VALUES ('需求'), ('缺陷');
 
-INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `type`, `priority`)
-VALUES ('测试任务 1', '任务描述', 3, 3, 1, 1616478832, 1614419750, 1, 1, 1), ('测试任务 2', '任务描述', 2, 3, 1, 1616478832, 1614439750, 2, 1, 2), ('测试任务 3', '任务描述', 2, 1, 0, 1616478832, 1614439800, 1, 1, 1), ('测试任务 4', '任务描述', 3, 1, 1, 1616478832, 1614449750, 1, 1, 1);
+INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_group_id`, `task_project_id`, `type`, `priority`)
+VALUES ('测试任务 1', '任务描述', 3, 3, 1, 1616478832, 1614419750, 1, 1, 1, 1), ('测试任务 2', '任务描述', 2, 3, 1, 1616478832, 1614439750, 2, 2, 1, 2), ('测试任务 3', '任务描述', 2, 1, 0, 1616478832, 1614439800, 1, 3, 1, 1), ('测试任务 4', '任务描述', 3, 1, 1, 1616478832, 1614449750, 1, 4, 1, 1);
 
 INSERT INTO `task_participant` (`task_id`, `uid`, `add_date`)
 VALUES (1, 2, 1614419750), (2, 3, 1614419750);
+
+SELECT * FROM tag;
+SELECT * FROM task_tag
