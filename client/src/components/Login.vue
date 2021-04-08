@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { login } from '../lib/api'
+// import { login } from '../lib/api'
 
 export default {
   name: 'Login',
@@ -60,23 +60,23 @@ export default {
   },
   methods: {
     async login() {
-      const { username, password } = this.$data
+      // const { username, password } = this.$data
       
-      const data = await login(username, password)
+      // const data = await login(username, password)
 
-      if (/^success:/.test(data)) {
-        const id = data.match(/^success:(\d+)/)[1]
+      // if (/^success:/.test(data)) {
+      //   const id = data.match(/^success:(\d+)/)[1]
         
-        sessionStorage.setItem('uid', id)
+      //   sessionStorage.setItem('uid', id)
 
-        this.$router.push({path: '/list' })
-      } else {
-        this.$confirm(data, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        })
-      }
+      //   this.$router.push({path: '/list' })
+      // } else {
+      //   this.$confirm(data, '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     type: 'error'
+      //   })
+      // }
     },
     forget() {
       this.$router.push({path:'/reget'})
