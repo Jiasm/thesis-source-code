@@ -4,7 +4,7 @@
     <div class="main">
       <common-tree-menu></common-tree-menu>
       <div class="content">
-        <h2>问卷列表</h2>
+        <h2>列表</h2>
         <el-table
           border
           stripe
