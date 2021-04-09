@@ -91,7 +91,7 @@ export default {
 
 .nav-item {
   display: flex;
-  height: 40px;
+  height: 60px;
   border-radius: 4px;
   align-items: center;
   justify-content: space-between;
