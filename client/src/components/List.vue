@@ -3,8 +3,6 @@
     <common-header></common-header>
     <div class="main">
       <common-tree-menu></common-tree-menu>
-      <!-- <common-task-detail :visible="dialogTableVisible" :view-state="true"></common-task-detail> -->
-      <common-create-group :visible="dialogTableVisible" />
       <div class="content">
         <el-table
           :data="tableData"
@@ -59,13 +57,12 @@
 
 <script>
 import { /*getList,*/ removeQuestion } from '../lib/api'
-import CreateGroup from './CreateGroup'
 import Header from './Header'
 // import TaskDetail from './TaskDetail'
 import TreeMenu from './TreeMenu'
 
 export default {
-  components: { 'common-header': Header, 'common-tree-menu': TreeMenu, /*'common-task-detail': TaskDetail, */ 'common-create-group': CreateGroup },
+  components: { 'common-header': Header, 'common-tree-menu': TreeMenu },
   name: 'List',
   methods: {
     remove(row) {

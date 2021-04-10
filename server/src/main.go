@@ -20,8 +20,10 @@ func main() {
 		Addr:        ":8080",
 		Handler:     util.Router,
 		ReadTimeout: 5 * time.Second,
+
 	}
 	RegiterRouter(util.Router)
+
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
