@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const host = 'http://127.0.0.1:8880'
+const host = 'http://127.0.0.1:8080'
 
 export async function login (username, password) {
   const { data } = await axios.post(`${host}/login`, {
@@ -10,6 +10,45 @@ export async function login (username, password) {
 
   return data
 }
+
+export async function getProjectList () {
+  const { data: { data } } = await axios.get(`${host}/project/list`)
+
+  const { created, participant } = data
+
+  const projectList = created.concat(participant.filter(item => !created.find(i => i.id === item.id))).map(row => ({
+    id: row.id,
+    groupName: row.group_name,
+    name: row.name,
+    status: row.status
+  }))
+
+  const groupMap = {}
+
+  projectList.forEach(row => {
+    if (!groupMap[row.groupName]) {
+      groupMap[row.groupName] = []
+    }
+
+    groupMap[row.groupName].push(row)
+  })
+
+  const groupList = []
+
+  Object.entries(groupMap).forEach(([groupName, pList]) => {
+    groupList.push({
+      groupName,
+      list: pList
+    })
+  })
+
+  return {
+    projectList,
+    groupList,
+  }
+}
+
+getProjectList().then(console.log)
 
 export async function getList () {
   const { data } = await axios.get(`${host}/list`)

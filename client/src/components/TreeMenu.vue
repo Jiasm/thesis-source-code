@@ -13,29 +13,19 @@
           <i class="el-icon-location"></i>
           <span>我的项目</span>
         </template>
-        <el-menu-item index="1-1">项目 1</el-menu-item>
-        <el-menu-item index="1-2">项目 2</el-menu-item>
+        <el-menu-item v-for="(row, index) in projectList" v-bind:key="index" :index="`1-${index}`">{{row.name}}</el-menu-item>
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>我的组织</span>
         </template>
-          <el-submenu index="2-1">
+          <el-submenu v-for="(row, index) in groupList" v-bind:key="index" :index="`2-${index}`">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>组织 1</span>
+              <span>{{row.groupName}}</span>
             </template>
-            <el-menu-item index="2-1-1">项目 1</el-menu-item>
-            <el-menu-item index="2-1-2">项目 2</el-menu-item>
-          </el-submenu>
-          <el-submenu index="2-2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>组织 2</span>
-            </template>
-            <el-menu-item index="2-2-1">项目 1</el-menu-item>
-            <el-menu-item index="2-2-2">项目 2</el-menu-item>
+            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${index}-${i}`">{{line.name}}</el-menu-item>
           </el-submenu>
       </el-submenu>
     </el-menu>
@@ -43,11 +33,15 @@
 </template>
 
 <script>
+import { getProjectList } from '../lib/api'
+
 export default {
   name: 'TreeMenu',
   data() {
     return {
       showTools: false,
+      projectList: [],
+      groupList: [],
     };
   },
   methods: {
@@ -59,6 +53,12 @@ export default {
       console.log('trigger close')
       this.showTools = false
     }
+  },
+  async mounted () {
+    const { projectList, groupList } = await getProjectList()
+
+    this.$data.projectList = projectList
+    this.$data.groupList = groupList
   }
 }
 </script>
