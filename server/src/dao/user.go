@@ -2,7 +2,10 @@ package dao
 
 import (
 	"entity"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -42,8 +45,14 @@ func (p *UserDao) FindOne(username, password string) *entity.User {
 	return &user
 }
 
-func (p *UserDao) FindAll(userIdList []int) []entity.User {
-	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM user WHERE id IN(?)", userIdList)
+func (p *UserDao) FindAll(userIdList []uint) []entity.User {
+	var userIdListStr []string
+
+	for _, item := range userIdList {
+		userIdListStr = append(userIdListStr, strconv.Itoa(int(item)))
+	}
+
+	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, username, password, status, role_id FROM user WHERE id IN(%s)", strings.Join(userIdListStr, " , ")))
 
 	if err != nil {
 		log.Println(err)

@@ -181,4 +181,17 @@ INSERT INTO `task_participant` (`task_id`, `uid`, `add_date`)
 VALUES (1, 2, 1614419750), (2, 3, 1614419750);
 
 SELECT * FROM tag;
-SELECT * FROM task_tag
+SELECT * FROM task;
+SELECT * FROM task_group;
+
+SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE task_project_id = 1 ORDER BY task_project_id DESC, task_group_id DESC, parent_task_id DESC, priority DESC, created_date DESC LIMIT 0 , 10;
+
+SELECT id, title, `desc`, creator, status FROM task_group WHERE id IN (1, 2);
+
+UPDATE task SET type = 1 WHERE id = 8;
+
+UPDATE task SET executor = 2 WHERE executor = 6;
+
+SELECT * FROM tag
+
+UPDATE tag SET text = '测试标签' WHERE id = 1

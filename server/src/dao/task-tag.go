@@ -1,7 +1,11 @@
 package dao
 
 import (
+	"entity"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -20,4 +24,35 @@ func (p *TaskTagDao) Insert(taskId, tagId uint) uint {
 		return 0
 	}
 	return uint(changedCount)
+}
+
+func (p *TaskTagDao) FindAll(taskIdList []uint) []entity.TaskTag {
+	var taskIdListStr []string
+
+	for _, item := range taskIdList {
+		taskIdListStr = append(taskIdListStr, strconv.Itoa(int(item)))
+	}
+
+	rows, err := util.DB.Query(fmt.Sprintf("SELECT task_id, tag_id FROM task_tag WHERE task_id IN (%s)", strings.Join(taskIdListStr, " , ")))
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var taskTagList []entity.TaskTag
+
+	for rows.Next() {
+		fmt.Println("join")
+		var project entity.TaskTag
+		rows.Scan(&project.TaskId, &project.TagId)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		taskTagList = append(taskTagList, project)
+	}
+	rows.Close()
+
+	return taskTagList
 }

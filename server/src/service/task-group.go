@@ -2,6 +2,7 @@ package service
 
 import (
 	"dao"
+	"entity"
 )
 
 type TaskGroupService struct {
@@ -13,4 +14,10 @@ func (p *TaskGroupService) Create(request dao.NewTaskGroup) uint {
 	taskGroupId := taskGroupDao.Insert(request)
 
 	return taskGroupId
+}
+
+func (p *TaskGroupService) FindAll(taskGroupIdList []uint) []entity.TaskGroup {
+	taskGroupList := taskGroupDao.FindAll(taskGroupIdList)
+
+	return taskGroupList
 }

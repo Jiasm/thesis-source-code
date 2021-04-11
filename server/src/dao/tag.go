@@ -2,7 +2,10 @@ package dao
 
 import (
 	"entity"
+	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -40,4 +43,35 @@ func (p *TagDao) FindOne(tagName string) *entity.Tag {
 	}
 
 	return &tag
+}
+
+func (p *TagDao) FindAll(tagIdList []uint) []entity.Tag {
+	var tagIdListStr []string
+
+	for _, item := range tagIdList {
+		tagIdListStr = append(tagIdListStr, strconv.Itoa(int(item)))
+	}
+
+	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, text FROM tag WHERE id IN (%s)", strings.Join(tagIdListStr, " , ")))
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var tagList []entity.Tag
+
+	for rows.Next() {
+		fmt.Println("join")
+		var project entity.Tag
+		rows.Scan(&project.Id, &project.Text)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		tagList = append(tagList, project)
+	}
+	rows.Close()
+
+	return tagList
 }

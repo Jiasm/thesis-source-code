@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"service"
+	"strconv"
+	"strings"
 	"util"
 )
 
-type ListController struct {
+type UserController struct {
 }
 
 type UserRequest struct {
@@ -18,15 +20,25 @@ type UserRequest struct {
 	Status   uint   `json:"status"`
 }
 
-var listService = new(service.ListService)
+type UserResponse struct {
+	Id uint `json:"id"`
+	UserName string `json:"username"`
+}
 
-func (p *ListController) Router(router *util.RouterHandler) {
+type UserListResponse struct {
+	List []UserResponse `json:"list"`
+}
+
+var userService = new(service.UserService)
+
+func (p *UserController) Router(router *util.RouterHandler) {
 	router.Router("/login", p.login)
 	router.Router("/logout", p.logout)
 	router.Router("/user/create", p.create)
+	router.Router("/user/list", p.GetList)
 }
 
-func (p *ListController) logout(w http.ResponseWriter, r *http.Request) {
+func (p *UserController) logout(w http.ResponseWriter, r *http.Request) {
 	//session
 	session := util.GlobalSession().SessionStart(w, r)
 
@@ -35,14 +47,14 @@ func (p *ListController) logout(w http.ResponseWriter, r *http.Request) {
 	util.ResultJsonOk(w, nil)
 }
 
-func (p *ListController) login(w http.ResponseWriter, r *http.Request) {
+func (p *UserController) login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	request := &UserRequest{}
 
 	decoder.Decode(&request)
 
-	user := listService.FindOne(request.UserName, request.Password)
+	user := userService.FindOne(request.UserName, request.Password)
 
 	if user == nil || user.ID == 0 {
 		util.ResultFail(w, "error")
@@ -56,14 +68,14 @@ func (p *ListController) login(w http.ResponseWriter, r *http.Request) {
 	util.ResultJsonOk(w, user)
 }
 
-func (p *ListController) create(w http.ResponseWriter, r *http.Request) {
+func (p *UserController) create(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	request := &UserRequest{}
 
 	decoder.Decode(&request)
 
-	id := listService.CreateAccount(request.UserName, request.Password, request.RoleId, request.Status)
+	id := userService.CreateAccount(request.UserName, request.Password, request.RoleId, request.Status)
 
 	if id == 0 {
 		util.ResultFail(w, "error")
@@ -71,4 +83,27 @@ func (p *ListController) create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	util.ResultJsonOk(w, id)
+}
+
+func (p *UserController) GetList(w http.ResponseWriter, r *http.Request) {
+	vars := r.URL.Query()
+
+	userIdStr := strings.Split(vars.Get("user_ids"), `,`)
+
+	var userIdList []uint
+
+	for _, str := range userIdStr {
+		num, _ := strconv.Atoi(str)
+		userIdList = append(userIdList, uint(num))
+	}
+
+	userList := userService.FindAll(userIdList)
+
+	var responseList []UserResponse
+
+	for _, user := range userList {
+		responseList = append(responseList, UserResponse{user.ID, user.UserName})
+	}
+
+	util.ResultJsonOk(w, UserListResponse{ responseList })
 }

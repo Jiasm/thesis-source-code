@@ -25,9 +25,9 @@
             width="120">
           </el-table-column>
           <el-table-column
-            prop="level"
+            prop="priority"
             sortable
-            label="任务等级">
+            label="优先级">
           </el-table-column>
           <el-table-column
             prop="executor"
@@ -45,9 +45,17 @@
             label="截止日期">
           </el-table-column>
           <el-table-column
-            prop="tag"
-            sortable
             label="标签">
+            <template slot-scope="scope">
+              <el-tag
+                class="tag"
+                size="small"
+                v-for="tag in scope.row.tag"
+                :key="tag.id"
+              >
+                {{tag.text}}
+              </el-tag>
+            </template>
           </el-table-column>
         </el-table>
       </div>
@@ -56,7 +64,7 @@
 </template>
 
 <script>
-import { /*getList,*/ removeQuestion } from '../lib/api'
+import { getTaskList, removeQuestion } from '../lib/api'
 import Header from './Header'
 // import TaskDetail from './TaskDetail'
 import TreeMenu from './TreeMenu'
@@ -102,86 +110,12 @@ export default {
     },
   },
   async mounted() {
-    // this.$data.tableData = await getList()
+    this.$data.tableData = await getTaskList()
   },
   data() {
     return {
       dialogTableVisible: true,
-      tableData: [{
-        id: 1,
-        title: '任务组 1',
-        status: '任务状态 1',
-        level: '任务等级 1',
-        executor: '执行人 XXX',
-        type: '需求',
-        expireDate: '2021-03-03',
-        tag: 'P1,P3',
-      }, {
-        id: 2,
-        title: '任务组 2',
-        status: '任务状态 1',
-        level: '任务等级 1',
-        executor: '执行人 XXX',
-        type: '需求',
-        expireDate: '2021-03-03',
-        tag: 'P1,P3',
-      }, {
-        id: 3,
-        title: '任务组 3',
-        status: '任务状态 1',
-        level: '任务等级 1',
-        executor: '执行人 XXX',
-        type: '需求',
-        expireDate: '2021-03-03',
-        tag: 'P1,P3',
-        children: [{
-            id: 31,
-            title: '任务标题 1',
-            status: '任务状态 1',
-            level: '任务等级 1',
-            executor: '执行人 XXX',
-            type: '需求',
-            expireDate: '2021-03-03',
-            tag: 'P1,P3',
-          }, {
-            id: 32,
-            title: '任务标题 2',
-            status: '任务状态 1',
-            level: '任务等级 1',
-            executor: '执行人 XXX',
-            type: '需求',
-            expireDate: '2021-03-03',
-            tag: 'P1,P3',
-            children: [{
-              id: 321,
-              title: '子任务 1',
-              status: '任务状态 1',
-              level: '任务等级 1',
-              executor: '执行人 XXX',
-              type: '需求',
-              expireDate: '2021-03-03',
-              tag: 'P1,P3',
-            }, {
-              id: 322,
-              title: '子任务 3',
-              status: '任务状态 1',
-              level: '任务等级 1',
-              executor: '执行人 XXX',
-              type: '需求',
-              expireDate: '2021-03-03',
-              tag: 'P1,P3',
-          }]
-        }]
-      }, {
-        id: 4,
-        title: '任务组 4',
-        status: '任务状态 1',
-        level: '任务等级 1',
-        executor: '执行人 XXX',
-        type: '需求',
-        expireDate: '2021-03-03',
-        tag: 'P1,P3',
-      }],
+      tableData: [],
     }
   },
 }
@@ -200,5 +134,9 @@ export default {
 .content {
   flex: 1;
   padding: 0 50px;
+}
+
+.tag {
+  margin-right: 10px;
 }
 </style>
