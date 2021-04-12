@@ -69,3 +69,15 @@ func (p *TaskService) AddTag(taskId uint, text string) uint {
 
 	return changedCount
 }
+
+func (p *TaskService) FindByTaskId(taskId uint) entity.Task {
+	task := taskDao.FindOne(taskId)
+
+	return task
+}
+
+func (p *TaskService) FindByParentTaskId(taskId uint) []entity.Task {
+	taskList := taskDao.FindByParentId(taskId)
+
+	return taskList
+}

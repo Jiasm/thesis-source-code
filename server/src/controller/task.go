@@ -3,6 +3,7 @@ package controller
 import (
 	"dao"
 	"encoding/json"
+	"entity"
 	"net/http"
 	"service"
 	"strconv"
@@ -50,6 +51,11 @@ type ChangeStatusResponse struct {
 	ChangedCount uint `json:"changed_count"`
 }
 
+type TaskDetailResponse struct {
+	entity.Task
+	ChildTask []entity.Task `json:"child_task"`
+}
+
 type AddCommentResponse struct {
 	CommentId uint `json:"comment_id"`
 }
@@ -65,6 +71,7 @@ func (p *TaskController) Router(router *util.RouterHandler) {
 	router.Router("/task/append-member", p.appendMember)
 	router.Router("/task/add-comment", p.addComment)
 	router.Router("/task/add-tag", p.addTag)
+	router.Router("/task/detail", p.FindByTaskId)
 }
 
 func (p *TaskController) findByFilter(w http.ResponseWriter, r *http.Request) {
@@ -198,3 +205,14 @@ func (p *TaskController) addTag(w http.ResponseWriter, r *http.Request) {
 	util.ResultJsonOk(w, ChangeStatusResponse{ commentId })
 }
 
+func (p *TaskController) FindByTaskId(w http.ResponseWriter, r *http.Request) {
+	vars := r.URL.Query()
+
+	taskId, _ := strconv.Atoi(vars.Get("task_id"))
+
+	task := taskService.FindByTaskId(uint(taskId))
+
+	childTaskList := taskService.FindByParentTaskId(uint(taskId))
+
+	util.ResultJsonOk(w, TaskDetailResponse{task, childTaskList})
+}

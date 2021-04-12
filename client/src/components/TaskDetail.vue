@@ -143,6 +143,7 @@
       <el-row type="flex" class="row" :gutter="20">
           <el-table
           :data="tableData"
+          row-key="id"
           style="width: 100%">
           <el-table-column
             prop="taskName"
@@ -223,7 +224,7 @@
 <script>
 export default {
   name: 'TaskDetail',
-  props: ['visible', 'viewState'],
+  props: ['viewState', 'taskId', 'close'],
   data() {
     return {
       inputVisible: false,
@@ -252,26 +253,30 @@ export default {
           text: '这里是评论内容'
         },
       ],
-      dialogTableVisible: this.$props.visible,
+      dialogTableVisible: true,
       tableData: [{
+        id: 1,
         taskName: '子任务 1',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
+        id: 2,
         taskName: '子任务 2',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
+        id: 3,
         taskName: '子任务 3',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
+        id: 4,
         taskName: '子任务 4',
         status: '未开始',
         priority: 'P0',
@@ -291,13 +296,11 @@ export default {
       });
     },
     handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.tags.push({ name: inputValue });
-      }
-      this.inputVisible = false;
-      this.inputValue = '';
+      this.$props.close()
     }
+  },
+  async mounted () {
+    console.log('mounted')
   }
 }
 </script>

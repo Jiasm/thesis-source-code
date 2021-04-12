@@ -3,6 +3,7 @@
     <common-header></common-header>
     <div class="main">
       <common-tree-menu></common-tree-menu>
+      <common-task-detail v-if="dialogTableVisible" :task-id="taskId" @close="close" />
       <div class="content">
         <el-table
           :data="tableData"
@@ -10,6 +11,7 @@
           row-key="id"
           border
           default-expand-all
+          @row-click="openTaskDetail"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column
@@ -64,57 +66,34 @@
 </template>
 
 <script>
-import { getTaskList, removeQuestion } from '../lib/api'
+import { getTaskList } from '../lib/api'
 import Header from './Header'
-// import TaskDetail from './TaskDetail'
+import TaskDetail from './TaskDetail'
 import TreeMenu from './TreeMenu'
 
 export default {
-  components: { 'common-header': Header, 'common-tree-menu': TreeMenu },
+  components: { 'common-header': Header, 'common-tree-menu': TreeMenu, 'common-task-detail': TaskDetail },
   name: 'List',
   methods: {
-    remove(row) {
-      const id = Number(row.id)
-      this.$confirm('此操作将禁用问卷，后续用户将不能再进行填写, 是否确认?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        const res = await removeQuestion(id)
-
-        if (res === 'success') {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          location.reload()
-        } else {
-          this.$confirm(res.data, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'error'
-          })
-        }
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });          
-      });
+    openTaskDetail(row) {
+      if (/^\d+$/.test(row.id)) {
+        this.$data.taskId = row.id
+        this.$data.dialogTableVisible = true
+        this.$forceUpdate()
+        console.log(1)
+      }
     },
-    add() {
-      this.$router.push({ path: 'create' })
-    },
-    detail(row) {
-      this.$router.push({ path: 'preview', query: { id: row.id } })
-    },
+    close () {
+      this.$data.dialogTableVisible = false
+    }
   },
   async mounted() {
     this.$data.tableData = await getTaskList()
   },
   data() {
     return {
-      dialogTableVisible: true,
+      dialogTableVisible: false,
+      taskId: 0,
       tableData: [],
     }
   },

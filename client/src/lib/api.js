@@ -102,8 +102,6 @@ export async function getTaskList (projectId = 1) {
     tagMap[row.id] = row
   })
 
-  console.log(taskTagMap, tagMap)
-
   Object.entries(groupMap).forEach(([groupId, group]) => {
     const parentTaskMap = {}
 
@@ -170,12 +168,31 @@ export async function getTaskList (projectId = 1) {
     tableList.push(info)
   })
 
-  console.log(JSON.stringify(tableList))
-
   return tableList
 }
 
-getTaskList()
+export async function getTaskDetail (taskId) {
+  const { data: { data } } = await axios.get(`${host}/task/detail?task_id=${taskId}`)
+
+  return {
+    createdDate: formatDate(data.created_date),
+    creator: 3,
+    desc: data.desc,
+    executor: 2,
+    expire_date: formatDate(data.expire_date),
+    id: 1,
+    parent_task_id: 0,
+    priority: getPriority(data.priority),
+    status: getStatus(data.status),
+    task_group_id: 1,
+    task_project_id: 1,
+    title: "测试任务 1",
+    type: getTaskType(data.type),
+    child_task: data.child_task
+  }
+}
+
+getTaskDetail(1)
 
 export async function getList () {
   const { data } = await axios.get(`${host}/list`)

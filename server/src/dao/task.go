@@ -40,15 +40,15 @@ func (p *TaskDao) Insert(request NewTask) uint {
 	return uint(id)
 }
 
-func (p *TaskDao) FindOne(taskId uint) *entity.Task {
+func (p *TaskDao) FindOne(taskId uint) entity.Task {
 	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = ? LIMIT 1", taskId)
+
+	var task entity.Task
 
 	if err != nil {
 		log.Println(err)
-		return nil
+		return task
 	}
-
-	var task entity.Task
 
 	rows.Next()
 
@@ -56,7 +56,31 @@ func (p *TaskDao) FindOne(taskId uint) *entity.Task {
 
 	rows.Close()
 
-	return &task
+	return task
+}
+
+func (p *TaskDao) FindByParentId(taskId uint) []entity.Task {
+	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE parent_task_id = ?", taskId)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var taskList []entity.Task
+
+	for rows.Next() {
+		var task entity.Task
+		rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.TaskGroupId, &task.ParentTaskId, &task.Type, &task.Priority)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		taskList = append(taskList, task)
+	}
+	rows.Close()
+
+	return taskList
 }
 
 func (p *TaskDao) FindAll(taskIdList []int) []entity.Task {

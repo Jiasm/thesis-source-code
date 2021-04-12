@@ -194,4 +194,4 @@ UPDATE task SET executor = 2 WHERE executor = 6;
 
 SELECT * FROM tag
 
-UPDATE tag SET text = '测试标签' WHERE id = 1
+SELECT * FROM task WHERE parent_task_id = 1
