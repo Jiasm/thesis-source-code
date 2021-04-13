@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="640px" title="任务详情" :visible.sync="dialogTableVisible">
+  <el-dialog width="640px" title="任务详情" v-bind="$attrs" @close="handleInputConfirm">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
