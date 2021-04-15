@@ -179,20 +179,18 @@ export async function getTaskDetail (taskId) {
     creator: 3,
     desc: data.desc,
     executor: 2,
-    expire_date: formatDate(data.expire_date),
+    expireDate: formatDate(data.expire_date),
     id: 1,
-    parent_task_id: 0,
+    parentTaskId: 0,
     priority: getPriority(data.priority),
     status: getStatus(data.status),
-    task_group_id: 1,
-    task_project_id: 1,
+    taskGroupId: 1,
+    taskProjectId: 1,
     title: "测试任务 1",
     type: getTaskType(data.type),
-    child_task: data.child_task
+    childTask: data.child_task
   }
 }
-
-getTaskDetail(1)
 
 export async function getList () {
   const { data } = await axios.get(`${host}/list`)

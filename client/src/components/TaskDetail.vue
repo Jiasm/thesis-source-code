@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="640px" title="任务详情" v-bind="$attrs" @close="handleInputConfirm">
+  <el-dialog width="640px" title="任务详情" v-bind="$attrs" @close="handleInputConfirm" @open="loadData">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
@@ -95,7 +95,7 @@
             <el-tag
               class="tag"
               size="small"
-              :key="tag"
+              :key="tag.id"
               :closable="!viewState"
               v-for="tag in tags"
               :disable-transitions="false"
@@ -142,11 +142,11 @@
       </el-row>
       <el-row type="flex" class="row" :gutter="20">
           <el-table
-          :data="tableData"
+          :data="childTask"
           row-key="id"
           style="width: 100%">
           <el-table-column
-            prop="taskName"
+            prop="title"
             label="子任务名"
             width="180"
             fixed>
@@ -222,6 +222,7 @@
 </template>
 
 <script>
+import { getTaskDetail } from '../lib/api';
 export default {
   name: 'TaskDetail',
   props: ['viewState', 'taskId', 'close'],
@@ -254,30 +255,30 @@ export default {
         },
       ],
       dialogTableVisible: true,
-      tableData: [{
+      childTask: [{
         id: 1,
-        taskName: '子任务 1',
+        title: '子任务 1',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
         id: 2,
-        taskName: '子任务 2',
+        title: '子任务 2',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
         id: 3,
-        taskName: '子任务 3',
+        title: '子任务 3',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
         expireDate: '2021-05-01',
       }, {
         id: 4,
-        taskName: '子任务 4',
+        title: '子任务 4',
         status: '未开始',
         priority: 'P0',
         executor: 'Jarvis',
@@ -297,11 +298,46 @@ export default {
     },
     handleInputConfirm() {
       this.$props.close()
+    },
+    async loadData() {
+      const data = await getTaskDetail(this.$props.taskId)
+
+      this.$data.projectName = 'test proj',
+      this.$data.taskGroupName = 'test'
+      this.$data.title = data.title
+      this.$data.description = data.desc
+      this.$data.priority = data.priority
+      this.$data.type = data.type
+      this.$data.expireDate = data.expireDate
+      this.$data.childTask = data.childTask
+
+
+      // tags: [
+      //   {
+      //     name: '标签 1',
+      //   }, {
+      //     name: '标签 2',
+      //   },
+      // ],
+      // comments: [
+      //   {
+      //     nickName: 'stark',
+      //     text: '这里是评论内容'
+      //   },
+      //   {
+      //     nickName: 'stark',
+      //     text: '这里是评论内容'
+      //   },
+      // ],
+      // dialogTableVisible: true,
+      // childTask: [{
+
+      console.log('loadData', data)
     }
   },
   async mounted () {
     console.log('mounted')
-  }
+  },
 }
 </script>
 

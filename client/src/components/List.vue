@@ -3,7 +3,7 @@
     <common-header></common-header>
     <div class="main">
       <common-tree-menu></common-tree-menu>
-      <common-task-detail :visible.sync="dialogTableVisible" :task-id="taskId" :close="close" />
+      <common-task-detail :visible.sync="dialogTableVisible" :task-id="taskId" :close="close" :view-state=true />
       <div class="content">
         <el-table
           :data="tableData"
