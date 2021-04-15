@@ -194,4 +194,4 @@ UPDATE task SET executor = 2 WHERE executor = 6;
 
 SELECT * FROM tag
 
-SELECT * FROM task WHERE parent_task_id = 1
+SELECT * FROM project

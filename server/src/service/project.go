@@ -39,6 +39,12 @@ func (p *ProjectService) Create(request dao.NewProject) uint {
 	return projectId
 }
 
+func (p *ProjectService) FindAll(projectIdList []uint) []entity.Project {
+	projectList := projectDao.FindAll(projectIdList)
+
+	return projectList
+}
+
 func BuildProjectData(projectList []entity.Project) []ProjectData {
 	// get group id list
 	var groupIdList []uint

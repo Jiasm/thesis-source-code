@@ -1,10 +1,8 @@
 import axios from 'axios'
 import { getStatus, getPriority, getTaskType, formatDate, filterTag } from '../util'
 
-const host = 'http://127.0.0.1:8080'
-
 export async function login (username, password) {
-  const { data } = await axios.post(`${host}/login`, {
+  const { data } = await axios.post(`/login`, {
     username,
     password
   })
@@ -13,7 +11,7 @@ export async function login (username, password) {
 }
 
 export async function getProjectList () {
-  const { data: { data } } = await axios.get(`${host}/project/list`)
+  const { data: { data } } = await axios.get(`/project/all`)
 
   const { created, participant } = data
 
@@ -49,16 +47,46 @@ export async function getProjectList () {
   }
 }
 
+async function getTaskGroupList (taskGroupIdList) {
+  const { data: { data : { list: groupList }} } = await axios.get(`/task/group/list?group_ids=${[...new Set(taskGroupIdList)].join(',')}`)
+
+  return groupList
+}
+
+async function getUserList (userIdList) {
+  const { data: { data : { list: userList }} } = await axios.get(`/user/list?user_ids=${[...new Set(userIdList)].join(',')}`)
+
+  return userList
+}
+
+async function getTaskTagList (taskIdList) {
+  const { data: { data : { list: taskTagList }} } = await axios.get(`/task/tag/list?task_ids=${[...new Set(taskIdList)].join(',')}`)
+
+  return taskTagList
+}
+
+async function getTagInfoList (tagIdList) {
+  const { data: { data : { list: tagList }} } = await axios.get(`/tag/list?tag_ids=${[...new Set(tagIdList)].join(',')}`)
+
+  return tagList
+}
+
+async function getProjectListById (projectIdList) {
+  const { data: { data } } = await axios.get(`/project/list?project_ids=${[...new Set(projectIdList)].join(',')}`)
+
+  return data
+}
+
 export async function getTaskList (projectId = 1) {
-  const { data: { data: { list } } } = await axios.get(`${host}/task/list?task_project_id=${projectId}&size=10`)
+  const { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=10`)
 
-  const taskGroupIdList = [...new Set(list.map(item => item.task_group_id))]
-  const userIdList = [...new Set(list.map(item => item.executor))]
-  const taskIdList = [...new Set(list.map(item => item.id))]
+  const taskGroupIdList = list.map(item => item.task_group_id)
+  const userIdList = list.map(item => item.executor)
+  const taskIdList = list.map(item => item.id)
 
-  const { data: { data : { list: groupList }} } = await axios.get(`${host}/task/group/list?group_ids=${taskGroupIdList.join(',')}`)
-  const { data: { data : { list: userList }} } = await axios.get(`${host}/user/list?user_ids=${userIdList.join(',')}`)
-  const { data: { data : { list: taskTagList }} } = await axios.get(`${host}/task/tag/list?task_ids=${taskIdList.join(',')}`)
+  const groupList = await getTaskGroupList(taskGroupIdList)
+  const userList = await getUserList(userIdList)
+  const taskTagList = await getTaskTagList(taskIdList)
 
   groupList.push({ id: 0, title: '未分组' })
 
@@ -80,7 +108,7 @@ export async function getTaskList (projectId = 1) {
     userMap[row.id] = row
   })
 
-  let tagIdList = []
+  const tagIdList = []
 
   taskTagList.forEach(row => {
     if (!taskTagMap[row.task_id]) {
@@ -92,9 +120,7 @@ export async function getTaskList (projectId = 1) {
     tagIdList.push(row.tag_id)
   })
 
-  tagIdList = [...new Set(tagIdList)]
-
-  const { data: { data : { list: tagList }} } = await axios.get(`${host}/tag/list?tag_ids=${tagIdList.join(',')}`)
+  const tagList = await getTagInfoList(tagIdList)
 
   const tagMap = {}
 
@@ -172,28 +198,86 @@ export async function getTaskList (projectId = 1) {
 }
 
 export async function getTaskDetail (taskId) {
-  const { data: { data } } = await axios.get(`${host}/task/detail?task_id=${taskId}`)
+  const { data: { data } } = await axios.get(`/task/detail?task_id=${taskId}`)
 
-  return {
+  const projectIdList = [data.task_project_id]
+  const taskGroupIdList = [data.task_group_id]
+  const taskIdList = [data.id]
+  const userIdList = [data.creator, data.executor]
+
+  if (data.child_task && data.child_task.length) {
+    data.child_task.forEach(item => {
+      taskIdList.push(item.id)
+      userIdList.push(item.creator)
+      userIdList.push(item.executor)
+    })
+  }
+
+  const projectList = await getProjectListById(projectIdList)
+  const groupList = await getTaskGroupList(taskGroupIdList)
+  const userList = await getUserList(userIdList)
+  const taskTagList = await getTaskTagList(taskIdList)
+
+  const userMap = {}
+  const taskTagMap = {}
+
+  userList.forEach(row => {
+    userMap[row.id] = row
+  })
+
+  const tagIdList = []
+
+  taskTagList.forEach(row => {
+    if (!taskTagMap[row.task_id]) {
+      taskTagMap[row.task_id] = []
+    }
+
+    taskTagMap[row.task_id].push(row.tag_id)
+    
+    tagIdList.push(row.tag_id)
+  })
+
+  const tagList = await getTagInfoList(tagIdList)
+
+  const tagMap = {}
+
+  tagList.forEach(row => {
+    console.log({ row })
+    tagMap[row.id] = row
+  })
+
+  const info = {
     createdDate: formatDate(data.created_date),
-    creator: 3,
+    creator: userMap[data.creator].username,
     desc: data.desc,
-    executor: 2,
+    executor: userMap[data.executor].username,
     expireDate: formatDate(data.expire_date),
-    id: 1,
-    parentTaskId: 0,
+    id: data.id,
+    parentTaskId: data.parent_task_id,
     priority: getPriority(data.priority),
     status: getStatus(data.status),
-    taskGroupId: 1,
-    taskProjectId: 1,
-    title: "测试任务 1",
+    taskGroupName: groupList.length ? groupList[0].title : '未分组',
+    projectName: projectList[0].name,
+    title: data.title,
     type: getTaskType(data.type),
-    childTask: data.child_task
+    tags: taskTagMap[data.id].map(tagId => tagMap[tagId]).filter(i => i),
+    childTask: data.child_task ? data.child_task.map(row => {
+      return {
+        id: row.id,
+        title: row.title,
+        status: getStatus(row.status),
+        priority: getPriority(row.priority),
+        executor: userMap[row.executor].username,
+        expireDate: formatDate(row.expire_date),
+      }
+    }) : []
   }
+
+  return info
 }
 
 export async function getList () {
-  const { data } = await axios.get(`${host}/list`)
+  const { data } = await axios.get(`/list`)
 
   return data.map(row => ({
     ...row,
@@ -202,7 +286,7 @@ export async function getList () {
 }
 
 export async function removeQuestion (id) {
-  const { data } = await axios.post(`${host}/delete`, {
+  const { data } = await axios.post(`/delete`, {
     id
   })
 
@@ -210,13 +294,13 @@ export async function removeQuestion (id) {
 }
 
 export async function getQuestion (id) {
-  const { data } = await axios.get(`${host}/info?id=${id}`)
+  const { data } = await axios.get(`/info?id=${id}`)
 
   return data
 }
 
 export async function addQuestion (title, creater) {
-  const { data } = await axios.post(`${host}/add`, {
+  const { data } = await axios.post(`/add`, {
     datetime: new Date().toISOString(),
     creater: Number(creater),
     title
@@ -226,7 +310,7 @@ export async function addQuestion (title, creater) {
 }
 
 export async function changeQuestion (id, title) {
-  const { data } = await axios.post(`${host}/change`, {
+  const { data } = await axios.post(`/change`, {
     title,
     id
   })
@@ -235,7 +319,7 @@ export async function changeQuestion (id, title) {
 }
 
 export async function getAnswer (id) {
-  const { data } = await axios.get(`${host}/answer-info?id=${id}`)
+  const { data } = await axios.get(`/answer-info?id=${id}`)
 
   const question = data.answer
 
@@ -260,7 +344,7 @@ export async function getAnswer (id) {
 }
 
 export async function addAnswer (qid, answer, options) {
-  const { data } = await axios.post(`${host}/add-answer`, {
+  const { data } = await axios.post(`/add-answer`, {
     qid,
     answer,
     option_a: options[0],
@@ -273,7 +357,7 @@ export async function addAnswer (qid, answer, options) {
 }
 
 export async function changeAnswer (id, answer, options) {
-  const { data } = await axios.post(`${host}/change-answer`, {
+  const { data } = await axios.post(`/change-answer`, {
     id,
     answer,
     option_a: options[0],

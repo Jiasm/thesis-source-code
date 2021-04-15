@@ -2,6 +2,7 @@ package dao
 
 import (
 	"entity"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -59,7 +60,7 @@ func (p *ProjectDao) FindAll(projectIdList []uint) []entity.Project {
 		projectIdStrList = append(projectIdStrList, strconv.Itoa(int(item)))
 	}
 
-	rows, err := util.DB.Query("SELECT id, creator, group_id, name, status FROM project WHERE id IN (?)", strings.Join(projectIdStrList, " , "))
+	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, creator, group_id, name, status FROM project WHERE id IN (%s)", strings.Join(projectIdStrList, " , ")))
 
 	if err != nil {
 		log.Println(err)

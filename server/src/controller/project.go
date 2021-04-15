@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"service"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -24,7 +26,8 @@ type CreateProjectResponse struct {
 var projectService = new(service.ProjectService)
 
 func (p *ProjectController) Router(router *util.RouterHandler) {
-	router.Router("/project/list", p.findAll)
+	router.Router("/project/all", p.findAll)
+	router.Router("/project/list", p.GetProjectList)
 	router.Router("/project", p.createProject)
 }
 
@@ -39,6 +42,23 @@ func (p *ProjectController) findAll(w http.ResponseWriter, r *http.Request) {
 	participantProjectList := projectService.FindParticipantProjectList(uid)
 
 	util.ResultJsonOk(w, ProjectResponse{ createdProjectList, participantProjectList })
+}
+
+func (p *ProjectController) GetProjectList(w http.ResponseWriter, r *http.Request) {
+	vars := r.URL.Query()
+
+	projectIdStr := strings.Split(vars.Get("project_ids"), `,`)
+
+	var projectIdList []uint
+
+	for _, str := range projectIdStr {
+		num, _ := strconv.Atoi(str)
+		projectIdList = append(projectIdList, uint(num))
+	}
+
+	list := projectService.FindAll(projectIdList)
+
+	util.ResultJsonOk(w, list)
 }
 
 func (p *ProjectController) createProject(w http.ResponseWriter, r *http.Request) {

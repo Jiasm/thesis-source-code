@@ -58,6 +58,32 @@
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
           <div class="grid-content bg-purple">
+            创建人
+          </div>
+        </el-col>
+        <el-col class="col" :span="6">
+          <div class="grid-content bg-purple">
+            <el-input
+              v-model="creator"
+              :disabled="viewState">
+            </el-input>
+          </div>
+        </el-col>
+        <el-col class="col col-title" :span="6">
+          <div class="grid-content bg-purple">
+            执行人
+          </div>
+        </el-col>
+        <el-col class="col" :span="6">
+            <el-input
+              v-model="executor"
+              :disabled="viewState">
+            </el-input>
+        </el-col>
+      </el-row>
+      <el-row type="flex" class="row" :gutter="20">
+        <el-col class="col col-title" :span="6">
+          <div class="grid-content bg-purple">
             任务类型
           </div>
         </el-col>
@@ -101,7 +127,7 @@
               :disable-transitions="false"
               @close="handleClose(tag)"
             >
-              {{tag.name}}
+              {{tag.text}}
             </el-tag>
             <el-input
               v-show="!viewState"
@@ -236,12 +262,14 @@ export default {
       description: '项目描述信息',
       priority: 'P0',
       type: '需求',
+      creator: '',
+      executor: '',
       expireDate: '2021-05-01',
       tags: [
         {
-          name: '标签 1',
+          text: '标签 1',
         }, {
-          name: '标签 2',
+          text: '标签 2',
         },
       ],
       comments: [
@@ -302,14 +330,17 @@ export default {
     async loadData() {
       const data = await getTaskDetail(this.$props.taskId)
 
-      this.$data.projectName = 'test proj',
-      this.$data.taskGroupName = 'test'
+      this.$data.projectName = data.projectName
+      this.$data.taskGroupName = data.taskGroupName
       this.$data.title = data.title
       this.$data.description = data.desc
+      this.$data.creator = data.creator
+      this.$data.executor = data.executor
       this.$data.priority = data.priority
       this.$data.type = data.type
       this.$data.expireDate = data.expireDate
       this.$data.childTask = data.childTask
+      this.$data.tags = data.tags
 
 
       // tags: [
