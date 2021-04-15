@@ -50,31 +50,37 @@ export async function getProjectList () {
 async function getTaskGroupList (taskGroupIdList) {
   const { data: { data : { list: groupList }} } = await axios.get(`/task/group/list?group_ids=${[...new Set(taskGroupIdList)].join(',')}`)
 
-  return groupList
+  return groupList || []
 }
 
 async function getUserList (userIdList) {
   const { data: { data : { list: userList }} } = await axios.get(`/user/list?user_ids=${[...new Set(userIdList)].join(',')}`)
 
-  return userList
+  return userList || []
 }
 
 async function getTaskTagList (taskIdList) {
   const { data: { data : { list: taskTagList }} } = await axios.get(`/task/tag/list?task_ids=${[...new Set(taskIdList)].join(',')}`)
 
-  return taskTagList
+  return taskTagList || []
 }
 
 async function getTagInfoList (tagIdList) {
   const { data: { data : { list: tagList }} } = await axios.get(`/tag/list?tag_ids=${[...new Set(tagIdList)].join(',')}`)
 
-  return tagList
+  return tagList || []
 }
 
 async function getProjectListById (projectIdList) {
   const { data: { data } } = await axios.get(`/project/list?project_ids=${[...new Set(projectIdList)].join(',')}`)
 
-  return data
+  return data || []
+}
+
+async function getTaskCommentListById (taskId) {
+  const { data: { data: taskCommentList } } = await axios.get(`/task/comment/list?task_id=${taskId}`)
+
+  return taskCommentList || []
 }
 
 export async function getTaskList (projectId = 1) {
@@ -176,7 +182,7 @@ export async function getTaskList (projectId = 1) {
           const childItem = {
             id: childTask.id,
             title: childTask.title,
-            status:getStatus(task.status),
+            status:getStatus(childTask.status),
             priority: getPriority(childTask.priority),
             executor: userMap[childTask.executor].username,
             type: getTaskType(childTask.type),
@@ -199,6 +205,7 @@ export async function getTaskList (projectId = 1) {
 
 export async function getTaskDetail (taskId) {
   const { data: { data } } = await axios.get(`/task/detail?task_id=${taskId}`)
+  const taskCommentList = await getTaskCommentListById(data.id)
 
   const projectIdList = [data.task_project_id]
   const taskGroupIdList = [data.task_group_id]
@@ -210,6 +217,12 @@ export async function getTaskDetail (taskId) {
       taskIdList.push(item.id)
       userIdList.push(item.creator)
       userIdList.push(item.executor)
+    })
+  }
+
+  if (taskCommentList && taskCommentList.length) {
+    taskCommentList.forEach(item => {
+      userIdList.push(item.creator)
     })
   }
 
@@ -242,7 +255,6 @@ export async function getTaskDetail (taskId) {
   const tagMap = {}
 
   tagList.forEach(row => {
-    console.log({ row })
     tagMap[row.id] = row
   })
 
@@ -260,7 +272,7 @@ export async function getTaskDetail (taskId) {
     projectName: projectList[0].name,
     title: data.title,
     type: getTaskType(data.type),
-    tags: taskTagMap[data.id].map(tagId => tagMap[tagId]).filter(i => i),
+    tags: (taskTagMap[data.id] || []).map(tagId => tagMap[tagId]).filter(i => i),
     childTask: data.child_task ? data.child_task.map(row => {
       return {
         id: row.id,
@@ -270,7 +282,12 @@ export async function getTaskDetail (taskId) {
         executor: userMap[row.executor].username,
         expireDate: formatDate(row.expire_date),
       }
-    }) : []
+    }) : [],
+    commentList: taskCommentList.map(item => ({
+      id: item.id,
+      text: item.text,
+      username: userMap[item.creator].username
+    }))
   }
 
   return info

@@ -216,10 +216,10 @@
           </div>
         </el-col>
       </el-row>
-      <el-row type="flex" v-for="(comment, index) in comments" v-bind:key="index" class="row" :gutter="20">
+      <el-row type="flex" v-for="(comment, index) in commentList" v-bind:key="index" class="row" :gutter="20">
         <el-col class="col" :span="6">
           <div class="grid-content bg-purple">
-            {{comment.nickName}}
+            {{comment.username}}
           </div>
         </el-col>
         <el-col class="col" :span="18">
@@ -254,64 +254,30 @@ export default {
   props: ['viewState', 'taskId', 'close'],
   data() {
     return {
-      inputVisible: false,
       inputValue: '',
-      projectName: '项目名',
-      taskGroupName: '项目对应组名',
-      title: '这里是项目的标题',
-      description: '项目描述信息',
-      priority: 'P0',
-      type: '需求',
+      projectName: '',
+      taskGroupName: '',
+      title: '',
+      description: '',
+      priority: '',
+      type: '',
       creator: '',
       executor: '',
-      expireDate: '2021-05-01',
-      tags: [
+      expireDate: '',
+      tags: [],
+      commentList: [
         {
-          text: '标签 1',
-        }, {
-          text: '标签 2',
-        },
-      ],
-      comments: [
-        {
-          nickName: 'stark',
+          username: 'stark',
           text: '这里是评论内容'
         },
         {
-          nickName: 'stark',
+          username: 'stark',
           text: '这里是评论内容'
         },
       ],
-      dialogTableVisible: true,
-      childTask: [{
-        id: 1,
-        title: '子任务 1',
-        status: '未开始',
-        priority: 'P0',
-        executor: 'Jarvis',
-        expireDate: '2021-05-01',
-      }, {
-        id: 2,
-        title: '子任务 2',
-        status: '未开始',
-        priority: 'P0',
-        executor: 'Jarvis',
-        expireDate: '2021-05-01',
-      }, {
-        id: 3,
-        title: '子任务 3',
-        status: '未开始',
-        priority: 'P0',
-        executor: 'Jarvis',
-        expireDate: '2021-05-01',
-      }, {
-        id: 4,
-        title: '子任务 4',
-        status: '未开始',
-        priority: 'P0',
-        executor: 'Jarvis',
-        expireDate: '2021-05-01',
-      }]
+      childTask: [],
+      inputVisible: false,
+      dialogTableVisible: true
     }
   },
   methods: {
@@ -341,15 +307,8 @@ export default {
       this.$data.expireDate = data.expireDate
       this.$data.childTask = data.childTask
       this.$data.tags = data.tags
+      this.$data.commentList = data.commentList
 
-
-      // tags: [
-      //   {
-      //     name: '标签 1',
-      //   }, {
-      //     name: '标签 2',
-      //   },
-      // ],
       // comments: [
       //   {
       //     nickName: 'stark',
@@ -360,10 +319,6 @@ export default {
       //     text: '这里是评论内容'
       //   },
       // ],
-      // dialogTableVisible: true,
-      // childTask: [{
-
-      console.log('loadData', data)
     }
   },
   async mounted () {

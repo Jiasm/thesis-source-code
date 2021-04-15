@@ -80,7 +80,6 @@ export default {
         this.$data.taskId = row.id
         this.$data.dialogTableVisible = true
         this.$forceUpdate()
-        console.log(1)
       }
     },
     close () {

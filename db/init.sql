@@ -194,4 +194,6 @@ UPDATE task SET executor = 2 WHERE executor = 6;
 
 SELECT * FROM tag
 
-SELECT * FROM project
+SELECT * FROM task
+
+UPDATE task_comment SET text = 'hahaha' WHERE text = ''
