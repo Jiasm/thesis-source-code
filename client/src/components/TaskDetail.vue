@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="640px" title="任务详情" v-bind="$attrs" @close="handleInputConfirm" @open="loadData">
+  <el-dialog width="640px" title="任务详情" v-bind="$attrs" @close="closeDialog" @open="loadData">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
@@ -235,7 +235,21 @@
       </el-row>
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col" :span="6">
-          <el-button type="primary" size="mini">添加评论</el-button>
+          <el-button type="primary" size="mini" @click="showAddComment">添加评论</el-button>
+        </el-col>
+      </el-row>
+      <el-row type="flex" class="row" v-if="addCommentVisible" :gutter="20">
+        <el-col class="col" :span="18">
+          <div class="grid-content bg-purple">
+            <el-input
+              type="textarea"
+              :rows="2"
+              v-model="addCommentText">
+            </el-input>
+          </div>
+        </el-col>
+        <el-col class="col" :span="6">
+          <el-button type="success" size="mini" @click="sendComment">发送</el-button>
         </el-col>
       </el-row>
       <el-row v-show="!viewState" type="flex" class="row" :gutter="20" justify="end">
@@ -248,12 +262,13 @@
 </template>
 
 <script>
-import { getTaskDetail } from '../lib/api';
+import { getTaskDetail, addComment } from '../lib/api';
 export default {
   name: 'TaskDetail',
   props: ['viewState', 'taskId', 'close'],
   data() {
     return {
+      id: 0,
       inputValue: '',
       projectName: '',
       taskGroupName: '',
@@ -277,7 +292,9 @@ export default {
       ],
       childTask: [],
       inputVisible: false,
-      dialogTableVisible: true
+      dialogTableVisible: true,
+      addCommentVisible: false,
+      addCommentText: ''
     }
   },
   methods: {
@@ -291,11 +308,22 @@ export default {
       });
     },
     handleInputConfirm() {
+    },
+    closeDialog() {
       this.$props.close()
+    },
+    showAddComment () {
+      this.$data.addCommentVisible = true
+    },
+    async sendComment () {
+      await addComment(this.$data.id, this.$data.addCommentText)
+      this.$data.addCommentVisible = false
+      await this.loadData()
     },
     async loadData() {
       const data = await getTaskDetail(this.$props.taskId)
 
+      this.$data.id = data.id
       this.$data.projectName = data.projectName
       this.$data.taskGroupName = data.taskGroupName
       this.$data.title = data.title
