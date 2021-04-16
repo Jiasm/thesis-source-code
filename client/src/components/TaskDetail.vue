@@ -321,7 +321,7 @@
 </template>
 
 <script>
-import { getTaskDetail, addComment, changeTask, newTask } from '../lib/api';
+import { getTaskDetail, addComment, changeTask, newChildTask } from '../lib/api';
 import { taskType, status, priority } from '../util'
 export default {
   name: 'TaskDetail',
@@ -406,7 +406,7 @@ export default {
       }))
 
       await Promise.all(newRows.map(row => {
-        return newTask({
+        return newChildTask({
           title: row.title,
           desc: row.desc,
           executor: row.executor,

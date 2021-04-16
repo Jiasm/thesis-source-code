@@ -76,7 +76,7 @@ func (p *UserDao) FindAll(userIdList []uint) []entity.User {
 }
 
 func (p *UserDao) FindByName(username string) *entity.User {
-	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM user WHERE username = ? LIMIT 1", username)
+	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM `user` WHERE username = ? LIMIT 1", username)
 
 	if err != nil {
 		log.Println(err)

@@ -192,10 +192,10 @@ UPDATE task SET type = 1 WHERE id = 8;
 
 UPDATE task SET executor = 2 WHERE executor = 6;
 
-SELECT * FROM user
-
 SELECT * FROM task
+
+SELECT * FROM task WHERE parent_task_id = 1
 
 UPDATE task_comment SET text = 'hahaha' WHERE text = '';
 
-UPDATE `task` SET desc = '任务描述 2.x' , status = 4 WHERE id = 1
+UPDATE `task` SET executor = 2 WHERE executor = 0

@@ -322,13 +322,13 @@ export async function changeTask (taskItem) {
   })
 }
 
-export async function newTask (taskItem) {
-  await axios.post('/task', {
+export async function newChildTask (taskItem) {
+  await axios.post('/child-task', {
     title: taskItem.title,
     desc: taskItem.desc,
     executor: taskItem.executor,
     status: taskItem.status,
-    expire_date: taskItem.expireDate,
+    expire_date: moment(taskItem.expireDate).unix(),
     task_project_id: taskItem.taskProjectId,
     task_group_id: taskItem.taskGroupId,
     parent_task_id: taskItem.parentTaskId,

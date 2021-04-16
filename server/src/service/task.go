@@ -20,6 +20,8 @@ func (p *TaskService) FindByFilter(creator, executor, status, maxCreatedDate, mi
 
 func (p *TaskService) Create(request dao.NewTask) uint {
 	request.CreatedDate = uint(time.Now().Unix())
+	executorInfo := userDao.FindByName(request.Executor)
+	request.ExecutorId = executorInfo.ID
 	taskId := taskDao.Insert(request)
 
 	return taskId
@@ -34,6 +36,8 @@ func (p *TaskService) Change(taskId, title, desc, executor, status, expireDate, 
 
 func (p *TaskService) CreateChildTask(request dao.NewTask) uint {
 	request.CreatedDate = uint(time.Now().Unix())
+	executorInfo := userDao.FindByName(request.Executor)
+	request.ExecutorId = executorInfo.ID
 	taskId := taskDao.Insert(request)
 
 	return taskId
