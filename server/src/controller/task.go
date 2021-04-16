@@ -60,6 +60,18 @@ type AddCommentResponse struct {
 	CommentId uint `json:"comment_id"`
 }
 
+type ChangeFieldsResponse struct {
+	TaskId string `json:"task_id"`
+	Title string `json:"title"`
+	Desc string `json:"desc"`
+	Executor string `json:"executor"`
+	Status string `json:"status"`
+	ExpireDate string `json:"expire_date"`
+	TaskGroupId string `json:"task_group_id"`
+	TaskType string `json:"task_type"`
+	Priority string `json:"priority"`
+}
+
 var taskService = new(service.TaskService)
 
 func (p *TaskController) Router(router *util.RouterHandler) {
@@ -72,6 +84,7 @@ func (p *TaskController) Router(router *util.RouterHandler) {
 	router.Router("/task/add-comment", p.addComment)
 	router.Router("/task/add-tag", p.addTag)
 	router.Router("/task/detail", p.FindByTaskId)
+	router.Router("/task/update", p.ChangeTask)
 }
 
 func (p *TaskController) findByFilter(w http.ResponseWriter, r *http.Request) {
@@ -215,4 +228,16 @@ func (p *TaskController) FindByTaskId(w http.ResponseWriter, r *http.Request) {
 	childTaskList := taskService.FindByParentTaskId(uint(taskId))
 
 	util.ResultJsonOk(w, TaskDetailResponse{task, childTaskList})
+}
+
+func (p *TaskController) ChangeTask(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	request := &ChangeFieldsResponse{}
+
+	decoder.Decode(&request)
+
+	changedRows := taskService.Change(request.TaskId, request.Title, request.Desc, request.Executor, request.Status, request.ExpireDate, request.TaskGroupId, request.TaskType, request.Priority)
+
+	util.ResultJsonOk(w, ChangeStatusResponse{ changedRows })
 }

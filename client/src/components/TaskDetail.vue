@@ -168,40 +168,99 @@
       </el-row>
       <el-row type="flex" class="row" :gutter="20">
           <el-table
-          :data="childTask"
-          row-key="id"
-          style="width: 100%">
+            :data="childTask"
+            row-key="id"
+            style="width: 100%"
+            @row-click="changeRow"
+          >
           <el-table-column
             prop="title"
             label="子任务名"
             width="180"
             fixed>
+            <template scope="scope">
+              <el-input v-if="scope.row.edit" size="mini" v-model="scope.row.title" placeholder="请输入任务名"></el-input>
+              <span v-else>{{scope.row.title}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="status"
             label="子任务状态"
             width="100">
+            <template scope="scope">
+              <el-select v-if="scope.row.edit" size="mini" v-model="scope.row.status" placeholder="请选择任务状态">
+                <el-option
+                  v-for="item in statusList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <span v-else>{{scope.row.statusText}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="type"
+            label="任务类型"
+            width="100">
+            <template scope="scope">
+              <el-select v-if="scope.row.edit" size="mini" v-model="scope.row.type" placeholder="请选择任务类型">
+                <el-option
+                  v-for="item in taskTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <span v-else>{{scope.row.typeText}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="priority"
             label="优先级"
             width="100">
+            <template scope="scope">
+              <el-select v-if="scope.row.edit" size="mini" v-model="scope.row.priority" placeholder="请选择优先级">
+                <el-option
+                  v-for="item in priorityList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <span v-else>{{scope.row.priorityText}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="executor"
             label="执行人"
             width="100">
+            <template scope="scope">
+              <el-input v-if="scope.row.edit" size="mini" v-model="scope.row.executor" placeholder="请选择执行人"></el-input>
+              <span v-else>{{scope.row.executor}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="expireDate"
             label="截止时间"
-            width="180">
+            width="240">
+            <template scope="scope">
+              <el-date-picker
+                v-if="scope.row.edit"
+                v-model="scope.row.expireDate"
+                size="mini"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+              <span v-else>{{scope.row.expireDate}}</span>
+            </template>
           </el-table-column>
         </el-table>
       </el-row>
       <el-row type="flex" class="row" :gutter="20">
-        <el-col class="col" :span="6">
-          <el-button type="success" size="mini">新增子任务</el-button>
+        <el-col class="col" :span="12">
+          <el-button type="primary" size="mini" @click="showAppendTask">新增子任务</el-button>
+          <el-button v-if="appendTaskVisible" type="success" size="mini" @click="saveChildTaskChange">保存</el-button>
         </el-col>
       </el-row>
       <el-row type="flex" class="row split-line" :gutter="20">
@@ -262,7 +321,8 @@
 </template>
 
 <script>
-import { getTaskDetail, addComment } from '../lib/api';
+import { getTaskDetail, addComment, changeTask, newTask } from '../lib/api';
+import { taskType, status, priority } from '../util'
 export default {
   name: 'TaskDetail',
   props: ['viewState', 'taskId', 'close'],
@@ -280,21 +340,17 @@ export default {
       executor: '',
       expireDate: '',
       tags: [],
-      commentList: [
-        {
-          username: 'stark',
-          text: '这里是评论内容'
-        },
-        {
-          username: 'stark',
-          text: '这里是评论内容'
-        },
-      ],
+      commentList: [],
       childTask: [],
       inputVisible: false,
       dialogTableVisible: true,
       addCommentVisible: false,
-      addCommentText: ''
+      appendTaskVisible: false,
+      addCommentText: '',
+      incrNewChildTaskNum: 0,
+      taskTypeList: taskType,
+      statusList: status,
+      priorityList: priority,
     }
   },
   methods: {
@@ -314,6 +370,58 @@ export default {
     },
     showAddComment () {
       this.$data.addCommentVisible = true
+    },
+    showAppendTask () {
+      this.$data.appendTaskVisible = true
+      this.$data.childTask.push({ id: `unkonwn-${this.$data.incrNewChildTaskNum}`, edit: true })
+      this.$data.incrNewChildTaskNum += 1
+    },
+    changeRow (row) {
+      const index = this.$data.childTask.findIndex(r => r.id === row.id)
+      this.$data.appendTaskVisible = true
+      this.$set(this.$data.childTask, index, { ...this.$data.childTask[index], edit: true })
+      // this.$data.childTask[index].edit = true
+    },
+    async saveChildTaskChange () {
+      const changedRows = []
+      const newRows = []
+      this.$data.childTask.filter(row => row.edit).forEach(row => {
+        if (/^\d+$/.test(row.id)) {
+          changedRows.push(row)
+        } else {
+          newRows.push(row)
+        }
+      })
+
+      await Promise.all(changedRows.map(row => {
+        return changeTask({
+          id: row.id,
+          title: row.title,
+          executor: row.executor,
+          status: row.status,
+          expireDate: row.expireDate,
+          type: row.type,
+          priority: row.priority,
+        })
+      }))
+
+      await Promise.all(newRows.map(row => {
+        return newTask({
+          title: row.title,
+          desc: row.desc,
+          executor: row.executor,
+          status: row.status,
+          expireDate: row.expireDate,
+          taskProjectId: row.taskProjectId,
+          taskGroupId: row.taskGroupId,
+          parentTaskId: this.$data.id,
+          type: row.type,
+          priority: row.priority,
+        })
+      }))
+
+      this.$data.appendTaskVisible = false
+      await this.loadData()
     },
     async sendComment () {
       await addComment(this.$data.id, this.$data.addCommentText)

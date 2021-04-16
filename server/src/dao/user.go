@@ -74,3 +74,22 @@ func (p *UserDao) FindAll(userIdList []uint) []entity.User {
 
 	return users
 }
+
+func (p *UserDao) FindByName(username string) *entity.User {
+	rows, err := util.DB.Query("SELECT id, username, password, status, role_id FROM user WHERE username = ? LIMIT 1", username)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var user entity.User
+
+	rows.Next()
+
+	rows.Scan(&user.ID, &user.UserName, &user.Password, &user.Status, &user.RoleId)
+
+	rows.Close()
+
+	return &user
+}

@@ -3,6 +3,7 @@ package service
 import (
 	"dao"
 	"entity"
+	"strconv"
 	"time"
 )
 
@@ -22,6 +23,13 @@ func (p *TaskService) Create(request dao.NewTask) uint {
 	taskId := taskDao.Insert(request)
 
 	return taskId
+}
+
+func (p *TaskService) Change(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) uint {
+	executorInfo := userDao.FindByName(executor)
+	changedRows := taskDao.ChangeFields(taskId, title, desc, strconv.Itoa(int(executorInfo.ID)), status, expireDate, taskGroupId, taskType, priority)
+
+	return changedRows
 }
 
 func (p *TaskService) CreateChildTask(request dao.NewTask) uint {

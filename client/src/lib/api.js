@@ -1,4 +1,5 @@
 import axios from 'axios'
+import moment from 'moment'
 import { getStatus, getPriority, getTaskType, formatDate, filterTag } from '../util'
 
 export async function login (username, password) {
@@ -277,8 +278,12 @@ export async function getTaskDetail (taskId) {
       return {
         id: row.id,
         title: row.title,
-        status: getStatus(row.status),
-        priority: getPriority(row.priority),
+        statusText: getStatus(row.status),
+        status: row.status,
+        typeText: getTaskType(row.type),
+        type: row.type,
+        priorityText: getPriority(row.priority),
+        priority: row.priority,
         executor: userMap[row.executor].username,
         expireDate: formatDate(row.expire_date),
       }
@@ -300,4 +305,34 @@ export async function addComment(taskId, commentText) {
   })
 
   return data
+}
+
+export async function changeTask (taskItem) {
+  console.log(taskItem.expireDate, String(moment(taskItem.expireDate).unix()))
+  await axios.post('/task/update', {
+    task_id: String(taskItem.id),
+    title: taskItem.title,
+    desc: taskItem.desc,
+    executor: taskItem.executor ? String(taskItem.executor) : '',
+    status: taskItem.status ? String(taskItem.status) : '',
+    expire_date: taskItem.expireDate ? String(moment(taskItem.expireDate).unix()) : '',
+    task_group_id: taskItem.taskGroupId ? String(taskItem.taskGroupId) : '',
+    task_type: taskItem.type ? String(taskItem.type) : '',
+    priority: taskItem.priority ? String(taskItem.priority) : '',
+  })
+}
+
+export async function newTask (taskItem) {
+  await axios.post('/task', {
+    title: taskItem.title,
+    desc: taskItem.desc,
+    executor: taskItem.executor,
+    status: taskItem.status,
+    expire_date: taskItem.expireDate,
+    task_project_id: taskItem.taskProjectId,
+    task_group_id: taskItem.taskGroupId,
+    parent_task_id: taskItem.parentTaskId,
+    task_type: taskItem.type,
+    priority: taskItem.priority,
+  })
 }

@@ -267,3 +267,56 @@ func (p *TaskDao) ChangeExecutor(taskId, executor uint) uint {
 	return uint(count)
 }
 
+func (p *TaskDao) ChangeFields(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) uint {
+	var fields []string
+
+	if title != "" {
+		fields = append(fields, fmt.Sprintf(`title = '%s'`, title))
+	}
+
+	if desc != "" {
+		fields = append(fields, fmt.Sprintf("`desc` = '%s'", desc))
+	}
+
+	if executor != "" {
+		fields = append(fields, fmt.Sprintf(`executor = %s`, executor))
+	}
+
+	if status != "" {
+		fields = append(fields, fmt.Sprintf(`status = %s`, status))
+	}
+
+	if expireDate != "" {
+		fields = append(fields, fmt.Sprintf(`expire_date = %s`, expireDate))
+	}
+
+	if taskGroupId != "" {
+		fields = append(fields, fmt.Sprintf(`task_group_id = %s`, taskGroupId))
+	}
+
+	if taskType != "" {
+		fields = append(fields, fmt.Sprintf(`type = %s`, taskType))
+	}
+
+	if priority != "" {
+		fields = append(fields, fmt.Sprintf(`priority = %s`, priority))
+	}
+
+	var sql string
+
+	sql = "UPDATE `task` SET " + strings.Join(fields, " , ") + " WHERE id = ?"
+
+	fmt.Println(sql)
+
+	result, err := util.DB.Exec(sql, taskId)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(count)
+}
