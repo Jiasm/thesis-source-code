@@ -75,7 +75,7 @@ func (p *ProjectController) createProject(w http.ResponseWriter, r *http.Request
 
 	request.Creator = uid
 
-	taskId := projectService.Create(*request)
+	projectId := projectService.Create(*request)
 
-	util.ResultJsonOk(w, CreateProjectResponse{ taskId })
+	util.ResultJsonOk(w, CreateProjectResponse{ projectId })
 }

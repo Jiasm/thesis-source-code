@@ -201,3 +201,5 @@ UPDATE task SET parent_task_id = 0 WHERE parent_task_id is null;
 UPDATE `task` SET executor = 2 WHERE executor = 0;
 
 SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = 1 LIMIT 1
+
+SELECT * FROM `group`

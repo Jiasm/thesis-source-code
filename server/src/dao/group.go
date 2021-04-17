@@ -2,6 +2,7 @@ package dao
 
 import (
 	"entity"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -58,7 +59,7 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 		groupIdStrList = append(groupIdStrList, strconv.Itoa(int(item)))
 	}
 
-	rows, err := util.DB.Query("SELECT id, name, status, creator, created_date FROM `group` WHERE id IN (?)", strings.Join(groupIdStrList, " , "))
+	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, name, status, creator, created_date FROM `group` WHERE id IN (%s)", strings.Join(groupIdStrList, " , ")))
 
 	if err != nil {
 		log.Println(err)

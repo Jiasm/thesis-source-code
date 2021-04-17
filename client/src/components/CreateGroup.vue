@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="640px" height="480px" title="创建组织" :visible.sync="dialogTableVisible">
+  <el-dialog width="960px" height="480px" title="创建组织" v-bind="$attrs" @close="closeDialog">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
@@ -18,7 +18,7 @@
       </el-row>
       <el-row type="flex" class="row" :gutter="20" justify="end">
         <el-col class="col col-confirm" :span="4" >
-          <el-button type="success" size="mini">确定</el-button>
+          <el-button type="success" size="mini" @click="add">确定</el-button>
         </el-col>
       </el-row>
     </div>
@@ -26,32 +26,22 @@
 </template>
 
 <script>
+import { createGroup } from '../lib/api'
 export default {
   name: 'CreateGroup',
-  props: ['visible'],
+  props: ['close'],
   data() {
     return {
-      groupName: 'haha',
-      dialogTableVisible: this.$props.visible,
+      groupName: '',
     }
   },
   methods: {
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    closeDialog() {
+      this.$props.close()
     },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.tags.push({ name: inputValue });
-      }
-      this.inputVisible = false;
-      this.inputValue = '';
+    async add () {
+      await createGroup(this.$data.groupName)
+      this.$props.close()
     }
   }
 }

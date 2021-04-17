@@ -17,14 +17,14 @@ type GroupData struct {
 
 var groupDao = new(dao.GroupDao)
 
-func (p *GroupService) FindParticipantProjectList(uid uint) []GroupData {
+func (p *GroupService) FindParticipantGroupList(uid uint) []GroupData {
 	groupIdList := groupMemberDao.GetGroupIdByMember(uid)
 	groupList := groupDao.FindAll(groupIdList)
 
 	return BuildGroupData(groupList)
 }
 
-func (p *GroupService) FindCreatedProjectList(uid uint) []GroupData {
+func (p *GroupService) FindCreatedGroupList(uid uint) []GroupData {
 	groupIdList := groupDao.FindGroupIdByCreator(uid)
 	groupList := groupDao.FindAll(groupIdList)
 

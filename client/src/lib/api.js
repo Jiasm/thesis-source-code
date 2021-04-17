@@ -352,3 +352,29 @@ export async function removeTag (taskId, tagId) {
     tag_id: tagId
   })
 }
+
+export async function getGroupList () {
+  const { data: { data: { created, participant } } } = await axios.get('/group/list')
+
+  const groupList = created.concat(participant.filter(item => !created.find(i => i.id === item.id))).map(row => ({
+    id: row.id,
+    name: row.name,
+  }))
+
+  return [{ id: 0, name: '未分组' }].concat(groupList)
+}
+
+export async function createProject (title, groupId, status = 1) {
+  await axios.post('/project', {
+    group_id: groupId,
+    name: title,
+    status
+  })
+}
+
+export async function createGroup (title, status = 1) {
+  await axios.post('/group', {
+    name: title,
+    status
+  })
+}

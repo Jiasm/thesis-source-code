@@ -39,8 +39,8 @@ func (p *GroupController) findAll(w http.ResponseWriter, r *http.Request) {
 		uid = 3
 	}
 
-	createdGroupList := groupService.FindCreatedProjectList(uid)
-	participantGroupList := groupService.FindParticipantProjectList(uid)
+	createdGroupList := groupService.FindCreatedGroupList(uid)
+	participantGroupList := groupService.FindParticipantGroupList(uid)
 
 	util.ResultJsonOk(w, GroupResponse{ createdGroupList, participantGroupList })
 }

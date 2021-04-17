@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="640px" height="480px" title="创建项目" :visible.sync="dialogTableVisible">
+  <el-dialog width="960px" height="480px" title="创建项目" v-bind="$attrs" @close="closeDialog" @open="loadData">
     <div class="content">
       <el-row type="flex" class="content-row row" :gutter="20">
         <el-row type="flex" class="row" :gutter="20">
@@ -25,17 +25,21 @@
           </el-col>
           <el-col class="col" :span="18">
             <div class="grid-content bg-purple">
-              <el-input
-                v-model="groupName"
-              >
-              </el-input>
+              <el-select v-model="groupId" placeholder="请选择组织" class="fill">
+                <el-option
+                  v-for="item in groupList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </div>
           </el-col>
         </el-row>
       </el-row>
       <el-row type="flex" class="row" :gutter="20" justify="end">
         <el-col class="col col-confirm" :span="4" >
-          <el-button type="success" size="mini">确定</el-button>
+          <el-button type="success" size="mini" @click="add">确定</el-button>
         </el-col>
       </el-row>
     </div>
@@ -43,34 +47,31 @@
 </template>
 
 <script>
+import { getGroupList, createProject } from '../lib/api'
 export default {
   name: 'CreateProject',
-  props: ['visible'],
+  props: ['close'],
   data() {
     return {
-      groupName: 'haha',
-      dialogTableVisible: this.$props.visible,
+      groupId: 0,
+      projectName: '',
+      groupList: []
     }
   },
   methods: {
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    closeDialog() {
+      this.$props.close()
     },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
+    async loadData () {
+      const groupList = await getGroupList()
+
+      this.$data.groupList = groupList
     },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.tags.push({ name: inputValue });
-      }
-      this.inputVisible = false;
-      this.inputValue = '';
+    async add () {
+      await createProject(this.$data.projectName, this.$data.groupId)
+      this.$props.close()
     }
-  }
+  },
 }
 </script>
 
