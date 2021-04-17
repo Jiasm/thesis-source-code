@@ -44,6 +44,22 @@ func (p *TaskDao) Insert(request NewTask) uint {
 func (p *TaskDao) FindOne(taskId uint) entity.Task {
 	rows, err := util.DB.Query("SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = ? LIMIT 1", taskId)
 
+	fmt.Println("SELECT " +
+		"`id`," +
+		"`title`," +
+		"`desc`," +
+		"`creator`," +
+		"`executor`," +
+		"`status`," +
+		"`created_date`," +
+		"`expire_date`," +
+		"`task_project_id`," +
+		"`task_group_id`," +
+		"`type`," +
+		"`priority`," +
+		"`parent_task_id`" +
+		"FROM task WHERE id = ? LIMIT 1", taskId)
+
 	var task entity.Task
 
 	if err != nil {
@@ -53,9 +69,25 @@ func (p *TaskDao) FindOne(taskId uint) entity.Task {
 
 	rows.Next()
 
-	rows.Scan(&task.ID, &task.Title, &task.Desc, &task.Creator, &task.Executor, &task.Status, &task.CreatedDate, &task.ExpireDate, &task.TaskProjectId, &task.TaskGroupId, &task.ParentTaskId, &task.Type, &task.Priority)
+	rows.Scan(
+		&task.ID,
+		&task.Title,
+		&task.Desc,
+		&task.Creator,
+		&task.Executor,
+		&task.Status,
+		&task.CreatedDate,
+		&task.ExpireDate,
+		&task.TaskProjectId,
+		&task.TaskGroupId,
+		&task.Type,
+		&task.Priority,
+		&task.ParentTaskId,
+	)
 
 	rows.Close()
+
+	fmt.Println(task.Priority, task.Type)
 
 	return task
 }

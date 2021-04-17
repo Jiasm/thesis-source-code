@@ -26,6 +26,20 @@ func (p *TaskTagDao) Insert(taskId, tagId uint) uint {
 	return uint(changedCount)
 }
 
+func (p *TaskTagDao) Remove(taskId, tagId uint) uint {
+	result, err := util.DB.Exec("DELETE FROM `task_tag` WHERE `task_id` = ? AND `tag_id` = ?", taskId, tagId)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	changedCount, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(changedCount)
+}
+
 func (p *TaskTagDao) FindAll(taskIdList []uint) []entity.TaskTag {
 	var taskIdListStr []string
 

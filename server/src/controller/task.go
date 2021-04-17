@@ -4,6 +4,7 @@ import (
 	"dao"
 	"encoding/json"
 	"entity"
+	"fmt"
 	"net/http"
 	"service"
 	"strconv"
@@ -47,6 +48,11 @@ type AddTagRequest struct {
 	Tag 	string 	`json:"tag"`
 }
 
+type RemoveTagRequest struct {
+	TaskId 	uint 	`json:"task_id"`
+	TagId 	uint 	`json:"tag_id"`
+}
+
 type ChangeStatusResponse struct {
 	ChangedCount uint `json:"changed_count"`
 }
@@ -83,6 +89,7 @@ func (p *TaskController) Router(router *util.RouterHandler) {
 	router.Router("/task/append-member", p.appendMember)
 	router.Router("/task/add-comment", p.addComment)
 	router.Router("/task/add-tag", p.addTag)
+	router.Router("/task/remove-tag", p.RemoveTag)
 	router.Router("/task/detail", p.FindByTaskId)
 	router.Router("/task/update", p.ChangeTask)
 }
@@ -218,6 +225,18 @@ func (p *TaskController) addTag(w http.ResponseWriter, r *http.Request) {
 	util.ResultJsonOk(w, ChangeStatusResponse{ commentId })
 }
 
+func (p *TaskController) RemoveTag(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	request := &RemoveTagRequest{}
+
+	decoder.Decode(&request)
+
+	commentId := taskService.RemoveTag(request.TaskId, request.TagId)
+
+	util.ResultJsonOk(w, ChangeStatusResponse{ commentId })
+}
+
 func (p *TaskController) FindByTaskId(w http.ResponseWriter, r *http.Request) {
 	vars := r.URL.Query()
 
@@ -226,6 +245,8 @@ func (p *TaskController) FindByTaskId(w http.ResponseWriter, r *http.Request) {
 	task := taskService.FindByTaskId(uint(taskId))
 
 	childTaskList := taskService.FindByParentTaskId(uint(taskId))
+
+	fmt.Println(task)
 
 	util.ResultJsonOk(w, TaskDetailResponse{task, childTaskList})
 }

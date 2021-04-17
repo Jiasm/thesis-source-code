@@ -28,8 +28,14 @@ func (p *TaskService) Create(request dao.NewTask) uint {
 }
 
 func (p *TaskService) Change(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) uint {
-	executorInfo := userDao.FindByName(executor)
-	changedRows := taskDao.ChangeFields(taskId, title, desc, strconv.Itoa(int(executorInfo.ID)), status, expireDate, taskGroupId, taskType, priority)
+	var executorId string
+	if executor != "" {
+		executorInfo := userDao.FindByName(executor)
+		executorId = strconv.Itoa(int(executorInfo.ID))
+	} else {
+		executorId = executor
+	}
+	changedRows := taskDao.ChangeFields(taskId, title, desc, executorId, status, expireDate, taskGroupId, taskType, priority)
 
 	return changedRows
 }
@@ -78,6 +84,12 @@ func (p *TaskService) AddTag(taskId uint, text string) uint {
 	}
 
 	changedCount := taskTagDao.Insert(taskId, tagId)
+
+	return changedCount
+}
+
+func (p *TaskService) RemoveTag(taskId uint, tagId uint) uint {
+	changedCount := taskTagDao.Remove(taskId, tagId)
 
 	return changedCount
 }

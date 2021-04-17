@@ -267,12 +267,15 @@ export async function getTaskDetail (taskId) {
     expireDate: formatDate(data.expire_date),
     id: data.id,
     parentTaskId: data.parent_task_id,
-    priority: getPriority(data.priority),
-    status: getStatus(data.status),
+    priorityText: getPriority(data.priority),
+    priority: data.priority,
+    statusText: getStatus(data.status),
+    status: data.status,
     taskGroupName: groupList.length ? groupList[0].title : '未分组',
     projectName: projectList[0].name,
     title: data.title,
-    type: getTaskType(data.type),
+    typeText: getTaskType(data.type),
+    type: data.type,
     tags: (taskTagMap[data.id] || []).map(tagId => tagMap[tagId]).filter(i => i),
     childTask: data.child_task ? data.child_task.map(row => {
       return {
@@ -308,11 +311,10 @@ export async function addComment(taskId, commentText) {
 }
 
 export async function changeTask (taskItem) {
-  console.log(taskItem.expireDate, String(moment(taskItem.expireDate).unix()))
   await axios.post('/task/update', {
     task_id: String(taskItem.id),
-    title: taskItem.title,
-    desc: taskItem.desc,
+    title: taskItem.title ? taskItem.title : '',
+    desc: taskItem.desc ? taskItem.desc : '',
     executor: taskItem.executor ? String(taskItem.executor) : '',
     status: taskItem.status ? String(taskItem.status) : '',
     expire_date: taskItem.expireDate ? String(moment(taskItem.expireDate).unix()) : '',
@@ -334,5 +336,19 @@ export async function newChildTask (taskItem) {
     parent_task_id: taskItem.parentTaskId,
     task_type: taskItem.type,
     priority: taskItem.priority,
+  })
+}
+
+export async function addNewTag (taskId, tagName) {
+  await axios.post('/task/add-tag', {
+    task_id: taskId,
+    tag: tagName
+  })
+}
+
+export async function removeTag (taskId, tagId) {
+  await axios.post('/task/remove-tag', {
+    task_id: taskId,
+    tag_id: tagId
   })
 }
