@@ -28,6 +28,7 @@ var projectService = new(service.ProjectService)
 func (p *ProjectController) Router(router *util.RouterHandler) {
 	router.Router("/project/all", p.findAll)
 	router.Router("/project/list", p.GetProjectList)
+	router.Router("/project/group/list", p.GetProjectGroupList)
 	router.Router("/project", p.createProject)
 }
 
@@ -57,6 +58,16 @@ func (p *ProjectController) GetProjectList(w http.ResponseWriter, r *http.Reques
 	}
 
 	list := projectService.FindAll(projectIdList)
+
+	util.ResultJsonOk(w, list)
+}
+
+func (p *ProjectController) GetProjectGroupList(w http.ResponseWriter, r *http.Request) {
+	vars := r.URL.Query()
+
+	projectIdStr, _ := strconv.Atoi(vars.Get("project_id"))
+
+	list := taskGroupService.FindByProjectId(uint(projectIdStr))
 
 	util.ResultJsonOk(w, list)
 }

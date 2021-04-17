@@ -13,8 +13,7 @@ type NewTask struct {
 	Title string `json:"title"`
 	Desc string `json:"desc"`
 	Creator uint `json:"creator"`
-	Executor string `json:"executor"`
-	ExecutorId uint `json:"executor_id"`
+	Executor uint `json:"executor"`
 	Status uint `json:"status"`
 	CreatedDate uint `json:"created_date"`
 	ExpireDate uint `json:"expire_date"`
@@ -28,7 +27,7 @@ type NewTask struct {
 type TaskDao struct {}
 
 func (p *TaskDao) Insert(request NewTask) uint {
-	result, err := util.DB.Exec("INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", request.Title, request.Desc, request.Creator, request.ExecutorId, request.Status, request.CreatedDate, request.ExpireDate, request.TaskProjectId, request.TaskGroupId, request.ParentTaskId, request.TaskType, request.Priority)
+	result, err := util.DB.Exec("INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", request.Title, request.Desc, request.Creator, request.Executor, request.Status, request.CreatedDate, request.ExpireDate, request.TaskProjectId, request.TaskGroupId, request.ParentTaskId, request.TaskType, request.Priority)
 	if err != nil {
 		log.Println(err)
 		return 0

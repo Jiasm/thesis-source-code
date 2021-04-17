@@ -21,3 +21,9 @@ func (p *TaskGroupService) FindAll(taskGroupIdList []uint) []entity.TaskGroup {
 
 	return taskGroupList
 }
+
+func (p *TaskGroupService) FindByProjectId(projectId uint) []entity.TaskGroup {
+	taskGroupList := taskGroupDao.FindByProjectId(projectId)
+
+	return taskGroupList
+}

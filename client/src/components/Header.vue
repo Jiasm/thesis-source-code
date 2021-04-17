@@ -3,7 +3,7 @@
     <el-button class="btn" type="success" @mouseover.native=showCreateTools @mouseleave.native=hideCreateTools >
       创建
       <div class="tools" v-if="showTools">
-        <div class="item">创建任务</div>
+        <div class="item" @click="openCreateTask">创建任务</div>
         <div class="item" @click="openCreateProject">创建项目</div>
         <div class="item" @click="openCreateGroup">创建组织</div>
       </div>
@@ -15,19 +15,22 @@
     </div>
     <common-create-group :visible.sync="groupDialogVisible" :close="closeCreateGroup" />
     <common-create-project :visible.sync="projectDialogVisible" :close="closeCreateProject" />
+    <common-create-task :visible.sync="taskDialogVisible" :close="closeCreateTask" />
   </div>
 </template>
 
 <script>
 import CreateProject from './CreateProject';
 import CreateGroup from './CreateGroup';
+import CreateTask from './CreateTask';
 export default {
   name: 'Header',
-  components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup },
+  components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup, 'common-create-task': CreateTask },
   data() {
     return {
       projectDialogVisible: false,
       groupDialogVisible: false,
+      taskDialogVisible: false,
       showTools: false,
     };
   },
@@ -49,6 +52,12 @@ export default {
     },
     closeCreateGroup () {
       this.$data.groupDialogVisible = false
+    },
+    openCreateTask() {
+      this.$data.taskDialogVisible = true
+    },
+    closeCreateTask () {
+      this.$data.taskDialogVisible = false
     }
   }
 }

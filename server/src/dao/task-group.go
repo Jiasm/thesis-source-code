@@ -63,3 +63,28 @@ func (p *TaskGroupDao) FindAll(taskGroupIdList []uint) []entity.TaskGroup {
 
 	return taskGroupList
 }
+
+func (p *TaskGroupDao) FindByProjectId(projectId uint) []entity.TaskGroup {
+	rows, err := util.DB.Query("SELECT id, title, `desc`, creator, status FROM task_group WHERE id IN (SELECT task_group_id FROM task WHERE task_project_id = ? GROUP BY task_group_id)", projectId)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var taskGroupList []entity.TaskGroup
+
+	for rows.Next() {
+		fmt.Println("join")
+		var project entity.TaskGroup
+		rows.Scan(&project.ID, &project.Title, &project.Desc, &project.Creator, &project.Status)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		taskGroupList = append(taskGroupList, project)
+	}
+	rows.Close()
+
+	return taskGroupList
+}

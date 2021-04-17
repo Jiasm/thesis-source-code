@@ -198,8 +198,15 @@ SELECT * FROM task WHERE parent_task_id = 1
 
 UPDATE task SET parent_task_id = 0 WHERE parent_task_id is null;
 
-UPDATE `task` SET executor = 2 WHERE executor = 0;
+UPDATE `task` SET task_group_id = 1 WHERE id >= 9
 
 SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = 1 LIMIT 1
 
-SELECT * FROM `group`
+SELECT * FROM `task`;
+
+UPDATE `task` SET task_group_id = task_project_id
+
+SELECT * FROM `tag`;
+
+INSERT INTO `task_group` (`title`, `desc`, `creator`, `status`)
+VALUES ('test 2', 'xx', 1, 1), ('test 3', 'xx', 1, 1), ('test 4', 'xx', 1, 1)

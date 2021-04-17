@@ -85,7 +85,7 @@ async function getTaskCommentListById (taskId) {
 }
 
 export async function getTaskList (projectId = 1) {
-  const { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=10`)
+  const { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=50`)
 
   const taskGroupIdList = list.map(item => item.task_group_id)
   const userIdList = list.map(item => item.executor)
@@ -263,7 +263,8 @@ export async function getTaskDetail (taskId) {
     createdDate: formatDate(data.created_date),
     creator: userMap[data.creator].username,
     desc: data.desc,
-    executor: userMap[data.executor].username,
+    executorText: userMap[data.executor].username,
+    executor: data.executor,
     expireDate: formatDate(data.expire_date),
     id: data.id,
     parentTaskId: data.parent_task_id,
@@ -272,7 +273,9 @@ export async function getTaskDetail (taskId) {
     statusText: getStatus(data.status),
     status: data.status,
     taskGroupName: groupList.length ? groupList[0].title : '未分组',
+    taskGroupId: groupList.length ? groupList[0].id : 0,
     projectName: projectList[0].name,
+    projectId: projectList[0].id,
     title: data.title,
     typeText: getTaskType(data.type),
     type: data.type,
@@ -287,7 +290,8 @@ export async function getTaskDetail (taskId) {
         type: row.type,
         priorityText: getPriority(row.priority),
         priority: row.priority,
-        executor: userMap[row.executor].username,
+        executorText: userMap[row.executor].username,
+        executor: row.executor,
         expireDate: formatDate(row.expire_date),
       }
     }) : [],
@@ -321,6 +325,7 @@ export async function changeTask (taskItem) {
     task_group_id: taskItem.taskGroupId ? String(taskItem.taskGroupId) : '',
     task_type: taskItem.type ? String(taskItem.type) : '',
     priority: taskItem.priority ? String(taskItem.priority) : '',
+    task_project_id: taskItem.projectId
   })
 }
 
@@ -377,4 +382,30 @@ export async function createGroup (title, status = 1) {
     name: title,
     status
   })
+}
+
+export async function createTask (info) {
+  await axios.post('/task', {
+    title: info.title,
+    desc: info.description,
+    executor: info.executor,
+    status: info.status,
+    expire_date: moment(info.expireDate).unix(),
+    task_project_id: info.projectId,
+    task_group_id: info.taskGroupId,
+    type: info.type,
+    priority: info.priority,
+  })
+}
+
+export async function getAllUserList () {
+  const { data: { data: { list } }} = await axios.get('/user/list/all')
+
+  return list
+}
+
+export async function getProjectGroupList (projectId) {
+  const { data: { data } } = await axios.get(`/project/group/list?project_id=${projectId}`)
+
+  return [{ id: 0, title: '未分组' }].concat(data || [])
 }

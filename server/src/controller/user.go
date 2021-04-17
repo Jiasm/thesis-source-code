@@ -36,6 +36,7 @@ func (p *UserController) Router(router *util.RouterHandler) {
 	router.Router("/logout", p.logout)
 	router.Router("/user/create", p.create)
 	router.Router("/user/list", p.GetList)
+	router.Router("/user/list/all", p.GetAllList)
 }
 
 func (p *UserController) logout(w http.ResponseWriter, r *http.Request) {
@@ -107,3 +108,16 @@ func (p *UserController) GetList(w http.ResponseWriter, r *http.Request) {
 
 	util.ResultJsonOk(w, UserListResponse{ responseList })
 }
+
+func (p *UserController) GetAllList(w http.ResponseWriter, r *http.Request) {
+	userList := userService.FindAllList()
+
+	var responseList []UserResponse
+
+	for _, user := range userList {
+		responseList = append(responseList, UserResponse{user.ID, user.UserName})
+	}
+
+	util.ResultJsonOk(w, UserListResponse{ responseList })
+}
+

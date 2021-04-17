@@ -9,10 +9,14 @@
         </el-col>
         <el-col class="col" :span="6">
           <div class="grid-content bg-purple">
-            <el-input
-              v-model="projectName"
-              :disabled="showOnly">
-            </el-input>
+            <el-select v-model="projectId" placeholder="请选择项目" class="fill" :disabled="showOnly">
+              <el-option
+                v-for="item in projectList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
           </div>
         </el-col>
       </el-row>
@@ -67,11 +71,14 @@
           </div>
         </el-col>
         <el-col class="col" :span="6">
-            <el-input
-              v-model="executor"
-              @change="changeExecutor"
-            >
-            </el-input>
+          <el-select v-model="executor" placeholder="请选择执行人" class="fill" @change="changeExecutor">
+            <el-option
+              v-for="item in userList"
+              :key="item.id"
+              :label="item.username"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-col>
       </el-row>
       <el-row type="flex" class="row" :gutter="20">
@@ -267,8 +274,16 @@
             label="执行人"
             width="100">
             <template scope="scope">
-              <el-input v-if="scope.row.edit" size="mini" v-model="scope.row.executor" placeholder="请选择执行人"></el-input>
-              <span v-else>{{scope.row.executor}}</span>
+              <el-select v-if="scope.row.edit" v-model="scope.row.executor" placeholder="请选择执行人">
+                <el-option
+                  size="mini"
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.username"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+              <span v-else>{{scope.row.executorText}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -345,17 +360,12 @@
           <el-button type="success" size="mini" @click="sendComment">发送</el-button>
         </el-col>
       </el-row>
-      <el-row type="flex" class="row" :gutter="20" justify="end">
-        <el-col class="col right-flow" :span="12" >
-          <el-button v-show="!showOnly" type="success" size="mini">创建任务</el-button>
-        </el-col>
-      </el-row>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { getTaskDetail, addComment, changeTask, newChildTask, addNewTag, removeTag } from '../lib/api';
+import { getTaskDetail, addComment, changeTask, newChildTask, addNewTag, removeTag, getAllUserList, getProjectList } from '../lib/api';
 import { taskType, status, priority } from '../util'
 export default {
   name: 'TaskDetail',
@@ -364,7 +374,6 @@ export default {
     return {
       id: 0,
       inputValue: '',
-      projectName: '',
       taskGroupName: '',
       title: '',
       description: '',
@@ -381,12 +390,16 @@ export default {
       dialogTableVisible: true,
       addCommentVisible: false,
       appendTaskVisible: false,
+      taskGroupId: 0,
+      projectId: 0,
       showOnly: this.$props.viewState,
+      userList: [],
       addCommentText: '',
       incrNewChildTaskNum: 0,
       taskTypeList: taskType,
       statusList: status,
       priorityList: priority,
+      projectList: [],
     }
   },
   methods: {
@@ -502,8 +515,8 @@ export default {
           executor: row.executor,
           status: row.status,
           expireDate: row.expireDate,
-          taskProjectId: row.taskProjectId,
-          taskGroupId: row.taskGroupId,
+          taskProjectId: this.$data.taskGroupId,
+          taskGroupId: this.$data.projectId,
           parentTaskId: this.$data.id,
           type: row.type,
           priority: row.priority,
@@ -520,9 +533,10 @@ export default {
     },
     async loadData() {
       const data = await getTaskDetail(this.$props.taskId)
+      const userList = await getAllUserList()
+      const projInfo = await getProjectList()
 
       this.$data.id = data.id
-      this.$data.projectName = data.projectName
       this.$data.taskGroupName = data.taskGroupName
       this.$data.title = data.title
       this.$data.description = data.desc
@@ -535,6 +549,10 @@ export default {
       this.$data.childTask = data.childTask
       this.$data.tags = data.tags
       this.$data.commentList = data.commentList
+      this.$data.userList = userList
+      this.$data.taskGroupId = data.taskGroupId
+      this.$data.projectId = data.projectId
+      this.$data.projectList = projInfo.projectList
     }
   },
   async mounted () {

@@ -3,7 +3,6 @@ package service
 import (
 	"dao"
 	"entity"
-	"strconv"
 	"time"
 )
 
@@ -20,30 +19,30 @@ func (p *TaskService) FindByFilter(creator, executor, status, maxCreatedDate, mi
 
 func (p *TaskService) Create(request dao.NewTask) uint {
 	request.CreatedDate = uint(time.Now().Unix())
-	executorInfo := userDao.FindByName(request.Executor)
-	request.ExecutorId = executorInfo.ID
+	//executorInfo := userDao.FindByName(request.Executor)
+	//request.ExecutorId = executorInfo.ID
 	taskId := taskDao.Insert(request)
 
 	return taskId
 }
 
 func (p *TaskService) Change(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) uint {
-	var executorId string
-	if executor != "" {
-		executorInfo := userDao.FindByName(executor)
-		executorId = strconv.Itoa(int(executorInfo.ID))
-	} else {
-		executorId = executor
-	}
-	changedRows := taskDao.ChangeFields(taskId, title, desc, executorId, status, expireDate, taskGroupId, taskType, priority)
+	//var executorId string
+	//if executor != "" {
+	//	executorInfo := userDao.FindByName(executor)
+	//	executorId = strconv.Itoa(int(executorInfo.ID))
+	//} else {
+	//	executorId = executor
+	//}
+	changedRows := taskDao.ChangeFields(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority)
 
 	return changedRows
 }
 
 func (p *TaskService) CreateChildTask(request dao.NewTask) uint {
 	request.CreatedDate = uint(time.Now().Unix())
-	executorInfo := userDao.FindByName(request.Executor)
-	request.ExecutorId = executorInfo.ID
+	//executorInfo := userDao.FindByName(request.Executor)
+	//request.ExecutorId = executorInfo.ID
 	taskId := taskDao.Insert(request)
 
 	return taskId

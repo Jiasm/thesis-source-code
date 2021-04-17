@@ -29,3 +29,9 @@ func (p *UserService) FindAll(userIdList []uint) []entity.User {
 
 	return userList
 }
+
+func (p *UserService) FindAllList() []entity.User {
+	userList := userDao.FindAllList()
+
+	return userList
+}

@@ -45,6 +45,12 @@ func (p *ProjectService) FindAll(projectIdList []uint) []entity.Project {
 	return projectList
 }
 
+func (p *ProjectService) FindGroupList(projectId uint) []entity.TaskGroup {
+	groupList := taskGroupDao.FindByProjectId(projectId)
+
+	return groupList
+}
+
 func BuildProjectData(projectList []entity.Project) []ProjectData {
 	// get group id list
 	var groupIdList []uint
