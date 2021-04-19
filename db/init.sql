@@ -206,7 +206,13 @@ SELECT * FROM `task`;
 
 UPDATE `task` SET task_group_id = task_project_id
 
-SELECT * FROM `tag`;
+SELECT * FROM `task` WHERE task_project_id = 1;
+
+UPDATE `task` SET `task_group_id` = 0 WHERE task_project_id = 1 AND id > 10
 
 INSERT INTO `task_group` (`title`, `desc`, `creator`, `status`)
 VALUES ('test 2', 'xx', 1, 1), ('test 3', 'xx', 1, 1), ('test 4', 'xx', 1, 1)
+
+SELECT * FROM project
+
+UPDATE `task_group` SET title = 'group title' WHERE id = 1

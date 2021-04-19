@@ -33,7 +33,32 @@ func (p *TaskGroupDao) Insert(task NewTaskGroup) uint {
 	return uint(id)
 }
 
-func (p *TaskGroupDao) FindAll(taskGroupIdList []uint) []entity.TaskGroup {
+func (p *TaskGroupDao) FindAll() []entity.TaskGroup {
+	rows, err := util.DB.Query("SELECT id, title, `desc`, creator, status FROM task_group")
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	var taskGroupList []entity.TaskGroup
+
+	for rows.Next() {
+		fmt.Println("join")
+		var project entity.TaskGroup
+		rows.Scan(&project.ID, &project.Title, &project.Desc, &project.Creator, &project.Status)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		taskGroupList = append(taskGroupList, project)
+	}
+	rows.Close()
+
+	return taskGroupList
+}
+
+func (p *TaskGroupDao) FindByGroupId(taskGroupIdList []uint) []entity.TaskGroup {
 	var taskGroupIdStrList []string
 
 	for _, item := range taskGroupIdList {

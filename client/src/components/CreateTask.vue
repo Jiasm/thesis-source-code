@@ -9,7 +9,7 @@
         </el-col>
         <el-col class="col" :span="6">
           <div class="grid-content bg-purple">
-            <el-select v-model="projectId" placeholder="请选择项目" class="fill" @change="changeProjectId">
+            <el-select v-model="projectId" placeholder="请选择项目" class="fill">
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { getAllUserList, getProjectList, getProjectGroupList, createTask } from '../lib/api';
+import { getAllUserList, getProjectList, getAllTaskGroup, createTask } from '../lib/api';
 import { taskType, status, priority } from '../util'
 export default {
   name: 'CreateTask',
@@ -196,17 +196,14 @@ export default {
     closeDialog() {
       this.$props.close()
     },
-    async changeProjectId () {
-      const projectGroupList = await getProjectGroupList(this.$data.projectId)
-
-      this.$data.projectGroupList = projectGroupList
-    },
     async loadData() {
       const userList = await getAllUserList()
       const projInfo = await getProjectList()
+      const projectGroupList = await getAllTaskGroup()
 
       this.$data.userList = userList
       this.$data.projectList = projInfo.projectList
+      this.$data.projectGroupList = projectGroupList
     },
     async submitCreateTask () {
       await createTask({

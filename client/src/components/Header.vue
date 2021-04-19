@@ -4,6 +4,7 @@
       创建
       <div class="tools" v-if="showTools">
         <div class="item" @click="openCreateTask">创建任务</div>
+        <div class="item" @click="openCreateTaskGroup">创建任务组</div>
         <div class="item" @click="openCreateProject">创建项目</div>
         <div class="item" @click="openCreateGroup">创建组织</div>
       </div>
@@ -11,11 +12,12 @@
     <el-button class="btn" type="primary" >搜索</el-button>
     <input class="search-input" placeholder="搜索" />
     <div>
-      <div class="nick-name">nick name</div>
+      <div class="nick-name">{{username}}</div>
     </div>
     <common-create-group :visible.sync="groupDialogVisible" :close="closeCreateGroup" />
     <common-create-project :visible.sync="projectDialogVisible" :close="closeCreateProject" />
     <common-create-task :visible.sync="taskDialogVisible" :close="closeCreateTask" />
+    <common-create-task-group :visible.sync="taskGroupDialogVisible" :close="closeCreateTaskGroup" />
   </div>
 </template>
 
@@ -23,15 +25,18 @@
 import CreateProject from './CreateProject';
 import CreateGroup from './CreateGroup';
 import CreateTask from './CreateTask';
+import CreateTaskGroup from './CreateTaskGroup';
 export default {
   name: 'Header',
-  components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup, 'common-create-task': CreateTask },
+  components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup, 'common-create-task': CreateTask, 'common-create-task-group': CreateTaskGroup },
   data() {
     return {
       projectDialogVisible: false,
       groupDialogVisible: false,
       taskDialogVisible: false,
+      taskGroupDialogVisible: false,
       showTools: false,
+      username: '',
     };
   },
   methods: {
@@ -58,7 +63,18 @@ export default {
     },
     closeCreateTask () {
       this.$data.taskDialogVisible = false
-    }
+    },
+    openCreateTaskGroup() {
+      this.$data.taskGroupDialogVisible = true
+    },
+    closeCreateTaskGroup () {
+      this.$data.taskGroupDialogVisible = false
+    },
+  },
+  mounted () {
+    const username = sessionStorage.getItem('username')
+
+    this.$data.username = username
   }
 }
 </script>

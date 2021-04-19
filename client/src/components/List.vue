@@ -17,37 +17,42 @@
           <el-table-column
             prop="title"
             label="任务名"
-            sortable
-            width="180">
+          >
           </el-table-column>
           <el-table-column
             prop="status"
             label="任务状态"
-            sortable
-            width="120">
+            width="150"
+          >
           </el-table-column>
           <el-table-column
             prop="priority"
-            sortable
-            label="优先级">
+            label="优先级"
+            width="150"
+          >
           </el-table-column>
           <el-table-column
             prop="executor"
-            sortable
-            label="执行人">
+            label="执行人"
+            width="150"
+          >
           </el-table-column>
           <el-table-column
             prop="type"
-            sortable
-            label="任务类型">
+            label="任务类型"
+            width="150"
+          >
           </el-table-column>
           <el-table-column
             prop="expireDate"
-            sortable
-            label="截止日期">
+            label="截止日期"
+            width="200"  
+          >
           </el-table-column>
           <el-table-column
-            label="标签">
+            label="标签"
+            width="300"
+          >
             <template slot-scope="scope">
               <el-tag
                 class="tag"
@@ -87,7 +92,13 @@ export default {
     }
   },
   async mounted() {
-    this.$data.tableData = await getTaskList()
+    if (sessionStorage.getItem('project_id')) {
+      this.$data.tableData = await getTaskList(sessionStorage.getItem('project_id'))
+    }
+
+    window.addEventListener('change-project-id', async (e) => {
+      this.$data.tableData = await getTaskList(e.pid)  
+    })
   },
   data() {
     return {

@@ -2,6 +2,7 @@ package memory
 
 import (
 	"container/list"
+	"fmt"
 	"session"
 	"sync"
 	"time"
@@ -16,6 +17,7 @@ type SessionStore struct {
 }
 
 func (p *SessionStore) Set(key, value interface{}) error {
+	fmt.Println("set session", key, value)
 	p.value[key] = value
 	pder.SessionUpdate(p.sid)
 	return nil

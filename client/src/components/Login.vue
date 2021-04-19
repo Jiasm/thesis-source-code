@@ -45,7 +45,7 @@
 </template>
 
 <script>
-// import { login } from '../lib/api'
+import { login } from '../lib/api'
 
 export default {
   name: 'Login',
@@ -60,9 +60,18 @@ export default {
   },
   methods: {
     async login() {
-      // const { username, password } = this.$data
+      const { username, password } = this.$data
       
-      // const data = await login(username, password)
+      const data = await login(username, password)
+
+      if (data.code === 200) {
+        // success
+        sessionStorage.setItem('uid', data.data.id)
+        sessionStorage.setItem('username', data.data.username)
+        this.$router.push({ path: '/list' })
+      } else {
+        console.log('error')
+      }
 
       // if (/^success:/.test(data)) {
       //   const id = data.match(/^success:(\d+)/)[1]

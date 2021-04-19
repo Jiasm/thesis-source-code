@@ -11,10 +11,22 @@ export async function login (username, password) {
   return data
 }
 
+export async function logout () {
+  await axios.post('/logout')
+}
+
 export async function getProjectList () {
   const { data: { data } } = await axios.get(`/project/all`)
 
-  const { created, participant } = data
+  let { created, participant } = data
+
+  if (!created) {
+    created = []
+  }
+
+  if (!participant) {
+    participant = []
+  }
 
   const projectList = created.concat(participant.filter(item => !created.find(i => i.id === item.id))).map(row => ({
     id: row.id,
@@ -359,7 +371,15 @@ export async function removeTag (taskId, tagId) {
 }
 
 export async function getGroupList () {
-  const { data: { data: { created, participant } } } = await axios.get('/group/list')
+  let { data: { data: { created, participant } } } = await axios.get('/group/list')
+
+  if (!created) {
+    created = []
+  }
+
+  if (!participant) {
+    participant = []
+  }
 
   const groupList = created.concat(participant.filter(item => !created.find(i => i.id === item.id))).map(row => ({
     id: row.id,
@@ -408,4 +428,18 @@ export async function getProjectGroupList (projectId) {
   const { data: { data } } = await axios.get(`/project/group/list?project_id=${projectId}`)
 
   return [{ id: 0, title: '未分组' }].concat(data || [])
+}
+
+export async function getAllTaskGroup () {
+  const { data: { data: { list } } } = await axios.get(`/task/group/list/all`)
+
+  return [{ id: 0, title: '未分组' }].concat(list || [])
+}
+
+export async function createTaskGroup (title, desc) {
+  await axios.post('/task-group', {
+    title,
+    desc,
+    status: 1
+  })
 }

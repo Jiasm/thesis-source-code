@@ -4,16 +4,13 @@
       <div class="nav-item">个人中心</div>
       <div class="nav-item">数据统计</div>
     </div>
-    <el-menu
-      default-active="2"
-      class="treemenu"
-    >
+    <el-menu class="treemenu">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>我的项目</span>
         </template>
-        <el-menu-item v-for="(row, index) in projectList" v-bind:key="index" :index="`1-${index}`">{{row.name}}</el-menu-item>
+        <el-menu-item v-for="(row, index) in projectList" v-bind:key="index" :index="`1-${row.id}`" @click="jumpProject">{{row.name}}</el-menu-item>
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
@@ -25,7 +22,7 @@
               <i class="el-icon-location"></i>
               <span>{{row.groupName}}</span>
             </template>
-            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${index}-${i}`">{{line.name}}</el-menu-item>
+            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${index}-${line.id}`" @click="jumpProject">{{line.name}}</el-menu-item>
           </el-submenu>
       </el-submenu>
     </el-menu>
@@ -52,6 +49,17 @@ export default {
     hideCreateTools: function(){
       console.log('trigger close')
       this.showTools = false
+    },
+    jumpProject (item) {
+      const index = item.index.split('-').pop()
+
+      localStorage.setItem('project_id', index)
+
+      const event = new Event('change-project-id')
+
+      event.pid = index
+
+      window.dispatchEvent(event)
     }
   },
   async mounted () {

@@ -4,7 +4,6 @@ import ElementUI from 'element-ui'
 import App from './App.vue'
 import Login from './components/Login.vue'
 import List from './components/List.vue'
-import Create from './components/Create.vue'
 import Reget from './components/Reget.vue'
 import UserLogin from './components/UserLogin.vue'
 import UserSignin from './components/UserSignin.vue'
@@ -18,7 +17,6 @@ Vue.config.productionTip = false
 const routes = [
   { path: '/', component: Login },
   { path: '/list', component: List },
-  { path: '/create', component: Create },
   { path: '/reget', component: Reget },
   { path: '/user-login', component: UserLogin },
   { path: '/user-signin', component: UserSignin },

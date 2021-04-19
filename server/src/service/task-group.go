@@ -16,8 +16,14 @@ func (p *TaskGroupService) Create(request dao.NewTaskGroup) uint {
 	return taskGroupId
 }
 
-func (p *TaskGroupService) FindAll(taskGroupIdList []uint) []entity.TaskGroup {
-	taskGroupList := taskGroupDao.FindAll(taskGroupIdList)
+func (p *TaskGroupService) FindByGroupId(taskGroupIdList []uint) []entity.TaskGroup {
+	taskGroupList := taskGroupDao.FindByGroupId(taskGroupIdList)
+
+	return taskGroupList
+}
+
+func (p *TaskGroupService) FindAll() []entity.TaskGroup {
+	taskGroupList := taskGroupDao.FindAll()
 
 	return taskGroupList
 }

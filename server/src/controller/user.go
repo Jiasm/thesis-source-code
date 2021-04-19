@@ -64,9 +64,9 @@ func (p *UserController) login(w http.ResponseWriter, r *http.Request) {
 
 	//session
 	session := util.GlobalSession().SessionStart(w, r)
-	session.Set(constant.KEY_USER, user.UserName)
+	session.Set(constant.KEY_USER, user.ID)
 
-	util.ResultJsonOk(w, user)
+	util.ResultJsonOk(w, UserResponse{ user.ID, user.UserName })
 }
 
 func (p *UserController) create(w http.ResponseWriter, r *http.Request) {

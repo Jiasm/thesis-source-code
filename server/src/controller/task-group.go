@@ -28,6 +28,7 @@ var taskGroupService = new(service.TaskGroupService)
 func (p *TaskGroupController) Router(router *util.RouterHandler) {
 	router.Router("/task-group", p.createTaskGroup)
 	router.Router("/task/group/list", p.findTaskGroup)
+	router.Router("/task/group/list/all", p.GetAllTaskGroup)
 }
 
 func (p *TaskGroupController) createTaskGroup(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +62,13 @@ func (p *TaskGroupController) findTaskGroup(w http.ResponseWriter, r *http.Reque
 		taskGroupIdList = append(taskGroupIdList, uint(num))
 	}
 
-	taskGroupList := taskGroupService.FindAll(taskGroupIdList)
+	taskGroupList := taskGroupService.FindByGroupId(taskGroupIdList)
+
+	util.ResultJsonOk(w, TaskGroupListResponse{ taskGroupList })
+}
+
+func (p *TaskGroupController) GetAllTaskGroup(w http.ResponseWriter, r *http.Request) {
+	taskGroupList := taskGroupService.FindAll()
 
 	util.ResultJsonOk(w, TaskGroupListResponse{ taskGroupList })
 }
