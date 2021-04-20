@@ -19,9 +19,22 @@ const typeMap = {
   2: '建议'
 }
 
+const roleMap = {
+  0: '未知',
+  1: '管理员',
+  2: '参与者',
+}
+
+const userStatusMap = {
+  0: '已冻结',
+  1: '活跃中',
+}
+
 export const status = buildSelector(statusMap)
 export const priority = buildSelector(priorityMap)
 export const taskType = buildSelector(typeMap)
+export const role = buildSelector(roleMap)
+export const userStatus = buildSelector(userStatusMap)
 
 export function getStatus (status) {
   return statusMap[status] || statusMap[0]
@@ -33,6 +46,14 @@ export function getPriority (priority) {
 
 export function getTaskType (type) {
   return typeMap[type] || typeMap[0]
+}
+
+export function getRole (role) {
+  return roleMap[role] || roleMap[0]
+}
+
+export function getUserStatus (userStatus) {
+  return userStatusMap[userStatus] || userStatusMap[0]
 }
 
 export function formatDate (date) {

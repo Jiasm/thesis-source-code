@@ -39,6 +39,12 @@ func (p *GroupService) CreateGroup(uid uint, name string, status uint) uint {
 	return id
 }
 
+func (p *GroupService) FindByGroupId(groupIdList []uint) []entity.Group {
+	groupList := groupDao.FindAll(groupIdList)
+
+	return groupList
+}
+
 func BuildGroupData(groupList []entity.Group) []GroupData {
 	var dataList []GroupData
 

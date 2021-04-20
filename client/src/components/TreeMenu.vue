@@ -1,6 +1,8 @@
 <template>
   <div class="container">
     <div class="nav">
+      <div class="nav-item">群组管理</div>
+      <div class="nav-item">项目管理</div>
       <div class="nav-item">个人中心</div>
       <div class="nav-item">数据统计</div>
     </div>

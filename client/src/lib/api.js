@@ -1,6 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
-import { getStatus, getPriority, getTaskType, formatDate, filterTag } from '../util'
+import { getStatus, getPriority, getTaskType, formatDate, filterTag, getUserStatus, getRole } from '../util'
 
 export async function login (username, password) {
   const { data } = await axios.post(`/login`, {
@@ -60,11 +60,27 @@ export async function getProjectList () {
   }
 }
 
+function listToMapBuilder (func) {
+  return async (...arg) => {
+    const listData = await func(...arg)
+  
+    const mapData = {}
+
+    listData.forEach(row => {
+      mapData[row.id] = row
+    })
+  
+    return mapData
+  }
+}
+
 async function getTaskGroupList (taskGroupIdList) {
   const { data: { data : { list: groupList }} } = await axios.get(`/task/group/list?group_ids=${[...new Set(taskGroupIdList)].join(',')}`)
 
-  return groupList || []
+  return [{ id: 0, title: '未分组' }].concat(groupList || [])
 }
+
+// const getTaskGroupMap = listToMapBuilder(getTaskGroupList)
 
 async function getUserList (userIdList) {
   const { data: { data : { list: userList }} } = await axios.get(`/user/list?user_ids=${[...new Set(userIdList)].join(',')}`)
@@ -72,23 +88,35 @@ async function getUserList (userIdList) {
   return userList || []
 }
 
+const getUserMap = listToMapBuilder(getUserList)
+
 async function getTaskTagList (taskIdList) {
   const { data: { data : { list: taskTagList }} } = await axios.get(`/task/tag/list?task_ids=${[...new Set(taskIdList)].join(',')}`)
-
+  
   return taskTagList || []
 }
 
 async function getTagInfoList (tagIdList) {
   const { data: { data : { list: tagList }} } = await axios.get(`/tag/list?tag_ids=${[...new Set(tagIdList)].join(',')}`)
-
+  
   return tagList || []
 }
 
 async function getProjectListById (projectIdList) {
   const { data: { data } } = await axios.get(`/project/list?project_ids=${[...new Set(projectIdList)].join(',')}`)
-
+  
   return data || []
 }
+
+const getProjectMap = listToMapBuilder(getProjectListById)
+
+export async function getGroupListByGroupId (groupIdList) {
+  let { data: { data: groupList } } = await axios.get(`/group/list?group_ids=${[...new Set(groupIdList)].join(',')}`)
+
+  return groupList || []
+}
+
+const getGroupListMap = listToMapBuilder(getGroupListByGroupId)
 
 async function getTaskCommentListById (taskId) {
   const { data: { data: taskCommentList } } = await axios.get(`/task/comment/list?task_id=${taskId}`)
@@ -375,7 +403,7 @@ export async function removeTag (taskId, tagId) {
 }
 
 export async function getGroupList () {
-  let { data: { data: { created, participant } } } = await axios.get('/group/list')
+  let { data: { data: { created, participant } } } = await axios.get('/group/list/all')
 
   if (!created) {
     created = []
@@ -390,7 +418,7 @@ export async function getGroupList () {
     name: row.name,
   }))
 
-  return [{ id: 0, name: '未分组' }].concat(groupList)
+  return groupList
 }
 
 export async function createProject (title, groupId, status = 1) {
@@ -447,3 +475,119 @@ export async function createTaskGroup (title, desc) {
     status: 1
   })
 }
+
+export async function getProjectMemberList (projectId) {
+  let { data: { data: { project, group } } } = await axios.get(`/project-member/list?project_id=${projectId}`)
+
+  if (!project) {
+    project = []
+  }
+
+  if (!group) {
+    group = []
+  }
+
+  let uidList = []
+  let projectList = []
+  let groupList = []
+
+  project.forEach(row => {
+    uidList.push(row.uid)
+    projectList.push(row.project_id)
+  })
+
+  group.forEach(row => {
+    uidList.push(row.uid)
+    groupList.push(row.group_id)
+  })
+
+  const userMap = await getUserMap(uidList)
+  const projectMap = await getProjectMap(projectList)
+  const groupMap = await getGroupListMap(groupList)
+
+  group = group.filter(row => !project.find(i => i.uid === row.uid))
+
+  console.log({ userMap, projectMap, groupMap, project, group })
+  // getUserList
+  // getProjectListById
+  // getGroupListByGroupId
+
+  const list = []
+
+  project.forEach(row => {
+    list.push({
+      projectId,
+      role: row.role_id,
+      roleText: getRole(row.role_id),
+      status: row.status,
+      statusText: getUserStatus(row.status),
+      uid: row.uid,
+      username: userMap[row.uid].username,
+      createdDate: formatDate(row.created_date),
+    })
+  })
+
+  group.forEach(row => {
+    list.push({
+      projectId,
+      role: row.role_id,
+      roleText: getRole(row.role_id),
+      status: row.status,
+      statusText: getUserStatus(row.status),
+      uid: row.uid,
+      username: userMap[row.uid].username,
+      createdDate: formatDate(row.created_date),
+      desc: `继承自 ${groupMap[projectMap[projectId].group_id].name}`,
+    })
+  })
+
+  console.log(list)
+
+  return list
+}
+
+export async function getGroupMemberList (groupId) {
+  let { data: { data: listData} } = await axios.get(`/group-member/list?group_id=${groupId}`)
+
+  if (!listData) {
+    listData = []
+  }
+
+  let uidList = []
+  let groupList = []
+  
+  listData.forEach(row => {
+    uidList.push(row.uid)
+    groupList.push(row.group_id)
+  })
+
+  const userMap = await getUserMap(uidList)
+  const groupMap = await getGroupListMap(groupList)
+
+  console.log({ userMap, groupMap, listData })
+  // getUserList
+  // getProjectListById
+  // getGroupListByGroupId
+
+  const list = []
+
+  listData.forEach(row => {
+    list.push({
+      groupId,
+      role: row.role_id,
+      roleText: getRole(row.role_id),
+      status: row.status,
+      statusText: getUserStatus(row.status),
+      uid: row.uid,
+      username: userMap[row.uid].username,
+      createdDate: formatDate(row.created_date),
+    })
+  })
+
+  console.log(list)
+
+  return list
+}
+
+// getProjectMemberList(1)
+// getGroupMemberList(1)

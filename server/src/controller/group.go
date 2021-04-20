@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"service"
+	"strconv"
+	"strings"
 	"util"
 )
 
@@ -28,7 +30,8 @@ type CreateGroupResponse struct {
 var groupService = new(service.GroupService)
 
 func (p *GroupController) Router(router *util.RouterHandler) {
-	router.Router("/group/list", p.findAll)
+	router.Router("/group/list/all", p.findAll)
+	router.Router("/group/list", p.FindByGroupId)
 	router.Router("/group", p.create)
 }
 
@@ -43,6 +46,23 @@ func (p *GroupController) findAll(w http.ResponseWriter, r *http.Request) {
 	participantGroupList := groupService.FindParticipantGroupList(uid)
 
 	util.ResultJsonOk(w, GroupResponse{ createdGroupList, participantGroupList })
+}
+
+func (p *GroupController) FindByGroupId(w http.ResponseWriter, r *http.Request) {
+	vars := r.URL.Query()
+
+	groupIdStr := strings.Split(vars.Get("group_ids"), `,`)
+
+	var groupIdList []uint
+
+	for _, str := range groupIdStr {
+		num, _ := strconv.Atoi(str)
+		groupIdList = append(groupIdList, uint(num))
+	}
+
+	list := groupService.FindByGroupId(groupIdList)
+
+	util.ResultJsonOk(w, list)
 }
 
 func (p *GroupController) create(w http.ResponseWriter, r *http.Request) {

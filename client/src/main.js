@@ -4,7 +4,7 @@ import ElementUI from 'element-ui'
 import App from './App.vue'
 import Login from './components/Login.vue'
 import List from './components/List.vue'
-import Reget from './components/Reget.vue'
+import ProjectMemberList from './components/ProjectMemberList'
 import UserLogin from './components/UserLogin.vue'
 import UserSignin from './components/UserSignin.vue'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -17,7 +17,7 @@ Vue.config.productionTip = false
 const routes = [
   { path: '/', component: Login },
   { path: '/list', component: List },
-  { path: '/reget', component: Reget },
+  { path: '/project-manage', component: ProjectMemberList },
   { path: '/user-login', component: UserLogin },
   { path: '/user-signin', component: UserSignin },
 ]
