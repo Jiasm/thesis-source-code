@@ -40,4 +40,6 @@ func RegiterRouter(handler *util.RouterHandler) {
 	new(controller.TaskTagController).Router(handler)
 	new(controller.TagController).Router(handler)
 	new(controller.TaskCommentController).Router(handler)
+	new(controller.GroupMemberController).Router(handler)
+	new(controller.ProjectMemberController).Router(handler)
 }

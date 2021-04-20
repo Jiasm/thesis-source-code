@@ -215,4 +215,10 @@ VALUES ('test 2', 'xx', 1, 1), ('test 3', 'xx', 1, 1), ('test 4', 'xx', 1, 1)
 
 SELECT * FROM project
 
+DELETE FROM project_member WHERE project_id = 0
+
 UPDATE `task_group` SET title = 'group title' WHERE id = 1
+
+SELECT * FROM project_member
+
+SELECT * FROM project WHERE id = 1
