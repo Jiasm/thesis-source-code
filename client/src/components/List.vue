@@ -92,8 +92,8 @@ export default {
     }
   },
   async mounted() {
-    if (sessionStorage.getItem('project_id')) {
-      this.$data.tableData = await getTaskList(sessionStorage.getItem('project_id'))
+    if (localStorage.getItem('project_id')) {
+      this.$data.tableData = await getTaskList(localStorage.getItem('project_id'))
     }
 
     window.addEventListener('change-project-id', async (e) => {

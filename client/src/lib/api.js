@@ -97,7 +97,11 @@ async function getTaskCommentListById (taskId) {
 }
 
 export async function getTaskList (projectId = 1) {
-  const { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=50`)
+  let { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=50`)
+
+  if (!list) {
+    return []
+  }
 
   const taskGroupIdList = list.map(item => item.task_group_id)
   const userIdList = list.map(item => item.executor)

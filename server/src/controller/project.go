@@ -3,7 +3,6 @@ package controller
 import (
 	"dao"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"service"
 	"strconv"
@@ -36,13 +35,9 @@ func (p *ProjectController) Router(router *util.RouterHandler) {
 func (p *ProjectController) findAll(w http.ResponseWriter, r *http.Request) {
 	uid := p.GetUserId(w, r)
 
-	fmt.Println("get uid", uid)
-
 	if uid <= 0 {
 		uid = 3
 	}
-
-	fmt.Println(uid)
 
 	createdProjectList := projectService.FindCreatedProjectList(uid)
 	participantProjectList := projectService.FindParticipantProjectList(uid)
