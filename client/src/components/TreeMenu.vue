@@ -4,7 +4,7 @@
       <div class="nav-item">个人中心</div>
       <div class="nav-item">数据统计</div>
     </div>
-    <el-menu class="treemenu">
+    <el-menu class="treemenu" ref="menu" :default-active="landingIndex">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -39,6 +39,7 @@ export default {
       showTools: false,
       projectList: [],
       groupList: [],
+      landingIndex: '',
     };
   },
   methods: {
@@ -54,6 +55,7 @@ export default {
       const index = item.index.split('-').pop()
 
       localStorage.setItem('project_id', index)
+      localStorage.setItem('index', item.index)
 
       const event = new Event('change-project-id')
 
@@ -67,6 +69,12 @@ export default {
 
     this.$data.projectList = projectList
     this.$data.groupList = groupList
+
+    if (localStorage.getItem('index')) {
+      // console.log({ output: localStorage.getItem('index') })
+      // this.$refs.menu.open(localStorage.getItem('index').split('-')[0])
+      this.$data.landingIndex = localStorage.getItem('index')
+    }
   }
 }
 </script>
