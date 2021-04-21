@@ -488,7 +488,7 @@ export async function getProjectMemberList (projectId) {
   }
 
   let uidList = []
-  let projectList = []
+  let projectList = [projectId]
   let groupList = []
 
   project.forEach(row => {
@@ -506,8 +506,6 @@ export async function getProjectMemberList (projectId) {
   const groupMap = await getGroupListMap(groupList)
 
   group = group.filter(row => !project.find(i => i.uid === row.uid))
-
-  console.log({ userMap, projectMap, groupMap, project, group })
   // getUserList
   // getProjectListById
   // getGroupListByGroupId
@@ -541,8 +539,6 @@ export async function getProjectMemberList (projectId) {
     })
   })
 
-  console.log(list)
-
   return list
 }
 
@@ -562,12 +558,6 @@ export async function getGroupMemberList (groupId) {
   })
 
   const userMap = await getUserMap(uidList)
-  const groupMap = await getGroupListMap(groupList)
-
-  console.log({ userMap, groupMap, listData })
-  // getUserList
-  // getProjectListById
-  // getGroupListByGroupId
 
   const list = []
 
@@ -584,10 +574,14 @@ export async function getGroupMemberList (groupId) {
     })
   })
 
-  console.log(list)
-
   return list
 }
 
-// getProjectMemberList(1)
-// getGroupMemberList(1)
+export async function addMemberToProject (projectId, uid, roleId, status = 1) {
+  await axios.post('/project-member/add', {
+    project_id: projectId,
+    uid,
+    role_id: roleId,
+    status,
+  })
+}

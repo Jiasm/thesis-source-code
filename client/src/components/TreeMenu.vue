@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <div class="nav">
-      <div class="nav-item">群组管理</div>
-      <div class="nav-item">项目管理</div>
+      <div class="nav-item" @click="jumpTaskList">任务列表</div>
+      <div class="nav-item" @click="jumpGroupManage">群组成员管理</div>
+      <div class="nav-item" @click="jumpProjectManage">项目成员管理</div>
       <div class="nav-item">个人中心</div>
       <div class="nav-item">数据统计</div>
     </div>
@@ -64,6 +65,15 @@ export default {
       event.pid = index
 
       window.dispatchEvent(event)
+    },
+    jumpTaskList () {
+      this.$router.push({ path: '/list' })
+    },
+    jumpProjectManage () {
+      this.$router.push({ path: '/project-manage' })
+    },
+    jumpGroupManage () {
+      this.$router.push({ path: '/group-manage' })
     }
   },
   async mounted () {

@@ -5,66 +5,72 @@
       <common-tree-menu></common-tree-menu>
       <common-task-detail :visible.sync="dialogTableVisible" :task-id="taskId" :close="close" :view-state=true />
       <div class="content">
-        <el-table
-          :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
-          row-key="id"
-          border
-          default-expand-all
-          @row-click="openTaskDetail"
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        >
-          <el-table-column
-            prop="title"
-            label="任务名"
+        <el-row>
+          <el-page-header @back="goBack" content="任务列表">
+          </el-page-header>
+        </el-row>
+        <el-row>
+          <el-table
+            :data="tableData"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="id"
+            border
+            default-expand-all
+            @row-click="openTaskDetail"
+            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           >
-          </el-table-column>
-          <el-table-column
-            prop="status"
-            label="任务状态"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="priority"
-            label="优先级"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="executor"
-            label="执行人"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="type"
-            label="任务类型"
-            width="150"
-          >
-          </el-table-column>
-          <el-table-column
-            prop="expireDate"
-            label="截止日期"
-            width="200"  
-          >
-          </el-table-column>
-          <el-table-column
-            label="标签"
-            width="300"
-          >
-            <template slot-scope="scope">
-              <el-tag
-                class="tag"
-                size="small"
-                v-for="tag in scope.row.tag"
-                :key="tag.id"
-              >
-                {{tag.text}}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column
+              prop="title"
+              label="任务名"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="status"
+              label="任务状态"
+              width="150"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="priority"
+              label="优先级"
+              width="150"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="executor"
+              label="执行人"
+              width="150"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="type"
+              label="任务类型"
+              width="150"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="expireDate"
+              label="截止日期"
+              width="200"  
+            >
+            </el-table-column>
+            <el-table-column
+              label="标签"
+              width="300"
+            >
+              <template slot-scope="scope">
+                <el-tag
+                  class="tag"
+                  size="small"
+                  v-for="tag in scope.row.tag"
+                  :key="tag.id"
+                >
+                  {{tag.text}}
+                </el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
       </div>
     </div>
   </div>
@@ -89,6 +95,9 @@ export default {
     },
     close () {
       this.$data.dialogTableVisible = false
+    },
+    goBack () {
+      this.$router.go(-1)
     }
   },
   async mounted() {
@@ -112,6 +121,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.el-row {
+  margin: 20px 0;
+}
+
 .button-row {
   margin-top: 40px;
 }
