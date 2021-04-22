@@ -585,3 +585,25 @@ export async function addMemberToProject (projectId, uid, roleId, status = 1) {
     status,
   })
 }
+
+export async function changeMemberRoleToProject (projectId, uid, roleId) {
+  await axios.post('/project-member/change-role', {
+    project_id: Number(projectId),
+    uid,
+    role_id: roleId,
+  })
+}
+
+export async function removeMemberToProject (projectId, uid) {
+  await axios.post('/project-member/remove', {
+    project_id: Number(projectId),
+    uid,
+  })
+}
+
+export async function activeMemberToProject (projectId, uid) {
+  await axios.post('/project-member/active', {
+    project_id: Number(projectId),
+    uid,
+  })
+}

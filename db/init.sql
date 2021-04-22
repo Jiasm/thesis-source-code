@@ -219,6 +219,6 @@ DELETE FROM project_member WHERE project_id = 0
 
 UPDATE `task_group` SET title = 'group title' WHERE id = 1
 
-SELECT * FROM `project_member`;
+SELECT * FROM `project_member` WHERE project_id = 3 AND uid = 1;
 
 SELECT * FROM project WHERE id = 1

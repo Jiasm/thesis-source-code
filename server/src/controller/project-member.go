@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"entity"
+	"fmt"
 	"net/http"
 	"service"
 	"strconv"
@@ -42,6 +43,7 @@ func (p *ProjectMemberController) Router(router *util.RouterHandler) {
 	router.Router("/project-member/list", p.FindAll)
 	router.Router("/project-member/add", p.AddMember)
 	router.Router("/project-member/remove", p.RemoveMember)
+	router.Router("/project-member/active", p.ActiveMember)
 	router.Router("/project-member/change-role", p.ChangeRole)
 }
 
@@ -80,6 +82,8 @@ func (p *ProjectMemberController) ChangeRole(w http.ResponseWriter, r *http.Requ
 
 	decoder.Decode(&request)
 
+	fmt.Println(request.ProjectId, request.Uid, request.RoleId)
+
 	id := projectMemberService.ChangeRole(request.ProjectId, request.Uid, request.RoleId)
 
 	if id == 0 {
@@ -98,6 +102,23 @@ func (p *ProjectMemberController) RemoveMember(w http.ResponseWriter, r *http.Re
 	decoder.Decode(&request)
 
 	id := projectMemberService.RemoveMember(request.ProjectId, request.Uid)
+
+	if id == 0 {
+		util.ResultFail(w, "error")
+		return
+	}
+
+	util.ResultJsonOk(w, id)
+}
+
+func (p *ProjectMemberController) ActiveMember(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	request := &RemoveProjectMemberRoleRequest{}
+
+	decoder.Decode(&request)
+
+	id := projectMemberService.ActiveMember(request.ProjectId, request.Uid)
 
 	if id == 0 {
 		util.ResultFail(w, "error")

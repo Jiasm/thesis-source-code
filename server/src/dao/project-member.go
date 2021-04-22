@@ -63,7 +63,21 @@ func (p *ProjectMemberDao) ChangeRole(projectId, uid, roleId uint) uint {
 }
 
 func (p *ProjectMemberDao) RemoveMember(projectId, uid uint) uint {
-	result, err := util.DB.Exec("DELETE FROM `project_member` WHERE `project_id` = ? AND `uid` = ?", projectId, uid)
+	result, err := util.DB.Exec("UPDATE `project_member` SET `status` = 0 WHERE `project_id` = ? AND `uid` = ?", projectId, uid)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	id, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(id)
+}
+
+func (p *ProjectMemberDao) ActiveMember(projectId, uid uint) uint {
+	result, err := util.DB.Exec("UPDATE `project_member` SET `status` = 1 WHERE `project_id` = ? AND `uid` = ?", projectId, uid)
 	if err != nil {
 		log.Println(err)
 		return 0

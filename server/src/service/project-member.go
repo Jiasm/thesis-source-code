@@ -34,3 +34,9 @@ func (p *ProjectMemberService) RemoveMember(projectId, uid uint) uint {
 
 	return id
 }
+
+func (p *ProjectMemberService) ActiveMember(projectId, uid uint) uint {
+	id := projectMemberDao.ActiveMember(projectId, uid)
+
+	return id
+}

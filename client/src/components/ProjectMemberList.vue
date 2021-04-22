@@ -33,6 +33,18 @@
               label="用户权限"
               width="150"
             >
+              <template scope="scope">
+                <el-select v-if="!scope.row.desc" v-model="scope.row.role" placeholder="用户权限" @change="changeRole(scope.row.uid, scope.row.role)">
+                  <el-option
+                    size="mini"
+                    v-for="item in ruleList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                <span v-else>{{scope.row.roleText}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="statusText"
@@ -57,9 +69,9 @@
               width="240"  
             >
               <template slot-scope="scope">
-                <el-button type="warning" @click="changeRole(scope.row)" size="small">修改权限</el-button>
-                <el-button v-if="scope.row.status === 1" type="danger" @click="removeMember(scope.row)" size="small">冻结</el-button>
-                <el-button v-else type="success" @click="removeMember(scope.row)" size="small">启用</el-button>
+                <!-- <el-button type="warning" @click="changeRole(scope.row)" size="small">修改权限</el-button> -->
+                <el-button v-if="scope.row.status === 1 && !scope.row.desc" type="danger" @click="removeMember(scope.row.uid)" size="small">冻结</el-button>
+                <el-button v-else-if="!scope.row.desc" type="success" @click="activeMember(scope.row.uid)" size="small">启用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -70,7 +82,8 @@
 </template>
 
 <script>
-import { getProjectMemberList } from '../lib/api'
+import { getProjectMemberList, changeMemberRoleToProject, removeMemberToProject, activeMemberToProject } from '../lib/api'
+import { role } from '../util'
 import Header from './Header'
 import TreeMenu from './TreeMenu'
 import Invite from './Invite'
@@ -88,12 +101,21 @@ export default {
     closeInvite () {
       this.$data.inviteDialogVisible = false
     },
+    async changeRole (uid, roleId) {
+      await changeMemberRoleToProject(this.$data.projectId, uid, roleId)
+    },
+    async removeMember(uid) {
+      await removeMemberToProject(this.$data.projectId, uid)
+    },
+    async activeMember(uid) {
+      await activeMemberToProject(this.$data.projectId, uid)
+    },
   },
   async mounted() {
     if (localStorage.getItem('project_id')) {
       this.$data.projectId = Number(localStorage.getItem('project_id'))
       this.$data.tableData = await getProjectMemberList(localStorage.getItem('project_id'))
-      console.log(this.$data.projectId)
+      console.log(this.$data.tableData)
     }
 
     window.addEventListener('change-project-id', async (e) => {
@@ -107,6 +129,7 @@ export default {
       projectId: 0,
       inviteDialogVisible: false,
       tableData: [],
+      ruleList: role.filter(row => row.value),
     }
   },
 }
