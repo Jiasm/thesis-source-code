@@ -10,10 +10,11 @@ type ProjectService struct {
 }
 
 type ProjectData struct {
-	ID uint `json:"id"`
-	GroupName string `json:"group_name"`
-	Name string `json:"name"`
-	Status uint `json:"status"`
+	ID 			uint 	`json:"id"`
+	GroupName 	string 	`json:"group_name"`
+	GroupId 	uint 	`json:"group_id"`
+	Name 		string 	`json:"name"`
+	Status 		uint 	`json:"status"`
 }
 
 var projectDao = new(dao.ProjectDao)
@@ -66,7 +67,7 @@ func BuildProjectData(projectList []entity.Project) []ProjectData {
 	for _, item := range projectList {
 		for _, groupItem := range groupList {
 			if item.GroupId == groupItem.ID {
-				dataList = append(dataList, ProjectData{ item.ID, groupItem.Name, item.Name, item.Status })
+				dataList = append(dataList, ProjectData{ item.ID, groupItem.Name, groupItem.ID, item.Name, item.Status })
 			}
 		}
 	}

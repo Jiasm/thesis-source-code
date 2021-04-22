@@ -36,6 +36,7 @@ func (p *GroupMemberController) Router(router *util.RouterHandler) {
 	router.Router("/group-member/list", p.FindAll)
 	router.Router("/group-member/add", p.AddMember)
 	router.Router("/group-member/remove", p.RemoveMember)
+	router.Router("/group-member/active", p.ActiveMember)
 	router.Router("/group-member/change-role", p.ChangeRole)
 }
 
@@ -91,6 +92,23 @@ func (p *GroupMemberController) RemoveMember(w http.ResponseWriter, r *http.Requ
 	decoder.Decode(&request)
 
 	id := groupMemberService.RemoveMember(request.GroupId, request.Uid)
+
+	if id == 0 {
+		util.ResultFail(w, "error")
+		return
+	}
+
+	util.ResultJsonOk(w, id)
+}
+
+func (p *GroupMemberController) ActiveMember(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	request := &RemoveGroupMemberRoleRequest{}
+
+	decoder.Decode(&request)
+
+	id := groupMemberService.ActiveMember(request.GroupId, request.Uid)
 
 	if id == 0 {
 		util.ResultFail(w, "error")

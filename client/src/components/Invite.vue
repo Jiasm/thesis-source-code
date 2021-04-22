@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { getAllUserList, addMemberToProject, getProjectMemberList } from '../lib/api'
+import { getAllUserList, addMemberToProject, addMemberToGroup, getProjectMemberList, getGroupMemberList } from '../lib/api'
 import { role } from '../util'
 export default {
   name: 'CreateProject',
@@ -78,21 +78,29 @@ export default {
     },
     async loadData () {
       const userList = await getAllUserList()
-      const projectUser = await getProjectMemberList(this.$data.projectId)
 
-      const existsUserList = projectUser.filter(row => !row.desc).map(row => row.uid)
+      let existsUserList = []
+
+      if (this.$props.isGroup) {
+        const groupUser = await getGroupMemberList(this.$data.groupId)
+        existsUserList = groupUser.map(row => row.uid)
+      } else {
+        const projectUser = await getProjectMemberList(this.$data.projectId)
+        existsUserList = projectUser.filter(row => !row.desc).map(row => row.uid)
+      }
+
+      console.log(existsUserList)
 
       this.$data.userList = userList.filter(row => !existsUserList.includes(row.id))
     },
     async add () {
       if (this.$props.isGroup) {
         // do something
+        await addMemberToGroup(this.$data.groupId, this.$data.uid, this.$data.roleId)
       } else {
         await addMemberToProject(this.$data.projectId, this.$data.uid, this.$data.roleId)
-        this.$props.close()
       }
-
-      return console.log(this.$data.projectId, this.$data.roleId, this.$data.uid)
+      this.$props.close()
       // await createProject(this.$data.projectName, this.$data.groupId)
       // this.$props.close()
     },

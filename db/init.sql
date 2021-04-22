@@ -221,4 +221,4 @@ UPDATE `task_group` SET title = 'group title' WHERE id = 1
 
 SELECT * FROM `project_member` WHERE project_id = 3 AND uid = 1;
 
-SELECT * FROM project WHERE id = 1
+SELECT * FROM group_member WHERE uid = 3 AND group_id = 1

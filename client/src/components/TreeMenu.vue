@@ -7,7 +7,16 @@
       <div class="nav-item">个人中心</div>
       <div class="nav-item">数据统计</div>
     </div>
-    <el-menu class="treemenu" ref="menu" :default-active="landingIndex">
+    <el-menu v-if="isGroupManage" class="treemenu" ref="menu" :default-active="landingIndex">
+      <el-submenu index="1">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span>我的组织</span>
+        </template>
+        <el-menu-item v-for="(row, index) in groupList" v-bind:key="index" :index="`1-${row.groupId}`" @click="jumpGroup(row.groupId, `1-${row.groupId}`)">{{row.groupName}}</el-menu-item>
+      </el-submenu>
+    </el-menu>
+    <el-menu v-else class="treemenu" ref="menu" :default-active="landingIndex">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -25,7 +34,7 @@
               <i class="el-icon-location"></i>
               <span>{{row.groupName}}</span>
             </template>
-            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${index}-${line.id}`" @click="jumpProject">{{line.name}}</el-menu-item>
+            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${row.id}-${line.id}`" @click="jumpProject">{{line.name}}</el-menu-item>
           </el-submenu>
       </el-submenu>
     </el-menu>
@@ -37,6 +46,7 @@ import { getProjectList } from '../lib/api'
 
 export default {
   name: 'TreeMenu',
+  props: ['isGroupManage'],
   data() {
     return {
       showTools: false,
@@ -66,6 +76,16 @@ export default {
 
       window.dispatchEvent(event)
     },
+    jumpGroup (groupId, index) {
+      localStorage.setItem('group_id', groupId)
+      localStorage.setItem('index', index)
+
+      const event = new Event('change-group-id')
+
+      event.pid = groupId
+
+      window.dispatchEvent(event)
+    },
     jumpTaskList () {
       this.$router.push({ path: '/list' })
     },
@@ -78,6 +98,8 @@ export default {
   },
   async mounted () {
     const { projectList, groupList } = await getProjectList()
+
+    console.log({ groupList: JSON.stringify(groupList) })
 
     this.$data.projectList = projectList
     this.$data.groupList = groupList

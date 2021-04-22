@@ -31,6 +31,7 @@ export async function getProjectList () {
   const projectList = created.concat(participant.filter(item => !created.find(i => i.id === item.id))).map(row => ({
     id: row.id,
     groupName: row.group_name,
+    groupId: row.group_id,
     name: row.name,
     status: row.status
   }))
@@ -50,6 +51,7 @@ export async function getProjectList () {
   Object.entries(groupMap).forEach(([groupName, pList]) => {
     groupList.push({
       groupName,
+      groupId: pList[0].groupId,
       list: pList
     })
   })
@@ -602,8 +604,39 @@ export async function removeMemberToProject (projectId, uid) {
 }
 
 export async function activeMemberToProject (projectId, uid) {
-  await axios.post('/project-member/active', {
+  await axios.post('/group-member/active', {
     project_id: Number(projectId),
+    uid,
+  })
+}
+
+export async function addMemberToGroup (groupId, uid, roleId, status = 1) {
+  await axios.post('/group-member/add', {
+    group_id: groupId,
+    uid,
+    role_id: roleId,
+    status,
+  })
+}
+
+export async function changeMemberRoleToGroup (groupId, uid, roleId) {
+  await axios.post('/group-member/change-role', {
+    group_id: Number(groupId),
+    uid,
+    role_id: roleId,
+  })
+}
+
+export async function removeMemberToGroup (groupId, uid) {
+  await axios.post('/group-member/remove', {
+    group_id: Number(groupId),
+    uid,
+  })
+}
+
+export async function activeMemberToGroup (groupId, uid) {
+  await axios.post('/group-member/active', {
+    group_id: Number(groupId),
     uid,
   })
 }

@@ -41,3 +41,9 @@ func (p *GroupMemberService) RemoveMember(groupId, uid uint) uint {
 
 	return id
 }
+
+func (p *GroupMemberService) ActiveMember(groupId, uid uint) uint {
+	id := groupMemberDao.ActiveMember(groupId, uid)
+
+	return id
+}

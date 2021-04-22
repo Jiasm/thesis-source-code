@@ -5,8 +5,8 @@ import App from './App.vue'
 import Login from './components/Login.vue'
 import List from './components/List.vue'
 import ProjectMemberList from './components/ProjectMemberList'
+import GroupMemberList from './components/GroupMemberList'
 import UserLogin from './components/UserLogin.vue'
-import UserSignin from './components/UserSignin.vue'
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI)
@@ -18,8 +18,8 @@ const routes = [
   { path: '/', component: Login },
   { path: '/list', component: List },
   { path: '/project-manage', component: ProjectMemberList },
+  { path: '/group-manage', component: GroupMemberList },
   { path: '/user-login', component: UserLogin },
-  { path: '/user-signin', component: UserSignin },
 ]
 
 const router = new VueRouter({

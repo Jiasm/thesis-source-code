@@ -62,7 +62,22 @@ func (p *GroupMemberDao) ChangeRole(groupId, uid, roleId uint) uint {
 }
 
 func (p *GroupMemberDao) RemoveMember(groupId, uid uint) uint {
-	result, err := util.DB.Exec("DELETE FROM `group_member` WHERE `group_id` = ? AND `uid` = ?", groupId, uid)
+	result, err := util.DB.Exec("UPDATE `group_member` SET `status` = 0 WHERE `group_id` = ? AND `uid` = ?", groupId, uid)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	id, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(id)
+}
+
+func (p *GroupMemberDao) ActiveMember(groupId, uid uint) uint {
+	result, err := util.DB.Exec("UPDATE `group_member` SET `status` = 1 WHERE `group_id` = ? AND `uid` = ?", groupId, uid)
+
 	if err != nil {
 		log.Println(err)
 		return 0
