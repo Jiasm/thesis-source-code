@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <img class="logo" src="../assets/logo.png">
     <h1>{{ title }}</h1>
     <div class="login-panel">
       <el-row class="input-row">
@@ -49,11 +48,9 @@ import { login } from '../lib/api'
 
 export default {
   name: 'Login',
-  props: {
-    title: String,
-  },
   data() {
     return {
+      title: '软件开发项目管理系统',
       username: '',
       password: '',
     }
@@ -94,6 +91,9 @@ export default {
 h3 {
   margin: 40px 0 0;
 }
+h1 {
+  margin-bottom: 120px;
+}
 ul {
   list-style-type: none;
   padding: 0;
@@ -107,7 +107,7 @@ a {
 }
 .container {
   width: 480px;
-  margin: 0 auto;
+  margin: 10% auto 0;
 }
 .logo {
   width: 200px;
