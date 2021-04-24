@@ -11,7 +11,7 @@ type InfoDao struct {
 }
 
 func (p *InfoDao) FindNewCountList(projectId uint) []entity.NewTask {
-	rows, err := util.DB.Query("SELECT COUNT(*) AS new_count, FROM_UNIXTIME(created_date,'%Y%m%d') AS `date` FROM task WHERE task_project_id = ? GROUP BY `date` ORDER BY `date` DESC", projectId)
+	rows, err := util.DB.Query("SELECT COUNT(*) AS new_count, FROM_UNIXTIME(created_date,'%Y%m%d') AS `date` FROM task WHERE task_project_id = ? GROUP BY `date` ORDER BY `date` ASC", projectId)
 
 	if err != nil {
 		log.Println(err)
