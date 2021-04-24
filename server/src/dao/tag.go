@@ -62,7 +62,6 @@ func (p *TagDao) FindAll(tagIdList []uint) []entity.Tag {
 	var tagList []entity.Tag
 
 	for rows.Next() {
-		fmt.Println("join")
 		var project entity.Tag
 		rows.Scan(&project.Id, &project.Text)
 		if err != nil {

@@ -1,5 +1,6 @@
 <template>
   <div class="header">
+    <div class="system-title">项目管理系统</div>
     <el-button class="btn" type="success" @mouseover.native=showCreateTools @mouseleave.native=hideCreateTools >
       创建
       <div class="tools" v-if="showTools">
@@ -9,10 +10,11 @@
         <div class="item" @click="openCreateGroup">创建组织</div>
       </div>
     </el-button>
-    <el-button class="btn" type="primary" >搜索</el-button>
-    <input class="search-input" placeholder="搜索" />
-    <div>
-      <div class="nick-name">{{username}}</div>
+    <!-- <el-button class="btn" type="primary" >搜索</el-button>
+    <input class="search-input" placeholder="搜索" /> -->
+    <div class="nick-name">用户：{{username}}</div>
+    <div class="btn-wrap">
+      <el-button type="text" @click="logout">注销</el-button>
     </div>
     <common-create-group :visible.sync="groupDialogVisible" :close="closeCreateGroup" />
     <common-create-project :visible.sync="projectDialogVisible" :close="closeCreateProject" />
@@ -26,6 +28,7 @@ import CreateProject from './CreateProject';
 import CreateGroup from './CreateGroup';
 import CreateTask from './CreateTask';
 import CreateTaskGroup from './CreateTaskGroup';
+import { logout } from '../lib/api'
 export default {
   name: 'Header',
   components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup, 'common-create-task': CreateTask, 'common-create-task-group': CreateTaskGroup },
@@ -70,6 +73,10 @@ export default {
     closeCreateTaskGroup () {
       this.$data.taskGroupDialogVisible = false
     },
+    async logout () {
+      await logout()
+      this.$router.push({ path: '/' })
+    }
   },
   mounted () {
     const username = sessionStorage.getItem('username')
@@ -150,5 +157,17 @@ export default {
 .nick-name {
   color: #333333;
   padding: 0 1em;
+}
+
+.btn-wrap { 
+  padding: 0 1em;
+}
+
+.system-title {
+  flex: 1;
+  text-align: left;
+  padding-left: 1em;
+  font-weight: bold;
+  font-size: 24px;
 }
 </style>

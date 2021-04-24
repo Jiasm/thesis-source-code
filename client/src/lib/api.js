@@ -90,7 +90,7 @@ async function getUserList (userIdList) {
   return userList || []
 }
 
-const getUserMap = listToMapBuilder(getUserList)
+export const getUserMap = listToMapBuilder(getUserList)
 
 async function getTaskTagList (taskIdList) {
   const { data: { data : { list: taskTagList }} } = await axios.get(`/task/tag/list?task_ids=${[...new Set(taskIdList)].join(',')}`)
@@ -639,4 +639,28 @@ export async function activeMemberToGroup (groupId, uid) {
     group_id: Number(groupId),
     uid,
   })
+}
+
+export async function getNewCountList (projectId) {
+  const { data: { data } } = await axios.get(`/info/new-count-list?project_id=${projectId}`)
+
+  return data || []
+}
+
+export async function getTypedTaskCountList (projectId) {
+  const { data: { data } } = await axios.get(`/info/typed-count-list?project_id=${projectId}`)
+
+  return data || []
+}
+
+export async function getTodoCountList (projectId) {
+  const { data: { data } } = await axios.get(`/info/todo-count-list?project_id=${projectId}`)
+
+  return data || []
+}
+
+export async function getDoneCountList (projectId) {
+  const { data: { data } } = await axios.get(`/info/done-count-list?project_id=${projectId}`)
+
+  return data || []
 }

@@ -9,7 +9,7 @@
         </el-col>
         <el-col class="col" :span="6">
           <div class="grid-content bg-purple">
-            <el-select v-model="projectId" placeholder="请选择项目" class="fill">
+            <el-select v-model="projectId" placeholder="请选择项目" class="fill" @change="changeProject">
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
@@ -63,9 +63,9 @@
           <el-select v-model="executor" placeholder="请选择执行人" class="fill">
             <el-option
               v-for="item in userList"
-              :key="item.id"
+              :key="item.uid"
               :label="item.username"
-              :value="item.id">
+              :value="item.uid">
             </el-option>
           </el-select>
         </el-col>
@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { getAllUserList, getProjectList, getAllTaskGroup, createTask } from '../lib/api';
+import { getProjectMemberList, getProjectList, getAllTaskGroup, createTask } from '../lib/api';
 import { taskType, status, priority } from '../util'
 export default {
   name: 'CreateTask',
@@ -197,11 +197,11 @@ export default {
       this.$props.close()
     },
     async loadData() {
-      const userList = await getAllUserList()
+      // const userList = await getAllUserList()
       const projInfo = await getProjectList()
       const projectGroupList = await getAllTaskGroup()
 
-      this.$data.userList = userList
+      // this.$data.userList = userList
       this.$data.projectList = projInfo.projectList
       this.$data.projectGroupList = projectGroupList
     },
@@ -218,6 +218,10 @@ export default {
         priority: this.$data.priority,
       })
       this.$props.close()
+    },
+    async changeProject () {
+      this.$data.userList = await getProjectMemberList(this.$data.projectId)
+      // console.log()
     }
   },
   async mounted () {

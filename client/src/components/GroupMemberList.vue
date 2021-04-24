@@ -109,13 +109,11 @@ export default {
     if (localStorage.getItem('group_id')) {
       this.$data.groupId = Number(localStorage.getItem('group_id'))
       this.$data.tableData = await getGroupMemberList(localStorage.getItem('group_id'))
-      console.log(this.$data.tableData)
     }
 
     window.addEventListener('change-group-id', async (e) => {
       this.$data.groupId = Number(e.pid)
       this.$data.tableData = await getGroupMemberList(e.pid)  
-      console.log(this.$data.groupId)
     })
   },
   data() {

@@ -222,3 +222,15 @@ UPDATE `task_group` SET title = 'group title' WHERE id = 1
 SELECT * FROM `project_member` WHERE project_id = 3 AND uid = 1;
 
 SELECT * FROM group_member WHERE uid = 3 AND group_id = 1
+
+# 获取新增数量
+SELECT COUNT(*) AS new_count, FROM_UNIXTIME(created_date,'%Y%m%d') AS `date` FROM task WHERE task_project_id = 1 GROUP BY `date`;
+
+# 当前任务类型分类
+SELECT COUNT(*) AS type_count, type FROM task WHERE task_project_id = 1 GROUP BY type
+
+# 按执行人分类未完成数量
+SELECT COUNT(*) AS todo_count, executor, status FROM task WHERE task_project_id = 1 AND (status = 0 OR status = 1) GROUP BY executor, status
+
+# 按执行人分类已完成数量
+SELECT COUNT(*) AS done_count, executor FROM task WHERE task_project_id = 1 AND status = 2 GROUP BY executor

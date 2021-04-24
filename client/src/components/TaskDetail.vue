@@ -74,9 +74,9 @@
           <el-select v-model="executor" placeholder="请选择执行人" class="fill" @change="changeExecutor">
             <el-option
               v-for="item in userList"
-              :key="item.id"
+              :key="item.uid"
               :label="item.username"
-              :value="item.id">
+              :value="item.uid">
             </el-option>
           </el-select>
         </el-col>
@@ -365,7 +365,7 @@
 </template>
 
 <script>
-import { getTaskDetail, addComment, changeTask, newChildTask, addNewTag, removeTag, getAllUserList, getProjectList } from '../lib/api';
+import { getTaskDetail, addComment, changeTask, newChildTask, addNewTag, removeTag, getProjectMemberList, getProjectList } from '../lib/api';
 import { taskType, status, priority } from '../util'
 export default {
   name: 'TaskDetail',
@@ -533,7 +533,7 @@ export default {
     },
     async loadData() {
       const data = await getTaskDetail(this.$props.taskId)
-      const userList = await getAllUserList()
+      const userList = await getProjectMemberList(data.projectId)
       const projInfo = await getProjectList()
 
       this.$data.id = data.id

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"constant"
-	"fmt"
 	"net/http"
 	"util"
 )
@@ -23,11 +22,9 @@ func (p *ApiController) GetUser(w http.ResponseWriter,r *http.Request) uint {
 	if session == nil {
 		return 0
 	}
-	key_user := session.Get(constant.KEY_USER)
+	keyUid := session.Get(constant.KEY_USER)
 
-	fmt.Println("key_user", key_user)
-
-	if uid,ok := key_user.(uint);ok{
+	if uid,ok := keyUid.(uint);ok{
 		return uid
 	}
 	return 0

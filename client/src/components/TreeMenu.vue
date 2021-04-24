@@ -4,8 +4,7 @@
       <div class="nav-item" @click="jumpTaskList">任务列表</div>
       <div class="nav-item" @click="jumpGroupManage">群组成员管理</div>
       <div class="nav-item" @click="jumpProjectManage">项目成员管理</div>
-      <div class="nav-item">个人中心</div>
-      <div class="nav-item">数据统计</div>
+      <div class="nav-item" @click="jumpDashboard">数据统计</div>
     </div>
     <el-menu v-if="isGroupManage" class="treemenu" ref="menu" :default-active="landingIndex">
       <el-submenu index="1">
@@ -94,19 +93,18 @@ export default {
     },
     jumpGroupManage () {
       this.$router.push({ path: '/group-manage' })
-    }
+    },
+    jumpDashboard () {
+      this.$router.push({ path: '/dashboard' })
+    },
   },
   async mounted () {
     const { projectList, groupList } = await getProjectList()
-
-    console.log({ groupList: JSON.stringify(groupList) })
 
     this.$data.projectList = projectList
     this.$data.groupList = groupList
 
     if (localStorage.getItem('index')) {
-      // console.log({ output: localStorage.getItem('index') })
-      // this.$refs.menu.open(localStorage.getItem('index').split('-')[0])
       this.$data.landingIndex = localStorage.getItem('index')
     }
   }

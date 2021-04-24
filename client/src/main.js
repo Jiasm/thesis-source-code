@@ -6,9 +6,13 @@ import Login from './components/Login.vue'
 import List from './components/List.vue'
 import ProjectMemberList from './components/ProjectMemberList'
 import GroupMemberList from './components/GroupMemberList'
-import UserLogin from './components/UserLogin.vue'
+import Dashboard from './components/Dashboard.vue'
 import 'element-ui/lib/theme-chalk/index.css'
+import * as echarts from 'echarts'
 
+console.log({ echarts })
+
+Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 
@@ -19,7 +23,7 @@ const routes = [
   { path: '/list', component: List },
   { path: '/project-manage', component: ProjectMemberList },
   { path: '/group-manage', component: GroupMemberList },
-  { path: '/user-login', component: UserLogin },
+  { path: '/dashboard', component: Dashboard },
 ]
 
 const router = new VueRouter({

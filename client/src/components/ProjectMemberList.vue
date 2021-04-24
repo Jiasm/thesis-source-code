@@ -115,13 +115,11 @@ export default {
     if (localStorage.getItem('project_id')) {
       this.$data.projectId = Number(localStorage.getItem('project_id'))
       this.$data.tableData = await getProjectMemberList(localStorage.getItem('project_id'))
-      console.log(this.$data.tableData)
     }
 
     window.addEventListener('change-project-id', async (e) => {
       this.$data.projectId = Number(e.pid)
       this.$data.tableData = await getProjectMemberList(e.pid)  
-      console.log(this.$data.projectId)
     })
   },
   data() {

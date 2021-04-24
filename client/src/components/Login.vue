@@ -62,30 +62,25 @@ export default {
     async login() {
       const { username, password } = this.$data
       
-      const data = await login(username, password)
+      try {
+        const data = await login(username, password)
 
-      if (data.code === 200) {
-        // success
-        sessionStorage.setItem('uid', data.data.id)
-        sessionStorage.setItem('username', data.data.username)
-        this.$router.push({ path: '/list' })
-      } else {
-        console.log('error')
+        if (data.code === 200) {
+          // success
+          sessionStorage.setItem('uid', data.data.id)
+          sessionStorage.setItem('username', data.data.username)
+          this.$router.push({ path: '/list' })
+        } else {
+          console.log(data.code)
+          throw new Error('')
+        }
+      } catch (e) {
+        this.$confirm('账号或密码错误', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        })
       }
-
-      // if (/^success:/.test(data)) {
-      //   const id = data.match(/^success:(\d+)/)[1]
-        
-      //   sessionStorage.setItem('uid', id)
-
-      //   this.$router.push({path: '/list' })
-      // } else {
-      //   this.$confirm(data, '提示', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'error'
-      //   })
-      // }
     },
     forget() {
       this.$router.push({path:'/reget'})
