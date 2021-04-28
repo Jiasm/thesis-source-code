@@ -162,8 +162,8 @@ VALUES ('管理员', '群组/项目管理员'), ('普通用户', '普通参与�
 INSERT INTO `group_member` (`group_id`, `uid`, `role_id`, `status`, `created_date`)
 VALUES (1, 1, 1, 1, 1616478832), (2, 2, 2, 1, 1616478832), (2, 3, 1, 1, 1616478832);
 
-INSERT INTO `project` (`creator`, `group_id`, `name`, `status`)
-VALUES (3, 1, '测试项目 1', 1), (4, 2, '测试项目 2', 1);
+INSERT INTO `project` (`creator`, `group_id`, `name`, `status`, `created_date`)
+VALUES (3, 1, '测试项目 1', 1, 1616478832), (4, 2, '测试项目 2', 1, 1616478832);
 
 INSERT INTO `project_member` (`project_id`, `uid`, `role_id`, `status`, `created_date`)
 VALUES (1, 1, 1, 1, 1616478832), (2, 2, 2, 1, 1616478832), (2, 3, 1, 1, 1616478832);
@@ -174,63 +174,63 @@ VALUES ('紧急'), ('重要'), ('普通');
 INSERT INTO `task_type` (`text`)
 VALUES ('需求'), ('缺陷');
 
+INSERT INTO `task_group` (`title`, `desc`, `creator`, `status`)
+VALUES ('test 2', 'xx', 1, 1), ('test 3', 'xx', 1, 1), ('test 4', 'xx', 1, 1);
+
 INSERT INTO `task` (`title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_group_id`, `task_project_id`, `type`, `priority`)
 VALUES ('测试任务 1', '任务描述', 3, 3, 1, 1616478832, 1614419750, 1, 1, 1, 1), ('测试任务 2', '任务描述', 2, 3, 1, 1616478832, 1614439750, 2, 2, 1, 2), ('测试任务 3', '任务描述', 2, 1, 0, 1616478832, 1614439800, 1, 3, 1, 1), ('测试任务 4', '任务描述', 3, 1, 1, 1616478832, 1614449750, 1, 4, 1, 1);
 
 INSERT INTO `task_participant` (`task_id`, `uid`, `add_date`)
 VALUES (1, 2, 1614419750), (2, 3, 1614419750);
-
-SELECT * FROM tag;
-SELECT * FROM task;
-SELECT * FROM task_group;
-
-SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE task_project_id = 1 ORDER BY task_project_id DESC, task_group_id DESC, parent_task_id DESC, priority DESC, created_date DESC LIMIT 0 , 10;
-
-SELECT id, title, `desc`, creator, status FROM task_group WHERE id IN (1, 2);
-
-UPDATE task SET type = 1 WHERE id = 8;
-
-UPDATE task SET executor = 2 WHERE executor = 6;
-
-SELECT * FROM task_tag WHERE task_id = 1
-
-SELECT * FROM task WHERE parent_task_id = 1
-
-UPDATE task SET parent_task_id = 0 WHERE parent_task_id is null;
-
-UPDATE `task` SET task_group_id = 1 WHERE id >= 9
-
-SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = 1 LIMIT 1
-
-SELECT * FROM `task`;
-
-UPDATE `task` SET task_group_id = task_project_id
-
-SELECT * FROM `task` WHERE task_project_id = 1;
-
-UPDATE `task` SET `task_group_id` = 0 WHERE task_project_id = 1 AND id > 10
-
-INSERT INTO `task_group` (`title`, `desc`, `creator`, `status`)
-VALUES ('test 2', 'xx', 1, 1), ('test 3', 'xx', 1, 1), ('test 4', 'xx', 1, 1)
-
-SELECT * FROM project
-
-DELETE FROM project_member WHERE project_id = 0
-
-UPDATE `task_group` SET title = 'group title' WHERE id = 1
-
-SELECT * FROM `project_member` WHERE project_id = 3 AND uid = 1;
-
-SELECT * FROM group_member WHERE uid = 3 AND group_id = 1
-
-# 获取新增数量
-SELECT COUNT(*) AS new_count, FROM_UNIXTIME(created_date,'%Y%m%d') AS `date` FROM task WHERE task_project_id = 1 GROUP BY `date`;
-
-# 当前任务类型分类
-SELECT COUNT(*) AS type_count, type FROM task WHERE task_project_id = 1 GROUP BY type
-
-# 按执行人分类未完成数量
-SELECT COUNT(*) AS todo_count, executor, status FROM task WHERE task_project_id = 1 AND (status = 0 OR status = 1) GROUP BY executor, status
-
-# 按执行人分类已完成数量
-SELECT COUNT(*) AS done_count, executor FROM task WHERE task_project_id = 1 AND status = 2 GROUP BY executor
+#
+# SELECT * FROM tag;
+# SELECT * FROM task;
+# SELECT * FROM task_group;
+#
+# SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE task_project_id = 1 ORDER BY task_project_id DESC, task_group_id DESC, parent_task_id DESC, priority DESC, created_date DESC LIMIT 0 , 10;
+#
+# SELECT id, title, `desc`, creator, status FROM task_group WHERE id IN (1, 2);
+#
+# UPDATE task SET type = 1 WHERE id = 8;
+#
+# UPDATE task SET executor = 2 WHERE executor = 6;
+#
+# SELECT * FROM task_tag WHERE task_id = 1;
+#
+# SELECT * FROM task WHERE parent_task_id = 1;
+#
+# UPDATE task SET parent_task_id = 0 WHERE parent_task_id is null;
+#
+# UPDATE `task` SET task_group_id = 1 WHERE id >= 9;
+#
+# SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task WHERE id = 1 LIMIT 1;
+#
+# SELECT * FROM `task`;
+#
+# UPDATE `task` SET task_group_id = task_project_id;
+#
+# SELECT * FROM `task` WHERE task_project_id = 1;
+#
+# UPDATE `task` SET `task_group_id` = 0 WHERE task_project_id = 1 AND id > 10;
+#
+# SELECT * FROM project;
+#
+# DELETE FROM project_member WHERE project_id = 0;
+#
+# UPDATE `task_group` SET title = 'group title' WHERE id = 1;
+#
+# SELECT * FROM `project_member` WHERE project_id = 3 AND uid = 1;
+#
+# SELECT * FROM group_member WHERE uid = 3 AND group_id = 1;
+#
+# # 获取新增数量
+# SELECT COUNT(*) AS new_count, FROM_UNIXTIME(created_date,'%Y%m%d') AS `date` FROM task WHERE task_project_id = 1 GROUP BY `date`;
+#
+# # 当前任务类型分类
+# SELECT COUNT(*) AS type_count, type FROM task WHERE task_project_id = 1 GROUP BY type;
+#
+# # 按执行人分类未完成数量
+# SELECT COUNT(*) AS todo_count, executor, status FROM task WHERE task_project_id = 1 AND (status = 0 OR status = 1) GROUP BY executor, status;
+#
+# # 按执行人分类已完成数量
+# SELECT COUNT(*) AS done_count, executor FROM task WHERE task_project_id = 1 AND status = 2 GROUP BY executor;

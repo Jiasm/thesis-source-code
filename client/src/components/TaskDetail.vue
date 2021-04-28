@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="960px" title="任务详情" v-bind="$attrs" @close="closeDialog" @open="loadData">
+  <el-dialog width="960px" title="任务详情" top="5vh" v-bind="$attrs" @close="closeDialog" @open="loadData">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
