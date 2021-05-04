@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="960px" height="480px" title="创建组织" v-bind="$attrs" @close="closeDialog">
+  <el-dialog width="480px" height="120px" title="创建组织" v-bind="$attrs" @close="closeDialog">
     <div class="content">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
@@ -11,12 +11,13 @@
           <div class="grid-content bg-purple">
             <el-input
               v-model="groupName"
+              placeholder="请输入组织名"
             >
             </el-input>
           </div>
         </el-col>
       </el-row>
-      <el-row type="flex" class="row" :gutter="20" justify="end">
+      <el-row type="flex" class="row row-end" :gutter="20" justify="end">
         <el-col class="col col-confirm" :span="4" >
           <el-button type="success" size="mini" @click="add">确定</el-button>
         </el-col>
@@ -51,7 +52,7 @@ export default {
 <style scoped>
 .content {
   padding: 8px 40px;
-  height: 400px;
+  height: 140px;
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -62,6 +63,10 @@ export default {
   margin-bottom: 18px;
   text-align: left;
   align-items: center;
+}
+
+.row-end {
+  margin-bottom: 0;
 }
 
 .col-title {

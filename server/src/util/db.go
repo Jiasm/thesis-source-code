@@ -21,14 +21,7 @@ type Config struct {
 }
 
 //数据库的配置
-const (
-	username   = "root"
-	password   = "root"
-	ip         = "127.0.0.1"
-	port       = "3306"
-	dbName     = "project_management"
-	driverName = "mysql"
-)
+const driverName = "mysql"
 
 //DB数据库连接池
 var DB *sql.DB

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="960px" height="480px" title="创建项目" v-bind="$attrs" @close="closeDialog" @open="loadData">
+  <el-dialog width="480px" height="160px" title="创建项目" v-bind="$attrs" @close="closeDialog" @open="loadData">
     <div class="content">
       <el-row type="flex" class="content-row row" :gutter="20">
         <el-row type="flex" class="row" :gutter="20">
@@ -12,6 +12,7 @@
             <div class="grid-content bg-purple">
               <el-input
                 v-model="projectName"
+                placeholder="请输入项目名"
               >
               </el-input>
             </div>
@@ -25,7 +26,7 @@
           </el-col>
           <el-col class="col" :span="18">
             <div class="grid-content bg-purple">
-              <el-select v-model="groupId" placeholder="请选择组织" class="fill">
+              <el-select v-model="groupId" placeholder="请选择组织" class="fill select">
                 <el-option
                   v-for="item in groupList"
                   :key="item.id"
@@ -79,7 +80,7 @@ export default {
 <style scoped>
 .content {
   padding: 8px 40px;
-  height: 400px;
+  height: 220px;
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -107,5 +108,9 @@ export default {
 
 .col-confirm {
   text-align: right;
+}
+
+.select {
+  width: 100%;
 }
 </style>

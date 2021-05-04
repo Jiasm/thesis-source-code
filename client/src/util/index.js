@@ -1,31 +1,31 @@
 import moment from "moment"
 
-const statusMap = {
+export const statusMap = {
   0: '未开始',
   1: '进行中',
   2: '已完成'
 }
 
-const priorityMap = {
+export const priorityMap = {
   0: '最高优',
   1: '高优',
   2: '正常',
   3: '不紧急',
 }
 
-const typeMap = {
+export const typeMap = {
   0: '需求',
   1: '缺陷',
   2: '建议'
 }
 
-const roleMap = {
+export const roleMap = {
   0: '未知',
   1: '管理员',
   2: '参与者',
 }
 
-const userStatusMap = {
+export const userStatusMap = {
   0: '已冻结',
   1: '活跃中',
 }
@@ -70,7 +70,7 @@ export function filterTag (taskTagMap, tagMap, taskId) {
   return tagList
 }
 
-function buildSelector (obj) {
+export function buildSelector (obj) {
   const data = []
   Object.entries(obj).forEach(([value, label]) => {
     data.push({ value: Number(value), label })
