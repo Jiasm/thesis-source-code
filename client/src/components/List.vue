@@ -93,8 +93,11 @@ export default {
         this.$forceUpdate()
       }
     },
-    close () {
+    async close () {
       this.$data.dialogTableVisible = false
+      if (localStorage.getItem('project_id')) {
+        this.$data.tableData = await getTaskList(localStorage.getItem('project_id'))
+      }
     },
     goBack () {
       this.$router.go(-1)

@@ -92,8 +92,12 @@ export default {
     openInvite() {
       this.$data.inviteDialogVisible = true
     },
-    closeInvite () {
+    async closeInvite () {
       this.$data.inviteDialogVisible = false
+      if (localStorage.getItem('group_id')) {
+        this.$data.groupId = Number(localStorage.getItem('group_id'))
+        this.$data.tableData = await getGroupMemberList(localStorage.getItem('group_id'))
+      }
     },
     async changeRole (uid, roleId) {
       await changeMemberRoleToGroup(this.$data.groupId, uid, roleId)

@@ -98,8 +98,12 @@ export default {
     openInvite() {
       this.$data.inviteDialogVisible = true
     },
-    closeInvite () {
+    async closeInvite () {
       this.$data.inviteDialogVisible = false
+      if (localStorage.getItem('project_id')) {
+        this.$data.projectId = Number(localStorage.getItem('project_id'))
+        this.$data.tableData = await getProjectMemberList(localStorage.getItem('project_id'))
+      }
     },
     async changeRole (uid, roleId) {
       await changeMemberRoleToProject(this.$data.projectId, uid, roleId)

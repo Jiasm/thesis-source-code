@@ -56,11 +56,9 @@ export default {
   },
   methods: {
     showCreateTools: function(){
-      console.log('trigger')
       this.showTools = true
     },
     hideCreateTools: function(){
-      console.log('trigger close')
       this.showTools = false
     },
     jumpProject (item) {
