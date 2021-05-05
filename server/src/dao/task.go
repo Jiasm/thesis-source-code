@@ -245,8 +245,6 @@ func (p *TaskDao) FindByFilter(creator, executor, status, maxCreatedDate, minCre
 		sql = "SELECT `id`, `title`, `desc`, `creator`, `executor`, `status`, `created_date`, `expire_date`, `task_project_id`, `task_group_id`, `parent_task_id`, `type`, `priority` FROM task" + orderStr + limitStr
 	}
 
-	fmt.Println(sql)
-
 	rows, err := util.DB.Query(sql)
 
 	if err != nil {
@@ -300,6 +298,22 @@ func (p *TaskDao) ChangeExecutor(taskId, executor uint) uint {
 }
 
 func (p *TaskDao) ChangeFields(taskId, title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) uint {
+	sql := BuildUpdateTaskFieldsSql(title, desc, executor, status, expireDate, taskGroupId, taskType, priority)
+
+	result, err := util.DB.Exec(sql, taskId)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
+	return uint(count)
+}
+
+func BuildUpdateTaskFieldsSql(title, desc, executor, status, expireDate, taskGroupId, taskType, priority string) (sql string) {
 	var fields []string
 
 	if title != "" {
@@ -334,21 +348,7 @@ func (p *TaskDao) ChangeFields(taskId, title, desc, executor, status, expireDate
 		fields = append(fields, fmt.Sprintf(`priority = %s`, priority))
 	}
 
-	var sql string
-
 	sql = "UPDATE `task` SET " + strings.Join(fields, " , ") + " WHERE id = ?"
 
-	fmt.Println(sql)
-
-	result, err := util.DB.Exec(sql, taskId)
-	if err != nil {
-		log.Println(err)
-		return 0
-	}
-	count, err := result.RowsAffected()
-	if err != nil {
-		log.Println(err)
-		return 0
-	}
-	return uint(count)
+	return
 }

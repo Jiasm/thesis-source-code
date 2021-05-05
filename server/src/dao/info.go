@@ -2,7 +2,6 @@ package dao
 
 import (
 	"entity"
-	"fmt"
 	"log"
 	"util"
 )
@@ -70,7 +69,6 @@ func (p *InfoDao) FindTodoCount(projectId uint) []entity.TodoCount {
 	var list []entity.TodoCount
 
 	for rows.Next() {
-		fmt.Println("join")
 		var item entity.TodoCount
 		rows.Scan(&item.TodoCount, &item.Executor, &item.Status)
 		if err != nil {
@@ -96,7 +94,6 @@ func (p *InfoDao) FindDoneCount(projectId uint) []entity.DoneCount {
 	var list []entity.DoneCount
 
 	for rows.Next() {
-		fmt.Println("join")
 		var item entity.DoneCount
 		rows.Scan(&item.DoneCount, &item.Executor)
 		if err != nil {

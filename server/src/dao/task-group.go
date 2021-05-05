@@ -44,7 +44,6 @@ func (p *TaskGroupDao) FindAll() []entity.TaskGroup {
 	var taskGroupList []entity.TaskGroup
 
 	for rows.Next() {
-		fmt.Println("join")
 		var project entity.TaskGroup
 		rows.Scan(&project.ID, &project.Title, &project.Desc, &project.Creator, &project.Status)
 		if err != nil {
@@ -75,7 +74,6 @@ func (p *TaskGroupDao) FindByGroupId(taskGroupIdList []uint) []entity.TaskGroup 
 	var taskGroupList []entity.TaskGroup
 
 	for rows.Next() {
-		fmt.Println("join")
 		var project entity.TaskGroup
 		rows.Scan(&project.ID, &project.Title, &project.Desc, &project.Creator, &project.Status)
 		if err != nil {
@@ -100,7 +98,6 @@ func (p *TaskGroupDao) FindByProjectId(projectId uint) []entity.TaskGroup {
 	var taskGroupList []entity.TaskGroup
 
 	for rows.Next() {
-		fmt.Println("join")
 		var project entity.TaskGroup
 		rows.Scan(&project.ID, &project.Title, &project.Desc, &project.Creator, &project.Status)
 		if err != nil {

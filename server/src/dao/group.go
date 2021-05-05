@@ -53,13 +53,7 @@ func (p *GroupDao) FindOne(groupName string) *entity.Group {
 }
 
 func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
-	var groupIdStrList []string
-
-	for _, item := range groupIdList {
-		groupIdStrList = append(groupIdStrList, strconv.Itoa(int(item)))
-	}
-
-	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, name, status, creator, created_date FROM `group` WHERE id IN (%s)", strings.Join(groupIdStrList, " , ")))
+	rows, err := util.DB.Query(BuildFindGroupListWithGroupIdList(groupIdList))
 
 	if err != nil {
 		log.Println(err)
@@ -80,6 +74,16 @@ func (p *GroupDao) FindAll(groupIdList []uint) []entity.Group {
 	rows.Close()
 
 	return groupList
+}
+
+func BuildFindGroupListWithGroupIdList(groupIdList []uint) string {
+	var groupIdStrList []string
+
+	for _, item := range groupIdList {
+		groupIdStrList = append(groupIdStrList, strconv.Itoa(int(item)))
+	}
+
+	return fmt.Sprintf("SELECT id, name, status, creator, created_date FROM `group` WHERE id IN (%s)", strings.Join(groupIdStrList, " , "))
 }
 
 func (p *GroupDao) FindGroupIdByCreator(creator uint) []uint {

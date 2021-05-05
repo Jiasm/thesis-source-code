@@ -54,13 +54,7 @@ func (p *ProjectDao) FindOne(projectName string) *entity.Project {
 }
 
 func (p *ProjectDao) FindAll(projectIdList []uint) []entity.Project {
-	var projectIdStrList []string
-
-	for _, item := range projectIdList {
-		projectIdStrList = append(projectIdStrList, strconv.Itoa(int(item)))
-	}
-
-	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, creator, group_id, name, status FROM project WHERE id IN (%s)", strings.Join(projectIdStrList, " , ")))
+	rows, err := util.DB.Query(BuildFindProjectListWithProjectId(projectIdList))
 
 	if err != nil {
 		log.Println(err)
@@ -81,6 +75,16 @@ func (p *ProjectDao) FindAll(projectIdList []uint) []entity.Project {
 	rows.Close()
 
 	return projectList
+}
+
+func BuildFindProjectListWithProjectId (projectIdList []uint) string {
+	var projectIdStrList []string
+
+	for _, item := range projectIdList {
+		projectIdStrList = append(projectIdStrList, strconv.Itoa(int(item)))
+	}
+
+	return fmt.Sprintf("SELECT id, creator, group_id, name, status FROM project WHERE id IN (%s)", strings.Join(projectIdStrList, " , "))
 }
 
 func (p *ProjectDao) FindByCreator(creator uint) []entity.Project {

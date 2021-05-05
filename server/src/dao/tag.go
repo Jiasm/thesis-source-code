@@ -46,13 +46,7 @@ func (p *TagDao) FindOne(tagName string) *entity.Tag {
 }
 
 func (p *TagDao) FindAll(tagIdList []uint) []entity.Tag {
-	var tagIdListStr []string
-
-	for _, item := range tagIdList {
-		tagIdListStr = append(tagIdListStr, strconv.Itoa(int(item)))
-	}
-
-	rows, err := util.DB.Query(fmt.Sprintf("SELECT id, text FROM tag WHERE id IN (%s)", strings.Join(tagIdListStr, " , ")))
+	rows, err := util.DB.Query(BuildFindTagListWithTagId(tagIdList))
 
 	if err != nil {
 		log.Println(err)
@@ -73,4 +67,14 @@ func (p *TagDao) FindAll(tagIdList []uint) []entity.Tag {
 	rows.Close()
 
 	return tagList
+}
+
+func BuildFindTagListWithTagId (tagIdList []uint) string {
+	var tagIdListStr []string
+
+	for _, item := range tagIdList {
+		tagIdListStr = append(tagIdListStr, strconv.Itoa(int(item)))
+	}
+
+	return fmt.Sprintf("SELECT id, text FROM tag WHERE id IN (%s)", strings.Join(tagIdListStr, " , "))
 }
