@@ -10,7 +10,7 @@
     "test": "mocha ./test/unit.spec.js"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "chai": "^4.3.4",
     "core-js": "^3.6.4",
     "echarts": "^5.1.0",
