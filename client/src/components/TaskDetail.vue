@@ -527,8 +527,8 @@ export default {
           executor: row.executor,
           status: row.status,
           expireDate: row.expireDate,
-          taskProjectId: this.$data.taskGroupId,
-          taskGroupId: this.$data.projectId,
+          taskProjectId: this.$data.projectId,
+          taskGroupId: this.$data.taskGroupId,
           parentTaskId: this.$data.id,
           type: row.type,
           priority: row.priority,
@@ -551,6 +551,7 @@ export default {
         getProjectList(),
       ])
       const userList = await getProjectMemberList(data.projectId)
+      console.log({ data })
 
       this.$data.id = data.id
       this.$data.taskGroupName = data.taskGroupName

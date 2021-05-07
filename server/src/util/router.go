@@ -37,6 +37,7 @@ func (p *RouterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if fileExit {
 		file, _ := ioutil.ReadFile(filePath)
+		w.Header().Set("Cache-Control", "public, max-age=43200")
 		w.Write(file)
 		return
 	}

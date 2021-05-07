@@ -132,7 +132,7 @@ async function getTaskCommentListById (taskId) {
 }
 
 export async function getTaskList (projectId = 1) {
-  let { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=50`)
+  let { data: { data: { list } } } = await axios.get(`/task/list?task_project_id=${projectId}&size=500`)
 
   if (!list) {
     return []
@@ -328,7 +328,7 @@ export async function getTaskDetail (taskId) {
     statusText: getStatus(data.status),
     status: data.status,
     taskGroupName: groupList.length ? groupList[0].title : '未分组',
-    taskGroupId: groupList.length ? groupList[0].id : 0,
+    taskGroupId: data.task_group_id,
     projectName: projectList[0].name,
     projectId: projectList[0].id,
     title: data.title,
