@@ -197,14 +197,14 @@
           </div>
         </el-col>
       </el-row>
-      <el-row type="flex" class="row split-line" :gutter="20">
+      <el-row v-if="parentTaskId === 0" type="flex" class="row split-line" :gutter="20">
         <el-col class="col col-title" :span="6">
           <div class="grid-content bg-purple">
             子任务
           </div>
         </el-col>
       </el-row>
-      <el-row type="flex" class="row" :gutter="20">
+      <el-row v-if="parentTaskId === 0" type="flex" class="row" :gutter="20">
         <el-table
           :data="childTask"
           row-key="id"
@@ -274,13 +274,13 @@
             label="执行人"
             width="100">
             <template scope="scope">
-              <el-select v-if="scope.row.edit" v-model="scope.row.executor" placeholder="请选择执行人">
+              <el-select size="mini" v-if="scope.row.edit" v-model="scope.row.executor" placeholder="请选择执行人">
                 <el-option
                   size="mini"
                   v-for="item in userList"
-                  :key="item.id"
+                  :key="item.uid"
                   :label="item.username"
-                  :value="item.id">
+                  :value="item.uid">
                 </el-option>
               </el-select>
               <span v-else>{{scope.row.executorText}}</span>
@@ -303,7 +303,7 @@
           </el-table-column>
         </el-table>
       </el-row>
-      <el-row type="flex" class="row" :gutter="20">
+      <el-row v-if="parentTaskId === 0" type="flex" class="row" :gutter="20">
         <el-col class="col" :span="12">
           <el-button type="primary" size="mini" @click="showAppendTask">新增子任务</el-button>
           <el-button v-if="appendTaskVisible" type="success" size="mini" @click="saveChildTaskChange">保存</el-button>
@@ -392,6 +392,7 @@ export default {
       appendTaskVisible: false,
       taskGroupId: 0,
       projectId: 0,
+      parentTaskId: 0,
       showOnly: this.$props.viewState,
       userList: [],
       addCommentText: '',
@@ -568,6 +569,7 @@ export default {
       this.$data.taskGroupId = data.taskGroupId
       this.$data.projectId = data.projectId
       this.$data.projectList = projInfo.projectList
+      this.$data.parentTaskId = data.parentTaskId
       this.$data.loading = false
     }
   },

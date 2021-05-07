@@ -79,9 +79,9 @@ func (p *TaskDao) FindOne(taskId uint) entity.Task {
 		&task.ExpireDate,
 		&task.TaskProjectId,
 		&task.TaskGroupId,
+		&task.ParentTaskId,
 		&task.Type,
 		&task.Priority,
-		&task.ParentTaskId,
 	)
 
 	rows.Close()
