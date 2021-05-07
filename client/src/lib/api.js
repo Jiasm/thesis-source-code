@@ -372,14 +372,14 @@ export async function addComment(taskId, commentText) {
 export async function changeTask (taskItem) {
   await axios.post('/task/update', {
     task_id: String(taskItem.id),
-    title: taskItem.title ? taskItem.title : '',
-    desc: taskItem.desc ? taskItem.desc : '',
-    executor: taskItem.executor ? String(taskItem.executor) : '',
-    status: taskItem.status ? String(taskItem.status) : '',
-    expire_date: taskItem.expireDate ? String(moment(taskItem.expireDate).unix()) : '',
-    task_group_id: taskItem.taskGroupId ? String(taskItem.taskGroupId) : '',
-    task_type: taskItem.type ? String(taskItem.type) : '',
-    priority: taskItem.priority ? String(taskItem.priority) : '',
+    title: typeof taskItem.title !== 'undefined' ? taskItem.title : '',
+    desc: typeof taskItem.desc !== 'undefined' ? taskItem.desc : '',
+    executor: typeof taskItem.executor !== 'undefined' ? String(taskItem.executor) : '',
+    status: typeof taskItem.status !== 'undefined' ? String(taskItem.status) : '',
+    expire_date: typeof taskItem.expireDate !== 'undefined' ? String(moment(taskItem.expireDate).unix()) : '',
+    task_group_id: typeof taskItem.taskGroupId !== 'undefined' ? String(taskItem.taskGroupId) : '',
+    task_type: typeof taskItem.type !== 'undefined' ? String(taskItem.type) : '',
+    priority: typeof taskItem.priority !== 'undefined' ? String(taskItem.priority) : '',
     task_project_id: taskItem.projectId
   })
 }
