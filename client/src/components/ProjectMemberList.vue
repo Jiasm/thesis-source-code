@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <common-header></common-header>
+    <common-header :closecreate="headerChanged"></common-header>
     <div class="main">
-      <common-tree-menu></common-tree-menu>
+      <common-tree-menu ref="treeMenu"></common-tree-menu>
       <common-invite :visible.sync="inviteDialogVisible" :close="closeInvite" :is-group="false" />
       <div class="content">
         <el-row>
@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
 import { getProjectMemberList, changeMemberRoleToProject, removeMemberToProject, activeMemberToProject } from '../lib/api'
 import { role } from '../util'
 import Header from './Header'
@@ -101,8 +102,10 @@ export default {
     async closeInvite () {
       this.$data.inviteDialogVisible = false
       if (localStorage.getItem('project_id')) {
+        const loadingInstance = Loading.service({ fullscreen: true })
         this.$data.projectId = Number(localStorage.getItem('project_id'))
         this.$data.tableData = await getProjectMemberList(localStorage.getItem('project_id'))
+        loadingInstance.close()
       }
     },
     async changeRole (uid, roleId) {
@@ -114,16 +117,23 @@ export default {
     async activeMember(uid) {
       await activeMemberToProject(this.$data.projectId, uid)
     },
+    headerChanged () {
+      this.$refs.treeMenu.loadData()
+    },
   },
   async mounted() {
     if (localStorage.getItem('project_id')) {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.projectId = Number(localStorage.getItem('project_id'))
       this.$data.tableData = await getProjectMemberList(localStorage.getItem('project_id'))
+      loadingInstance.close()
     }
 
     window.addEventListener('change-project-id', async (e) => {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.projectId = Number(e.pid)
       this.$data.tableData = await getProjectMemberList(e.pid)  
+      loadingInstance.close()
     })
   },
   data() {

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <common-header></common-header>
+    <common-header :closecreate="headerChanged"></common-header>
     <div class="main">
-      <common-tree-menu></common-tree-menu>
+      <common-tree-menu ref="treeMenu"></common-tree-menu>
       <common-task-detail :visible.sync="dialogTableVisible" :task-id="taskId" :close="close" :view-state=true />
       <div class="content">
         <el-row>
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
 import { getTaskList } from '../lib/api'
 import Header from './Header'
 import TaskDetail from './TaskDetail'
@@ -96,20 +97,29 @@ export default {
     async close () {
       this.$data.dialogTableVisible = false
       if (localStorage.getItem('project_id')) {
+        const loadingInstance = Loading.service({ fullscreen: true })
         this.$data.tableData = await getTaskList(localStorage.getItem('project_id'))
+        loadingInstance.close()
       }
     },
     goBack () {
       this.$router.go(-1)
+    },
+    headerChanged () {
+      this.$refs.treeMenu.loadData()
     }
   },
   async mounted() {
     if (localStorage.getItem('project_id')) {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.tableData = await getTaskList(localStorage.getItem('project_id'))
+      loadingInstance.close()
     }
 
     window.addEventListener('change-project-id', async (e) => {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.tableData = await getTaskList(e.pid)  
+      loadingInstance.close()
     })
   },
   data() {

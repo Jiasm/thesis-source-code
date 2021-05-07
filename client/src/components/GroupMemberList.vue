@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <common-header></common-header>
+    <common-header :closecreate="headerChanged"></common-header>
     <div class="main">
-      <common-tree-menu :is-group-manage="true"></common-tree-menu>
+      <common-tree-menu :is-group-manage="true" ref="treeMenu"></common-tree-menu>
       <common-invite :visible.sync="inviteDialogVisible" :close="closeInvite" :is-group="true" />
       <div class="content">
         <el-row>
@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
 import { getGroupMemberList, changeMemberRoleToGroup, removeMemberToGroup, activeMemberToGroup } from '../lib/api'
 import { role } from '../util'
 import Header from './Header'
@@ -95,8 +96,10 @@ export default {
     async closeInvite () {
       this.$data.inviteDialogVisible = false
       if (localStorage.getItem('group_id')) {
+        const loadingInstance = Loading.service({ fullscreen: true })
         this.$data.groupId = Number(localStorage.getItem('group_id'))
         this.$data.tableData = await getGroupMemberList(localStorage.getItem('group_id'))
+        loadingInstance.close()
       }
     },
     async changeRole (uid, roleId) {
@@ -108,16 +111,23 @@ export default {
     async activeMember(uid) {
       await activeMemberToGroup(this.$data.groupId, uid)
     },
+    headerChanged () {
+      this.$refs.treeMenu.loadData()
+    },
   },
   async mounted() {
     if (localStorage.getItem('group_id')) {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.groupId = Number(localStorage.getItem('group_id'))
       this.$data.tableData = await getGroupMemberList(localStorage.getItem('group_id'))
+      loadingInstance.close()
     }
 
     window.addEventListener('change-group-id', async (e) => {
+      const loadingInstance = Loading.service({ fullscreen: true })
       this.$data.groupId = Number(e.pid)
       this.$data.tableData = await getGroupMemberList(e.pid)  
+      loadingInstance.close()
     })
   },
   data() {

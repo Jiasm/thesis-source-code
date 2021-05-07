@@ -1,6 +1,6 @@
 <template>
   <el-dialog width="960px" height="480px" title="创建任务组" v-bind="$attrs" @close="closeDialog">
-    <div class="content">
+    <el-container class="content" v-loading="loading" direction="vertical">
       <el-row type="flex" class="content-row row" :gutter="20">
         <el-row type="flex" class="row" :gutter="20">
           <el-col class="col col-title" :span="6">
@@ -39,7 +39,7 @@
           <el-button type="success" size="mini" @click="add">确定</el-button>
         </el-col>
       </el-row>
-    </div>
+    </el-container>
   </el-dialog>
 </template>
 
@@ -52,6 +52,7 @@ export default {
     return {
       taskGroupName: '',
       taskGroupDesc: '',
+      loading: false,
     }
   },
   methods: {
@@ -59,8 +60,10 @@ export default {
       this.$props.close()
     },
     async add () {
+      this.$data.loading = true
       await createTaskGroup(this.$data.taskGroupName, this.$data.taskGroupDesc)
       this.$props.close()
+      this.$data.loading = false
     }
   }
 }

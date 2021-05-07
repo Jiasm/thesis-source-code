@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <common-header></common-header>
+    <common-header :closecreate="headerChanged"></common-header>
     <div class="main">
-      <common-tree-menu></common-tree-menu>
+      <common-tree-menu ref="treeMenu"></common-tree-menu>
       <div class="content">
         <el-row>
           <el-page-header @back="goBack" content="数据看板">
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
 import { getNewCountList, getTypedTaskCountList, getTodoCountList, getDoneCountList, getUserMap } from '../lib/api'
 import { role, getTaskType, getStatus } from '../util'
 import Header from './Header'
@@ -160,10 +161,13 @@ export default {
       })
     },
     async getDataAndRender (projectId) {
-      const newCountList = await getNewCountList(projectId)
-      const typedCountList = await getTypedTaskCountList(projectId)
-      const todoCountList = await getTodoCountList(projectId)
-      const doneCountList = await getDoneCountList(projectId)
+      const loadingInstance = Loading.service({ fullscreen: true })
+      const [newCountList, typedCountList, todoCountList, doneCountList] = await Promise.all([
+        getNewCountList(projectId),
+        getTypedTaskCountList(projectId),
+        getTodoCountList(projectId),
+        getDoneCountList(projectId),
+      ])
 
       this.$data.userMap = await getUserMap([].concat(...todoCountList.map(row => row.executor), ...doneCountList.map(row => row.executor), ))
       this.$data.newCountList = newCountList
@@ -171,6 +175,10 @@ export default {
       this.$data.todoCountList = todoCountList
       this.$data.doneCountList = doneCountList
       this.renderEcharts()
+      loadingInstance.close()
+    },
+    headerChanged () {
+      this.$refs.treeMenu.loadData()
     }
   },
   async mounted() {

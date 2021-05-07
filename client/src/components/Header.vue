@@ -31,6 +31,7 @@ import CreateTaskGroup from './CreateTaskGroup';
 import { logout } from '../lib/api'
 export default {
   name: 'Header',
+  props: ['closecreate'],
   components: { 'common-create-project': CreateProject, 'common-create-group': CreateGroup, 'common-create-task': CreateTask, 'common-create-task-group': CreateTaskGroup },
   data() {
     return {
@@ -54,24 +55,28 @@ export default {
     },
     closeCreateProject () {
       this.$data.projectDialogVisible = false
+      this.$props.closecreate()
     },
     openCreateGroup() {
       this.$data.groupDialogVisible = true
     },
     closeCreateGroup () {
       this.$data.groupDialogVisible = false
+      this.$props.closecreate()
     },
     openCreateTask() {
       this.$data.taskDialogVisible = true
     },
     closeCreateTask () {
       this.$data.taskDialogVisible = false
+      this.$props.closecreate()
     },
     openCreateTaskGroup() {
       this.$data.taskGroupDialogVisible = true
     },
     closeCreateTaskGroup () {
       this.$data.taskGroupDialogVisible = false
+      this.$props.closecreate()
     },
     async logout () {
       await logout()
@@ -80,6 +85,10 @@ export default {
   },
   mounted () {
     const username = sessionStorage.getItem('username')
+
+    if (!username) {
+      return this.$router.push({ path: '/' })
+    }
 
     this.$data.username = username
   }

@@ -56,6 +56,11 @@ export async function getProjectList () {
     })
   })
 
+  console.log({
+    projectList,
+    groupList,
+  })
+
   return {
     projectList,
     groupList,
@@ -137,9 +142,11 @@ export async function getTaskList (projectId = 1) {
   const userIdList = list.map(item => item.executor)
   const taskIdList = list.map(item => item.id)
 
-  const groupList = await getTaskGroupList(taskGroupIdList)
-  const userList = await getUserList(userIdList)
-  const taskTagList = await getTaskTagList(taskIdList)
+  const [groupList, userList, taskTagList] = await Promise.all([
+    getTaskGroupList(taskGroupIdList),
+    getUserList(userIdList),
+    getTaskTagList(taskIdList),
+  ])
 
   groupList.push({ id: 0, title: '未分组' })
 
@@ -273,10 +280,12 @@ export async function getTaskDetail (taskId) {
     })
   }
 
-  const projectList = await getProjectListById(projectIdList)
-  const groupList = await getTaskGroupList(taskGroupIdList)
-  const userList = await getUserList(userIdList)
-  const taskTagList = await getTaskTagList(taskIdList)
+  const [projectList, groupList, userList, taskTagList] = await Promise.all([
+    getProjectListById(projectIdList),
+    getTaskGroupList(taskGroupIdList),
+    getUserList(userIdList),
+    getTaskTagList(taskIdList),
+  ])
 
   const userMap = {}
   const taskTagMap = {}
@@ -503,9 +512,11 @@ export async function getProjectMemberList (projectId) {
     groupList.push(row.group_id)
   })
 
-  const userMap = await getUserMap(uidList)
-  const projectMap = await getProjectMap(projectList)
-  const groupMap = await getGroupListMap(groupList)
+  const [userMap, projectMap, groupMap] = await Promise.all([
+    getUserMap(uidList),
+    getProjectMap(projectList),
+    getGroupListMap(groupList),
+  ])
 
   group = group.filter(row => !project.find(i => i.uid === row.uid))
   // getUserList

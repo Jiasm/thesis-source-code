@@ -1,47 +1,49 @@
 <template>
   <div class="container">
-    <div class="nav">
-      <div class="nav-item" @click="jumpTaskList">任务列表</div>
-      <div class="nav-item" @click="jumpGroupManage">群组成员管理</div>
-      <div class="nav-item" @click="jumpProjectManage">项目成员管理</div>
-      <div class="nav-item" @click="jumpDashboard">数据统计</div>
-    </div>
-    <el-menu v-if="isGroupManage" class="treemenu" ref="menu" :default-active="landingIndex">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>我的组织</span>
-        </template>
-        <el-menu-item v-for="(row, index) in groupList" v-bind:key="index" :index="`1-${row.groupId}`" @click="jumpGroup(row.groupId, `1-${row.groupId}`)">{{row.groupName}}</el-menu-item>
-      </el-submenu>
-    </el-menu>
-    <el-menu v-else class="treemenu" ref="menu" :default-active="landingIndex">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>我的项目</span>
-        </template>
-        <el-menu-item v-for="(row, index) in projectList" v-bind:key="index" :index="`1-${row.id}`" @click="jumpProject">{{row.name}}</el-menu-item>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>我的组织</span>
-        </template>
-          <el-submenu v-for="(row, index) in groupList" v-bind:key="index" :index="`2-${index}`">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>{{row.groupName}}</span>
-            </template>
-            <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${row.id}-${line.id}`" @click="jumpProject">{{line.name}}</el-menu-item>
-          </el-submenu>
-      </el-submenu>
-    </el-menu>
+    <el-container v-loading="loading" direction="vertical">
+      <div class="nav">
+        <div class="nav-item" @click="jumpTaskList">任务列表</div>
+        <div class="nav-item" @click="jumpGroupManage">群组成员管理</div>
+        <div class="nav-item" @click="jumpProjectManage">项目成员管理</div>
+        <div class="nav-item" @click="jumpDashboard">数据统计</div>
+      </div>
+      <el-menu v-if="isGroupManage" class="treemenu" ref="menu" :default-active="landingIndex">
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>我的组织</span>
+          </template>
+          <el-menu-item v-for="(row, index) in groupList" v-bind:key="index" :index="`1-${row.groupId}`" @click="jumpGroup(row.groupId, `1-${row.groupId}`)">{{row.groupName}}</el-menu-item>
+        </el-submenu>
+      </el-menu>
+      <el-menu v-else class="treemenu" ref="menu" :default-active="landingIndex">
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>我的项目</span>
+          </template>
+          <el-menu-item v-for="(row, index) in projectList" v-bind:key="index" :index="`1-${row.id}`" @click="jumpProject">{{row.name}}</el-menu-item>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>我的组织</span>
+          </template>
+            <el-submenu v-for="(row, index) in groupList" v-bind:key="index" :index="`2-${index}`">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>{{row.groupName}}</span>
+              </template>
+              <el-menu-item v-for="(line, i) in row.list" v-bind:key="i" :index="`2-${row.id}-${line.id}`" @click="jumpProject">{{line.name}}</el-menu-item>
+            </el-submenu>
+        </el-submenu>
+      </el-menu>
+    </el-container>
   </div>
 </template>
 
 <script>
-import { getProjectList } from '../lib/api'
+import { getProjectList, getGroupList } from '../lib/api'
 
 export default {
   name: 'TreeMenu',
@@ -52,6 +54,7 @@ export default {
       projectList: [],
       groupList: [],
       landingIndex: '',
+      loading: true,
     };
   },
   methods: {
@@ -95,16 +98,28 @@ export default {
     jumpDashboard () {
       this.$router.push({ path: '/dashboard' })
     },
+    async loadData () {
+      this.$data.loading = true
+      if (this.$props.isGroupManage) {
+        const groupData = await getGroupList()
+
+        this.$data.projectList = []
+        this.$data.groupList = groupData.map(row => ({ groupId: row.id, groupName: row.name }))
+      } else {
+        const { projectList, groupList } = await getProjectList()
+
+        this.$data.projectList = projectList
+        this.$data.groupList = groupList
+      }
+
+      if (localStorage.getItem('index')) {
+        this.$data.landingIndex = localStorage.getItem('index')
+      }
+      this.$data.loading = false
+    }
   },
   async mounted () {
-    const { projectList, groupList } = await getProjectList()
-
-    this.$data.projectList = projectList
-    this.$data.groupList = groupList
-
-    if (localStorage.getItem('index')) {
-      this.$data.landingIndex = localStorage.getItem('index')
-    }
+    return this.loadData()
   }
 }
 </script>

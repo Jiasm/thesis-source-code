@@ -1,6 +1,6 @@
 <template>
   <el-dialog width="480px" height="160px" title="创建项目" v-bind="$attrs" @close="closeDialog" @open="loadData">
-    <div class="content">
+    <el-container class="content" v-loading="loading" direction="vertical">
       <el-row type="flex" class="content-row row" :gutter="20">
         <el-row type="flex" class="row" :gutter="20">
           <el-col class="col col-title" :span="6">
@@ -43,7 +43,7 @@
           <el-button type="success" size="mini" @click="add">确定</el-button>
         </el-col>
       </el-row>
-    </div>
+    </el-container>
   </el-dialog>
 </template>
 
@@ -56,7 +56,8 @@ export default {
     return {
       groupId: 0,
       projectName: '',
-      groupList: []
+      groupList: [],
+      loading: true,
     }
   },
   methods: {
@@ -64,12 +65,16 @@ export default {
       this.$props.close()
     },
     async loadData () {
+      this.$data.loading = true
       const groupList = await getGroupList()
+      this.$data.loading = false
 
       this.$data.groupList = groupList
     },
     async add () {
+      this.$data.loading = true
       await createProject(this.$data.projectName, this.$data.groupId)
+      this.$data.loading = false
       this.$props.close()
     }
   },

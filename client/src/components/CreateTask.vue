@@ -1,6 +1,6 @@
 <template>
   <el-dialog width="960px" title="新建任务" v-bind="$attrs" @close="closeDialog" @open="loadData">
-    <div class="content">
+    <el-container class="content" v-loading="loading" direction="vertical">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
           <div class="grid-content bg-purple">
@@ -158,7 +158,7 @@
           <el-button v-show="!showOnly" type="success" size="mini" @click="submitCreateTask">创建任务</el-button>
         </el-col>
       </el-row>
-    </div>
+    </el-container>
   </el-dialog>
 </template>
 
@@ -190,6 +190,7 @@ export default {
       priorityList: priority,
       projectList: [],
       projectGroupList: [{ id: 0, title: '未分组' }],
+      loading: true
     }
   },
   methods: {
@@ -197,15 +198,17 @@ export default {
       this.$props.close()
     },
     async loadData() {
+      this.$data.loading = true
       // const userList = await getAllUserList()
-      const projInfo = await getProjectList()
-      const projectGroupList = await getAllTaskGroup()
+      const [projInfo, projectGroupList] = await Promise.all([getProjectList(), getAllTaskGroup()])
 
       // this.$data.userList = userList
       this.$data.projectList = projInfo.projectList
       this.$data.projectGroupList = projectGroupList
+      this.$data.loading = false
     },
     async submitCreateTask () {
+      this.$data.loading = true
       await createTask({
         title: this.$data.title,
         description: this.$data.description,
@@ -217,10 +220,13 @@ export default {
         type: this.$data.type,
         priority: this.$data.priority,
       })
+      this.$data.loading = false
       this.$props.close()
     },
     async changeProject () {
+      this.$data.loading = true
       this.$data.userList = await getProjectMemberList(this.$data.projectId)
+      this.$data.loading = false
       // console.log()
     }
   },

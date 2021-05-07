@@ -1,6 +1,6 @@
 <template>
   <el-dialog width="960px" title="任务详情" top="5vh" v-bind="$attrs" @close="closeDialog" @open="loadData">
-    <div class="content">
+    <el-container class="content" v-loading="loading" direction="vertical">
       <el-row type="flex" class="row" :gutter="20">
         <el-col class="col col-title" :span="6">
           <div class="grid-content bg-purple">
@@ -360,7 +360,7 @@
           <el-button type="success" size="mini" @click="sendComment">发送</el-button>
         </el-col>
       </el-row>
-    </div>
+    </el-container>
   </el-dialog>
 </template>
 
@@ -400,10 +400,12 @@ export default {
       statusList: status,
       priorityList: priority,
       projectList: [],
+      loading: true,
     }
   },
   methods: {
     async handleRemoveTag(tag) {
+      this.$data.loading = true
       await removeTag(this.$data.id, tag.id)
       await this.loadData()
     },
@@ -414,6 +416,7 @@ export default {
       });
     },
     async handleInputConfirm () {
+      this.$data.loading = true
       const newTag = this.$data.inputValue
       await addNewTag(this.$data.id, newTag)
       this.inputVisible = false
@@ -437,6 +440,7 @@ export default {
       // this.$data.childTask[index].edit = true
     },
     async changeStatus () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         status: this.$data.status
@@ -444,6 +448,7 @@ export default {
       await this.loadData()
     },
     async changeType () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         taskType: this.$data.type
@@ -451,6 +456,7 @@ export default {
       await this.loadData()
     },
     async changePriority () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         priority: this.$data.priority
@@ -458,6 +464,7 @@ export default {
       await this.loadData()
     },
     async changeExpireDate () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         expireDate: this.$data.expireDate
@@ -465,6 +472,7 @@ export default {
       await this.loadData()
     },
     async changeTitle () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         title: this.$data.title
@@ -472,6 +480,7 @@ export default {
       await this.loadData()
     },
     async changeExecutor () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         executor: this.$data.executor
@@ -479,6 +488,7 @@ export default {
       await this.loadData()
     },
     async changeDesc () {
+      this.$data.loading = true
       await changeTask({
         id: this.$data.id,
         description: this.$data.description
@@ -486,6 +496,7 @@ export default {
       await this.loadData()
     },
     async saveChildTaskChange () {
+      this.$data.loading = true
       const changedRows = []
       const newRows = []
       this.$data.childTask.filter(row => row.edit).forEach(row => {
@@ -527,14 +538,18 @@ export default {
       await this.loadData()
     },
     async sendComment () {
+      this.$data.loading = true
       await addComment(this.$data.id, this.$data.addCommentText)
       this.$data.addCommentVisible = false
       await this.loadData()
     },
     async loadData() {
-      const data = await getTaskDetail(this.$props.taskId)
+      this.$data.loading = true
+      const [data, projInfo] = await Promise.all([
+        getTaskDetail(this.$props.taskId),
+        getProjectList(),
+      ])
       const userList = await getProjectMemberList(data.projectId)
-      const projInfo = await getProjectList()
 
       this.$data.id = data.id
       this.$data.taskGroupName = data.taskGroupName
@@ -553,6 +568,7 @@ export default {
       this.$data.taskGroupId = data.taskGroupId
       this.$data.projectId = data.projectId
       this.$data.projectList = projInfo.projectList
+      this.$data.loading = false
     }
   },
   async mounted () {
