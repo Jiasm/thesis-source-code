@@ -11,6 +11,12 @@ type UserService struct {
 var userDao = new(dao.UserDao)
 
 func (p *UserService) CreateAccount(userName, password string, roleId, status uint) int64 {
+	info := userDao.FindByName(userName)
+
+	if info.ID > 0 {
+		return -1
+	}
+
 	id := userDao.Insert(&entity.User{UserName: userName, Password: password, RoleId: roleId, Status: status})
 	if id <= 0 {
 		return 0

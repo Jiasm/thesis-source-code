@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
 import App from './App.vue'
 import Login from './components/Login.vue'
+import Signin from './components/Signin.vue'
 import List from './components/List.vue'
 import ProjectMemberList from './components/ProjectMemberList'
 import GroupMemberList from './components/GroupMemberList'
@@ -20,6 +21,8 @@ Vue.config.productionTip = false
 
 const routes = [
   { path: '/', component: Login },
+  { path: '/login', component: Login },
+  { path: '/signin', component: Signin },
   { path: '/list', component: List },
   { path: '/project-manage', component: ProjectMemberList },
   { path: '/group-manage', component: GroupMemberList },

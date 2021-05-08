@@ -35,8 +35,7 @@
         <!-- <el-col :span="8" :offset="8">
         </el-col> -->
         <el-col class="btn-wrap" :span="8">
-          <el-button type="primary" round @click="login">登录</el-button>
-          <el-button type="text" round @click="signin">注册</el-button>
+          <el-button type="primary" round @click="signin">注册</el-button>
         </el-col>
       </el-row>
     </div>
@@ -44,10 +43,10 @@
 </template>
 
 <script>
-import { login } from '../lib/api'
+import { signin } from '../lib/api'
 
 export default {
-  name: 'Login',
+  name: 'Signin',
   data() {
     return {
       title: '软件开发项目管理系统',
@@ -56,32 +55,37 @@ export default {
     }
   },
   methods: {
-    async login() {
+    async signin() {
       const { username, password } = this.$data
       
       try {
-        const data = await login(username, password)
+        const data = await signin(username, password)
 
         if (data.code === 200) {
-          // success
-          sessionStorage.setItem('uid', data.data.id)
-          sessionStorage.setItem('username', data.data.username)
-          this.$router.push({ path: '/list' })
+          try {
+            await this.$confirm('注册成功，跳转登录页面', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'error'
+            })
+          } finally {
+            this.$router.push({path:'/login'})
+          }
         } else {
-          console.log(data.code)
-          throw new Error('')
+          this.$confirm('用户名已经存在', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'error'
+          })
         }
       } catch (e) {
-        this.$confirm('账号或密码错误', '提示', {
+        this.$confirm('用户名已经存在', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'error'
         })
       }
     },
-    signin() {
-      this.$router.push({path:'/signin'})
-    }
   }
 }
 </script>

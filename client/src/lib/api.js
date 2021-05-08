@@ -11,6 +11,15 @@ export async function login (username, password) {
   return data
 }
 
+export async function signin (username, password) {
+  const { data } = await axios.post(`/user/create`, {
+    username,
+    password
+  })
+
+  return data
+}
+
 export async function logout () {
   await axios.post('/logout')
 }

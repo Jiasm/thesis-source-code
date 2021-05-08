@@ -81,6 +81,9 @@ func (p *UserController) create(w http.ResponseWriter, r *http.Request) {
 	if id == 0 {
 		util.ResultFail(w, "error")
 		return
+	} else if id == -1 {
+		util.ResultFail(w, "exists")
+		return
 	}
 
 	util.ResultJsonOk(w, id)
